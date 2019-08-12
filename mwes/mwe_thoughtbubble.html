@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+</head>
+
+<style>
+
+</style>
+
+<body>
+  <script type="module">
+
+    /* 
+    Examples on class Path and its child Arrow.
+    */
+    
+    // Module imports
+    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {Path} from '../src/classes/Path.js'
+    
+    if (document.URL.includes('bubble_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+    let timing = 0
+    
+    /****************************************************
+      Canvas
+    ****************************************************/
+    const svg = SimpleCanvas(1930,1090, false)
+
+    /****************************************************
+      Define bubble parameters
+    ****************************************************/
+    let pathparams4 = 
+    {
+       pos: [[200,200], [1000,600]]
+      ,id:          "path4"
+      ,pathData:    "M 0,0"
+                  + "c -10,0 -40,-15 -60,40"
+                  + "c -30,20 -32,51 -10,81" 
+                  + "c -14,10 -10,83 45,65"
+                  + "c -15,27 35,27 37,19"
+                  + "c 15,12 40,13 54,-3" 
+                  + "c 30,20 82,10 90,-9" 
+                  + "c 23,4 30,-10 29,-27" 
+                  + "c 10,0 10,-20 6,-20"
+                  + "c 36,-17 23,-40 16,-44"
+                  + "c 20,-21 23,-37 1,-57" 
+                  + "c 17,-16 -2,-48 -60,-34"
+                  + "c -5,-30 -70,-25 -60,-20" 
+                  + "c -20,-19 -70,-20 -90,9"
+      ,color:       NQColors.light_grey
+      ,strokeWidth: 5
+      ,fill:"rgba(228, 239, 233, 1.00)"
+      ,moveInScale: 1/20 
+    }    
+    let path4 = new Path(pathparams4)
+
+    // Attach text to object
+		var fo = d3.select('#'+ "path4")
+					     .append('foreignObject')
+					     .attr('x',-180 + 0) 
+					     .attr('y',50   + 0)
+					     .attr('width',   500)
+					     .attr('height',  500)
+		var div = fo.append('xhtml:div')
+						    .html("This is my<br>bubble text")
+						    .style("font-family","Arial")
+						    .attr("align", "center")					
+						    .style("font-size", 40 + "px")
+						    .style("color", "black")    
+
+    /****************************************************
+      Animate
+    ****************************************************/                
+    timing = timing + 300
+    path4.Draw({delay:timing, duration:1500, type:'default'})
+
+    timing = timing + 2000
+    path4.Update({delay:timing, duration:1500, params:{newScale:2}})    
+
+    timing = timing + 2000
+    path4.Update({delay:timing, duration:1500, params:{moveStepNo:1}})
+
+  </script> 
+
+</body>
+</html>

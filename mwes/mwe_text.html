@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+  <!-- Math symbols PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Examples on text objects.
+    */
+
+    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {AddMathJax} from '../src/functions/AddMathJax.js'
+    import {TextObject} from '../src/classes/TextObject.js'
+
+    if (document.URL.includes('text_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    var timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    const svg = SimpleCanvas(1930,1090, false)
+      
+    let mytext = `Wait a minute. So you are saying  I can easily write math 
+    symbols within a text field if I wrap it in dollar signs?! Let's try:
+    $y = \\alpha + \\beta \\mathbf{X} + \\epsilon $. There you go! Anything that is 
+    within dollar signs are not put to next row, however.
+    `
+
+    let textparams1 = {
+      "pos"            : [[300,200]],
+      "textAreaWidth"  : 700,
+      "textAreaHeight" : 400, 
+      "id"             : "txt1",
+      "text"           : mytext,
+      "fontSize"       : 40,
+      "textRelXPos"    : -200,
+      "textColor"      : NQTextColors.red,
+    }
+    let text1 = new TextObject(textparams1)
+
+    let textparams2 = {
+      "pos"            : [[1200,700], [1200,500]],
+      "textAreaWidth"  : 600,
+      "textAreaHeight" : 300,      
+      "id"             : "txt2",
+      "text"           : "$y = \\alpha + \\beta \\mathbf{X}$",
+      "fontSize"       : 70,
+      "textRelXPos"    : -200,
+      "textColor"      : NQTextColors.purple,
+      "entPoint"       : [1100,600]
+    }
+    let text2 = new TextObject(textparams2)    
+    
+    /*********************************
+    Draw
+    *********************************/
+    timing = timing + 1500
+    text1.Draw({delay:timing, duration:1600})
+    text2.Draw({delay:timing, duration:1600, type:"movein"})    
+    
+    timing = timing + 3000
+    text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
+
+    // This needs to be added in conjunction with the import above!
+    AddMathJax(svg)
+
+  </script> 
+
+</body>
+</html>

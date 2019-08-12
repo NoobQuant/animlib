@@ -1,0 +1,4 @@
+# Exclude all ipynb checkpoint files
+.ipynb_checkpoints/
+# exclude contents of png folder
+png/*

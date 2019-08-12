@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+  <!-- Math symbols PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+
+    import {SimpleCanvas} from '../../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
+    import {AddMathJax} from '../../src/functions/AddMathJax.js'
+
+    if (document.URL.includes('template_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    const svg = SimpleCanvas(1930,1090, false)
+    
+    // FILL HERE
+    
+    /*********************************
+    Animate
+    *********************************/
+
+    // FILL HERE
+
+    // This needs to be added in conjunction with the import above!
+    AddMathJax(svg)
+
+  </script> 
+
+</body>
+</html>

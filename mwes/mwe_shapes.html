@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v4.js" charset="utf-8"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+
+
+  <script type="module">
+    /* 
+    Examples on classes Circle and Rectangle.
+    */
+
+    // Module imports
+    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {Circle} from '../src/classes/Circle.js'
+    import {Rectangle} from '../src/classes/Rectangle.js'    
+
+    if (document.URL.includes('shapes_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    var timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    const svg = SimpleCanvas(1930,1090, false)
+
+    let circparams1 = {
+      "pos"          : [[300,200], [500,600]]
+      ,"entPoint"    : [0,0]
+      ,"id"          : "circ1"
+      ,"r"           : 10
+      ,"color"       : NQColors.purple
+      ,"strokeColor" : NQColors.white
+      ,"strokeWidth" : 3
+      ,"moveInEase"  : d3.easeBack
+    }
+    let circ1 = new Circle(circparams1)
+
+    let rectparams1 = {
+      "pos"          : [[1500,400], [300,850]]
+      ,"id"          : "rect1"
+      ,"dim"         : [300,100]
+      ,"color"       : NQColors.light_purple
+      ,"strokeColor" : NQColors.white
+      ,"strokeWidth" : 3
+      ,"moveInEase"  : d3.easeLinear
+    }
+    let rect1 = new Rectangle(rectparams1)    
+
+    /*********************************
+    Draw
+    *********************************/
+    timing = timing + 500
+    circ1.Draw({delay:timing,duration:3000,type:"movein"})
+    rect1.Draw({delay:timing,duration:500,type:"scalein"})     
+
+    timing = timing + 4000
+
+    //circ1.Move({stepno:1, delay:timing, duration:2000})
+    circ1.Update({delay:timing, duration:2000, params:{moveStepNo:1, newScale:2}})
+    
+    // chained simultaneous transitions do not work! Workaround...
+    // ...update on AnimObject level
+    d3.select("#rect1")
+	      .transition()
+	      .delay(timing)
+	      .duration(2000)
+		    .attr("transform", "translate(" + (rectparams1.pos[1][0] ) + "," + (rectparams1.pos[1][1] ) + ")")
+        .ease(d3.easePoly)
+    // ...update on specific shape level 
+    d3.select("#rect1")
+        .selectAll("rect")
+	      .transition()
+	      .delay(timing)
+	      .duration(2000)
+        .style("fill", NQColors.yellow)
+        .attr("width", 600)        
+        .ease(d3.easePoly)        
+  
+    timing = timing + 3000
+    circ1.ChangeColor({color:NQColors.orange, delay:timing, duration:500})
+    rect1.ChangeColor({color:NQColors.dark_grey, delay:timing, duration:500})    
+
+    timing = timing + 1500
+    circ1.Scale({delay:timing, duration:500, newr:20}) // r= will be 40 since above we scale group to 2!
+    //circ1.Update({delay:timing, duration:500, params:{newScale:4}})    
+    
+    timing = timing + 3000
+    circ1.Hide({delay:timing, duration:500})
+    rect1.Hide({delay:timing, duration:500})    
+
+  </script> 
+
+</body>
+</html>

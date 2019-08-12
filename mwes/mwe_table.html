@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Table
+    */
+
+    // Module imports
+    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {Table} from '../src/classes/Table.js'
+
+    if (document.URL.includes('table_gg')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    
+    // Canvas
+    //const svg = SimpleCanvas(1930,1090, false, "white")
+    const svg = SimpleCanvas(1930,1090, false)
+
+    /*********************************************
+     * Define nodes data for 1st force
+    *********************************************/
+    let params = 
+    {
+      id: "datatable1"
+      ,pos: [[200, 100], [200, 500]]   
+      ,path: "data/table_data.json"
+      ,width: 1500
+      ,svgid: "bgsvg"
+    }
+    let dt = new Table(params)
+
+    /*********************************************
+     * Animate
+    *********************************************/
+ 
+    timing = timing + 500
+    dt.Draw({delay:timing, duration:1000})
+  
+    timing = timing + 1500
+    dt.Update({delay:timing, duration:1500, params:{moveStepNo:1}})
+    
+    timing = timing + 2000
+    dt.Hide({delay:timing, duration:500})    
+
+  </script> 
+
+</body>
+</html>

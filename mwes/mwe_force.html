@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Force layout
+    */
+
+    // Module imports
+    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {ForceLayout} from '../src/classes/ForceLayout.js'
+
+    if (document.URL.includes('force_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    
+    // Canvas
+    const svg = SimpleCanvas(1930,1090, false)
+
+    /*********************************************
+     * Define nodes data for 1st force
+    *********************************************/
+    let nodes = d3.range(100).map(function(d,i) {
+      return { 
+              name: i
+              ,groupid: 1
+              ,xCenter: 1000
+              ,yCenter: 500                    
+              ,color: NQColors.steelblue
+              ,radius: 10
+              ,x: 600
+              ,y: 200
+              ,fixed: true             
+            }
+    })
+
+    // First new updated nodes
+    let nodesUdptData1 = d3.range(100).map(function(d,i) {
+      return { 
+               name: i
+              ,color: NQColors.light_purple
+              ,radius: 15           
+            }
+    })
+
+    // Deep copy and modify some elements
+    let nodesUdptData2 = JSON.parse(JSON.stringify(nodesUdptData1))
+    nodesUdptData2.forEach(function(d){
+        if ([5,6,7,8,50,51,52].includes(d.name)){
+          d.radius = 20
+          d.color = NQColors.yellow
+        }
+      })    
+
+    // Parameter objects for nodes update
+    let nodesUpdtParams1 = 
+    {
+       data         : nodesUdptData1
+      ,alphaTarget  : 0.1
+    }
+
+    let nodesUpdtParams2 = 
+    {
+       data         : nodesUdptData2
+      ,alphaTarget  : 0.1
+    }    
+    /*********************************************
+     * Function for pushing new node
+    *********************************************/
+    function PushNewNode(nodes,counter){
+      nodes.push({
+            "name": "new_node" + counter
+            ,"groupid": 1       
+            ,"xCenter": 1000
+            ,"yCenter": 500         
+            ,"color": NQColors.orange
+            ,"radius": 15
+            ,"x": 0
+            ,"y": 500
+            ,fixed: true
+          })
+      return nodes
+    }
+
+    /*********************************************
+     * Define force simulation
+    *********************************************/
+    let animationtickinterval = 20
+    let force1params = 
+    {
+       nodes : nodes
+      ,id    : "forcelayout0"    
+    } 
+    let Force1 = new ForceLayout(force1params)
+    Force1.Activate({nodes:nodes}) // Activate starting nodes
+
+    /*********************************************
+     * Animate
+    *********************************************/
+
+    // Animate force and return its timer    
+    timing = timing + 500
+    let animTimer1 = Force1.Draw({delay:timing,tickInterval:animationtickinterval})
+
+    // Update all nodes using Update() method
+    timing = timing + 2000
+    Force1.Update({delay:timing, params:nodesUpdtParams1})
+
+    // Update only some nodes using Update() method    
+    timing = timing + 2000
+    Force1.Update({delay:timing, params:nodesUpdtParams2,nodes:nodes})
+
+    // Add more nodes one-at-a-time to existing force layout
+    // This is done in a manual timer loop
+    timing = timing + 2000
+    d3.timeout(function() {
+      
+      let counter = 0
+      let newnodecounter = 0
+      let moddivisor = 5 // 5 = every 10th of a second if animationtickinterval = 20      
+      let newnodes = 10 
+      let flagnomorenodes = false
+
+      // Stop current ective force timer
+      Force1.activeTimer.stop()
+
+      let animTimer3 = d3.interval( function(elapsed){
+
+        // at steady intervals, add new node and reheat animation
+        if (counter%moddivisor == 0){
+
+          if (flagnomorenodes === false){
+            PushNewNode(nodes,counter)          
+            Force1.Activate({nodes:nodes})     
+          }
+
+          // reheat force animation
+          Force1.simulation.alphaTarget(0.1).restart()
+          Force1.simulation.stop()
+
+          newnodecounter += 1          
+        }
+
+        // Animate force
+        Force1.Tick()
+
+        // Check if still new nodes
+        if (newnodecounter >= 10) {flagnomorenodes = true}
+
+        counter += 1
+      },animationtickinterval)
+
+    },timing)
+    
+    // Hide force
+    timing = timing + 5000
+    Force1.Hide({delay:timing, duration:300})
+
+  </script> 
+
+</body>
+</html>
