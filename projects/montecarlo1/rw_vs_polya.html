@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+  <!-- Math symbols PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+
+    import {SimpleCanvas} from '../../src/functions/SimpleCanvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
+    import {AddMathJax} from '../../src/functions/AddMathJax.js'
+    import {Plot} from '../../src/classes/Plot.js'    
+
+    if (document.URL.includes('template_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    const svg = SimpleCanvas(1930,1090, false)
+    
+    // FILL HERE
+    
+    let params4 = {
+       "pos"                : [[200,100]]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,10]
+      ,"xDomain"            : [0,10]
+      ,"id"                 : "plot4"
+      ,"yLabel"             : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize"         : 30
+      ,"xLabel"             : "dd"      
+    }
+    let plot4 = new Plot(params4)  
+
+
+    let lineData1 = [[1,2],[2,4],[3,4],[4,4],[5,4],[6,8],[7,4],[8,4]]
+    let lineData2 = [[1,3],[2,7],[3,1],[4,6],[5,3],[6,8],[7,7],[8,2]]
+    let linData = [lineData1,lineData2]
+
+    /*********************************
+    Animate
+    *********************************/
+
+    timing = timing + 1000
+    plot4.Draw({delay:timing, duration:500})
+
+    timing = timing + 1000
+    for (let i = 0; i < 2; i++) {
+
+      let lineDataParams = {
+         "data"        : linData[i]
+        ,"id"          : "linedata"+i         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeExpInOut
+    }
+
+      plot4.DrawLine({delay:timing, duration:4000, lineParams:lineDataParams})
+      lineDataParams = null
+    }
+
+
+    // This needs to be added in conjunction with the import above!
+    AddMathJax(svg)
+
+  </script> 
+
+</body>
+</html>

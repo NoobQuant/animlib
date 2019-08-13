@@ -1,4 +1,6 @@
 # Exclude all ipynb checkpoint files
 .ipynb_checkpoints/
+# Exclude all vscode specific files
+.vscode/
 # exclude contents of png folder
 png/*
