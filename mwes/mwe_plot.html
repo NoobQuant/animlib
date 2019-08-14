@@ -6,6 +6,9 @@
   <!-- d3-->
   <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
 
+  <!-- Load data from json-->
+  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>  
+
   <!-- Math symbols - REQUIRED! PUTT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
   </script>  
@@ -169,9 +172,9 @@
     /**************************************************
     Line data parameters
     **************************************************/     
-    let lineData = [[1,2],[2,4],[3,4],[4,4],[5,4],[6,8],[7,4],[8,4]]
+    //let lineData = [[1,2],[2,4],[3,4],[4,4],[5,4],[6,8],[7,4],[8,4]]
     let lineDataParams1 = {
-         "data"        : lineData
+         "data"        : lineDataObject["y1"]
         ,"id"          : "linedata1"         
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
