@@ -21,9 +21,9 @@ def WriteDfToJsonVar(dff,path,orientation,varname="lineDataObject"):
                         seriesname = df_p.columns[1]
                         json_p = df_p.to_json(orient="values")
                         if colpairno != len(dff.columns)/2-1:
-                                json = json + '"'+seriesname+'":' + json_p + ', '
+                                json = json + '"'+str(seriesname)+'":' + json_p + ', '
                         else:
-                                json = json + '"'+seriesname+'":' + json_p + '}'
+                                json = json + '"'+str(seriesname)+'":' + json_p + '}'
         
         if orientation == 'comx':
                 for colloc in range(1,len(dff.columns)):
@@ -34,9 +34,9 @@ def WriteDfToJsonVar(dff,path,orientation,varname="lineDataObject"):
                         json_p = df_p.to_json(orient="values")
 
                         if colloc != len(dff.columns)-1:
-                                json = json + '"'+seriesname+'":' + json_p + ', '
+                                json = json + '"'+str(seriesname)+'":' + json_p + ', '
                         else:
-                                json = json + '"'+seriesname+'":' + json_p + '}'                        
+                                json = json + '"'+str(seriesname)+'":' + json_p + '}'                        
         
         json = "let " + varname + " = " + json
         with open(path, 'w') as outfile:
