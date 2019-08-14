@@ -36,15 +36,13 @@ export class Plot extends AnimObject{
 		if (this.yAxisType == 'scaleLinear'){
 			var yScale = d3.scaleLinear().range(yRangeInv).domain(this.yDomain)
 		} else if (this.yAxisType == 'scaleBand'){
-			//var yScale = d3.scaleLinear().range(yRangeInv).domain(this.yDomain)
-			//				.paddingInner(0.05) // still ad hoc!		
+			var yScale = d3.scaleLinear()
+							.domain(this.yDomain)
+							.range(yRangeInv)
+							.paddingInner(0.05) // still ad hoc!		
 		} else if (this.yAxisType == 'scaleTime'){
 			var yScale = d3.scaleLinear().range(yRangeInv).domain(this.yDomain)
 		}		
-
-		// Group needed here for update logic bound objects
-		// THIS HAS BEEN MOVED TO INDIVIDUAL OBJECT DRAWS
-		//this.vis = this.group.append("g")
 
 		// Axis calls
 		let xAxis = d3.axisBottom().scale(xScale)
