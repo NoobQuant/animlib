@@ -12,7 +12,7 @@ export const NQColors = {
   purple        : "#5534BF",
   light_grey    : "#7D859C",
   red           : "#ff3333",
-  steelblue     : "#666da3"
+  steelblue     : "#4682B4"
 }
 
 export const NQTextColors = {
