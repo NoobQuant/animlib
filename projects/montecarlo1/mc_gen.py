@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from src.dataprep.WriteDfToJsonVar import WriteDfToJsonVar
 np.random.seed(1)
 
 #%%
@@ -44,6 +45,21 @@ def PolyaProcess(nrow,ncol):
             p_1 = mylist.count(1) / len(mylist)
     return pd.DataFrame(arr.cumsum(axis=0))
 
+def CopyAndSortCols(dff):
+    # This does not put the columns in original order but does not matter!
+    for col in dff.columns:
+        dff.rename(columns={col:"col_"+str(col) + "_y"}, inplace=True)
+        dff["col_"+str(col) + "_x"] = dff.index
+    dff = dff.reindex(sorted(dff.columns), axis=1)
+    return dff
+
+def FlipXandY(dff):
+    dff.columns = dff.columns.str.replace("_x", "_z")
+    dff.columns = dff.columns.str.replace("_y", "_x")
+    dff.columns = dff.columns.str.replace("_z", "_y")
+    dff = dff.reindex(sorted(dff.columns), axis=1)
+    return dff
+
 #%% [markdown]
 # ## Random walk
 
@@ -51,14 +67,19 @@ def PolyaProcess(nrow,ncol):
 df = pd.DataFrame(np.random.choice([-1,1], size=(50,100)).cumsum(axis=0))
 PlotVertical(dff=df, xlim=[-60,60], redcolors=[99])
 
+df = CopyAndSortCols(df)
+df = FlipXandY(df)
+WriteDfToJsonVar(df,'projects/montecarlo1/rw.json',"sepx","data_rw")
+
 #%% [markdown]
 # ## Polya process
 
 #%%
-df = PolyaProcess(nrow=3,ncol=2)
+df = PolyaProcess(nrow=50,ncol=100)
 PlotVertical(dff=df, xlim=[-60,60], redcolors=[99])
 
-#%%
-df.iloc[:,0:2].to_json()
+df = CopyAndSortCols(df)
+df = FlipXandY(df)
+WriteDfToJsonVar(df,'projects/montecarlo1/polya.json',"sepx","data_polya")
 
 #%%

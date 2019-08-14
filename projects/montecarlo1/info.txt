@@ -1,0 +1,3 @@
+Simple video on the difference between Random Walk and Polya Process.
+
+animlib version v.0.1.0

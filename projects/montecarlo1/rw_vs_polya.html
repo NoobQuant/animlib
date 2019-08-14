@@ -6,6 +6,10 @@
   <!-- d3-->
   <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
 
+  <!-- Load data from json-->
+  <script src="rw.json" charset="utf-8"></script>
+  <script src="polya.json" charset="utf-8"></script>  
+
   <!-- Math symbols PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
   </script>  
@@ -21,9 +25,10 @@
     import {SimpleCanvas} from '../../src/functions/SimpleCanvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
     import {AddMathJax} from '../../src/functions/AddMathJax.js'
-    import {Plot} from '../../src/classes/Plot.js'    
+    import {Plot} from '../../src/classes/Plot.js'
+    import {TextObject} from '../../src/classes/TextObject.js'    
 
-    if (document.URL.includes('template_hh')){
+    if (document.URL.includes('polya')){
       window.currentTime = 0
       performance.now = () => currentTime
     }
@@ -35,48 +40,79 @@
     *********************************/
     const svg = SimpleCanvas(1930,1090, false)
     
-    // FILL HERE
-    
     let params4 = {
-       "pos"                : [[200,100]]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,10]
-      ,"id"                 : "plot4"
-      ,"yLabel"             : "$\\alpha + \\text{Time}$"
-      ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"      
+       "pos"          : [[150,120]]
+      ,"xRange"       : [0,1650]
+      ,"yRange"       : [0,900]
+      ,"xDomain"      : [-60,60]
+      ,"yDomain"      : [0,55]
+      ,"id"           : "plot4"
+      ,"xTickFormat"  : d3.format('.0f')
+      ,"yTickFormat"  : d3.format('.0f')      
+      ,"yLabelSize"   : 30
+      ,"tickLabelSize" : 40
     }
     let plot4 = new Plot(params4)  
 
 
-    let lineData1 = [[1,2],[2,4],[3,4],[4,4],[5,4],[6,8],[7,4],[8,4]]
-    let lineData2 = [[1,3],[2,7],[3,1],[4,6],[5,3],[6,8],[7,7],[8,2]]
-    let linData = [lineData1,lineData2]
+    let textparams1 = {
+      "pos"            : [[200,750]],
+      "textAreaWidth"  : 700,
+      "textAreaHeight" : 400, 
+      "id"             : "txt1",
+      "text"           : "Random Walk",
+      "fontSize"       : 70,
+      "textRelXPos"    : -200,
+      "textColor"      : NQTextColors.orange,
+    }
+    let text1 = new TextObject(textparams1)
+
+    let textparams2 = {
+      "pos"            : [[1370,750]],
+      "textAreaWidth"  : 700,
+      "textAreaHeight" : 400, 
+      "id"             : "txt2",
+      "text"           : "Polya Process",
+      "fontSize"       : 70,
+      "textRelXPos"    : -200,
+      "textColor"      : NQColors.steelblue,
+    }
+    let text2 = new TextObject(textparams2)
 
     /*********************************
     Animate
     *********************************/
 
-    timing = timing + 1000
-    plot4.Draw({delay:timing, duration:500})
+    timing = timing + 0
+    plot4.Draw({delay:timing, duration:0})
 
-    timing = timing + 1000
-    for (let i = 0; i < 2; i++) {
-
+    timing = timing + 400
+    text1.Draw({delay:timing, duration:2200})
+    for (let i = 0; i < Object.keys(data_rw).length; i++) {
       let lineDataParams = {
-         "data"        : linData[i]
-        ,"id"          : "linedata"+i         
+         "data"        : data_rw["col_"+ i + "_y"]
+        ,"id"          : "linedata_rw"+i         
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeExpInOut
-    }
-
-      plot4.DrawLine({delay:timing, duration:4000, lineParams:lineDataParams})
+        ,"drawEase"    : d3.easeExpInOut   
+      }
+      plot4.DrawLine({delay:timing, duration:3000, lineParams:lineDataParams})
       lineDataParams = null
     }
 
+    timing = timing + 3500
+    text2.Draw({delay:timing, duration:2200})    
+    for (let i = 0; i < Object.keys(data_rw).length; i++) {
+      let lineDataParams = {
+         "data"        : data_polya["col_"+ i + "_y"]
+        ,"id"          : "linedata_polya"+i         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.steelblue
+        ,"drawEase"    : d3.easeExpInOut   
+      }
+      plot4.DrawLine({delay:timing, duration:3000, lineParams:lineDataParams})
+      lineDataParams = null
+    }
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)
