@@ -24,5 +24,25 @@ export class TextObject extends AnimObject{
 		   .style("font-size", this.fontSize + "px")
 		   .append("text")
 		   .html(this.text)
-	};
+	}
+
+	UpdateText({delay, duration, params}={}){
+		// Update text "text1" -> "text2"
+
+		/*
+		To make swap and cross-fade to work, need to hide fade out
+		old xhtml:div and replace it w/ new, while somehow keeping old
+		ID. Not sure if this works with other kinds of transitions.
+		*/
+		let type = params.type || "swap"
+	
+		d3.select("#"+this.id + "_xhtml")
+			.transition()
+			.delay(delay)
+			.duration(duration)
+			.text("$y = \\alpha + \\beta \\mathbf{X}$")	
+	}
+
+
+
 }

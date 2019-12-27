@@ -67,17 +67,32 @@
       "textColor"      : NQTextColors.purple,
       "entPoint"       : [1100,600]
     }
-    let text2 = new TextObject(textparams2)    
+    let text2 = new TextObject(textparams2)
     
+    let textparams3 = {
+      "pos"            : [[1200,800]],
+      "textAreaWidth"  : 600,
+      "textAreaHeight" : 300,      
+      "id"             : "txt3",
+      "text"           : "test text",
+      "fontSize"       : 70,
+      "textRelXPos"    : -200,
+      "textColor"      : NQTextColors.purple,
+      "entPoint"       : [1100,600]
+    }
+    let text3 = new TextObject(textparams3)
+
     /*********************************
     Draw
     *********************************/
     timing = timing + 1500
-    text1.Draw({delay:timing, duration:1600})
-    text2.Draw({delay:timing, duration:1600, type:"movein"})    
+    //text1.Draw({delay:timing, duration:1600})
+    text2.Draw({delay:timing, duration:1600, type:"movein"})
+    text3.Draw({delay:timing, duration:1600, type:"movein"})        
     
-    timing = timing + 3000
-    text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
+    //timing = timing + 100000
+    //text2.UpdateText({delay:timing, duration:1500, params:{}})    
+    //text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)
