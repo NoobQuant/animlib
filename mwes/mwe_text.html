@@ -26,6 +26,9 @@
     import {AddMathJax} from '../src/functions/AddMathJax.js'
     import {TextObject} from '../src/classes/TextObject.js'
 
+    // AddMathJax needs to be bound to window for text updates to work!!!
+    window.AddMathJax = AddMathJax
+
     if (document.URL.includes('text_hh')){
       window.currentTime = 0
       performance.now = () => currentTime
@@ -57,8 +60,8 @@
     let text1 = new TextObject(textparams1)
 
     let textparams2 = {
-      "pos"            : [[1200,700], [1200,500]],
-      "textAreaWidth"  : 600,
+      "pos"            : [[1200,700], [700,550]],
+      "textAreaWidth"  : 800,
       "textAreaHeight" : 300,      
       "id"             : "txt2",
       "text"           : "$y = \\alpha + \\beta \\mathbf{X}$",
@@ -85,14 +88,23 @@
     /*********************************
     Draw
     *********************************/
+    timing = timing + 1000
+    text1.Draw({delay:timing, duration:1600})
+    timing = timing + 1000
+    text2.Draw({delay:timing, duration:1000, type:"movein"})
+    text3.Draw({delay:timing, duration:1000, type:"movein"})        
+
+    timing = timing + 3000
+    text3.UpdateText({delay:timing, duration:1000, params:{text:"look at this"}})
+
+    timing = timing + 2000
+    text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
+
+    timing = timing + 2000
+    text2.UpdateText({delay:timing, duration:1000, params:{text:"$y = \\gamma + \\beta_{1} X_{1} + \\beta_{2} X_{2}$"}})
+
     timing = timing + 1500
-    //text1.Draw({delay:timing, duration:1600})
-    text2.Draw({delay:timing, duration:1600, type:"movein"})
-    text3.Draw({delay:timing, duration:1600, type:"movein"})        
-    
-    //timing = timing + 100000
-    //text2.UpdateText({delay:timing, duration:1500, params:{}})    
-    //text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
+    text3.UpdateText({delay:timing, duration:1000, params:{text:"change again!"}})
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)

@@ -14,33 +14,82 @@ export class TextObject extends AnimObject{
 		// Foreign object to hold html text
 		let fo = this.group.append('foreignObject')
 					       .attr('width',this.textAreaWidth)
-					       .attr('height',this.textAreaHeight)			
+						   .attr('height',this.textAreaHeight)
+						   .style("position", "relative")			
 
 		fo.append('xhtml:div')
 		   .attr('id',this.id + "_xhtml")
+		   .style("position", "absolute")
+		   .style("top", 0)
+		   .style("left", 0)
+		   .style("bottom", 0)
+		   .style("right", 0)		   
 		   .style("font-family",this.fontFamily)				
 		   .style("color", this.textColor)
 		   .attr("align", this.textAlign)											
 		   .style("font-size", this.fontSize + "px")
 		   .append("text")
 		   .html(this.text)
+
+		// Save foreign object
+		this.fo = fo;
 	}
 
-	UpdateText({delay, duration, params}={}){
-		// Update text "text1" -> "text2"
+	UpdateText({delay, duration, params={}}={}){
 
-		/*
-		To make swap and cross-fade to work, need to hide fade out
-		old xhtml:div and replace it w/ new, while somehow keeping old
-		ID. Not sure if this works with other kinds of transitions.
-		*/
-		let type = params.type || "swap"
-	
-		d3.select("#"+this.id + "_xhtml")
+		d3.timeout(() => {
+
+			// Update text "text1" -> "text2"
+			// Params is of same type as in initialization.
+			
+			// This prolly should extend Update! Or dunno of this is possible...
+
+			// Write parameter update still!
+			// if params = {}, then take those from before. Text should be included
+			// in the params passed in here, other not.
+			//let type = params.type || "crossfade"
+
+			this.text = params.text || this.text
+			let extraDelayShare = params.extraDelayShare ||  0.2
+
+			// Change ID of text to be hidden
+			d3.select("#"+this.id + "_xhtml")
+			  .attr("id",this.id + "_xhtml" + "_old")	
+			
+			// New xhtml text to fo with same ID as the old
+			this.fo.append('xhtml:div')
+			.attr('id',this.id + "_xhtml")
+			.style("position", "absolute")
+			.style("top", 0)
+			.style("left", 0)
+			.style("bottom", 0)
+			.style("right", 0)
+			.style("font-family",this.fontFamily)
+			.style("opacity",0.0)		   				
+			.style("color", this.textColor)
+			.attr("align", this.textAlign)											
+			.style("font-size", this.fontSize + "px")
+			.append("text")
+			.html(this.text)
+
+			// Fade out old and fade in new
+			d3.select("#"+this.id + "_xhtml" + "_old")
 			.transition()
-			.delay(delay)
+			.delay(0)
 			.duration(duration)
-			.text("$y = \\alpha + \\beta \\mathbf{X}$")	
+			.style("opacity",0)
+			.remove()
+			d3.select("#"+this.id + "_xhtml")
+			.transition()
+			.delay(extraDelayShare*duration)
+			.duration(duration)
+			.style("opacity",1)
+
+			// Make sure latex works
+			window.AddMathJax(d3.select('#'+this.svgid))			
+			
+		},delay)
+
 	}
 
 
