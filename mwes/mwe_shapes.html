@@ -20,7 +20,7 @@
     */
 
     // Module imports
-    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {Canvas} from '../src/functions/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Circle} from '../src/classes/Circle.js'
     import {Rectangle} from '../src/classes/Rectangle.js'    
@@ -35,7 +35,7 @@
     /*********************************
     Define objects 
     *********************************/
-    const svg = SimpleCanvas(1930,1090, false)
+    const svg = Canvas({})
 
     let circparams1 = {
       "pos"          : [[300,200], [500,600]]

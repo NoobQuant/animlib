@@ -18,7 +18,7 @@
     */
 
     // Module imports
-    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {Canvas} from '../src/functions/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Table} from '../src/classes/Table.js'
 
@@ -30,8 +30,8 @@
     let timing = 0
     
     // Canvas
-    //const svg = SimpleCanvas(1930,1090, false, "white")
-    const svg = SimpleCanvas(1930,1090, false)
+    //const svg = Canvas(1930,1090, false, "white")
+    const svg = Canvas({})
 
     /*********************************************
      * Define nodes data for 1st force

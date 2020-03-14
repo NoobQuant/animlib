@@ -21,7 +21,7 @@
     */
 
     // Module imports
-    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {Canvas} from '../src/functions/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Image} from '../src/classes/Image.js'
 
@@ -33,7 +33,7 @@
     var timing = 0
     
     // Canvas
-    const svg = SimpleCanvas(1930,1090, false)
+    const svg = Canvas({})
 
     // Flag in top-left corner with placeholder svg height 500 and
     // flag radius of sqrt(250^2 + 250^2) = 353.55339

@@ -21,7 +21,7 @@
     Examples on text objects.
     */
 
-    import {SimpleCanvas} from '../src/functions/SimpleCanvas.js'
+    import {Canvas} from '../src/functions/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {AddMathJax} from '../src/functions/AddMathJax.js'
     import {TextObject} from '../src/classes/TextObject.js'
@@ -39,7 +39,7 @@
     /*********************************
     Define objects 
     *********************************/
-    const svg = SimpleCanvas(1930,1090, false)
+    const svg = Canvas({})
       
     let mytext = `Wait a minute. So you are saying  I can easily write math 
     symbols within a text field if I wrap it in dollar signs?! Let's try:

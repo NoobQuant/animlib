@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+
+  <!-- Load data from json-->
+  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
+
+  <!-- Math symbols PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+
+    import {Canvas} from '../../src/functions/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
+    import {Svg} from '../src/classes/Svg.js'
+    import {Plot} from '../src/classes/Plot.js'
+    import {AddMathJax} from '../../src/functions/AddMathJax.js'
+
+    if (document.URL.includes('template_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    // Backgorund svg
+    const svg = Canvas({})
+    
+    let svg1params = {
+         "id"          : "svg1"
+        //,"pos"         : [[100, 100]]
+        ,"dim"         : [1930, 1090]
+        //,"color"       : "steelblue"                 
+        //,"strokeColor" : "green"
+        //,"strokeWidth" : 5
+    }
+    let svg1 = new Svg(svg1params)
+    svg1.Draw({delay:0, duration:0})    
+
+    
+    // line plot
+    let params1 = {
+       "pos"                : [[200,100]]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,10]
+      ,"xDomain"            : [0,10]
+      ,"id"                 : "plot4"
+      ,"yLabel"             : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize"         : 30
+      ,"xLabel"             : "dd"
+      ,"svgid"              :"svg1"      
+    }
+    let plot1 = new Plot(params1)
+    let lineDataParams1 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+
+    /*********************************
+    Animate
+    *********************************/
+
+    timing = timing + 1000
+    plot1.Draw({delay:timing, duration:300})
+    plot1.DrawLine({delay:timing+300, duration:500, lineParams:lineDataParams1})    
+
+
+    // Zoom svg1
+
+    //// Zoom out svg on bgsvg
+    //timing = timing + 1000
+    //d3.timeout(function() {
+    // svg1.transition()
+    //           .delay(0)
+    //           .duration(1000)  
+    //           .attr("transform", " translate(" + (0) +","+ (220) +") scale(" + 0.5 + ")")         
+    //},timing)
+//
+//
+    //// Zoom out entire bgsvg
+    //timing = timing + 1500
+    //d3.timeout(function() {
+    // svg.transition()
+    //           .delay(0)
+    //           .duration(1000)  
+    //           .attr("transform", " translate(" + (-100) +","+ (220) +") scale(" + 0.5 + ")")         
+    //},timing)
+//
+//
+//
+    //// This needs to be added in conjunction with the import above!
+    //AddMathJax(svg)
+//
+  </script> 
+
+</body>
+</html>
