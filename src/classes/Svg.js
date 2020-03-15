@@ -10,7 +10,6 @@ export class Svg extends AnimObject{
 
         let svg = this.group
                     .append("svg")
-                    .attr('id',this.id)
                     .attr("width", this.dim[0])
                     .attr("height", this.dim[1])
 
