@@ -82,15 +82,11 @@
       ,"xRange"      : [0,1400]
       ,"yRange"      : [0,650]
       ,"xDomain"     : ['A', 'B']
-      //,"xDomain"     : gg.map(function(d){ return d})
-      //,"xDomain"     : [{'name':'A', "value":3}, {'name':'B',"value":5}]
-      //,"xDomain"     : [9,1,2,"w"]      
       ,"yDomain"     : [0, 10] 
       ,"id"          : "plot3"
       ,"xLabel"      : "x label"
       ,"yLabel"      : "y label"      
       ,"xAxisType"   : "scaleBand"
-      //,"xTickFormat" : d3.format("none")
       ,"xTickFormat" : "string"      
     };
     let plot3 = new Plot(params3)
@@ -103,7 +99,7 @@
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
       ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,10]
+      ,"xDomain"            : [0,20]
       ,"id"                 : "plot4"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -146,7 +142,6 @@
     }
     let histDataParams2 = {
         "data"      : histData2
-       //,"id"        : "hisdata2"        
        ,"datatype"  : 'normal'
        ,"fill"      : "#fac0a2"
        ,"histBins"  : [0,25,50,75,100,125,150,175,200]
@@ -165,14 +160,12 @@
     }
     let barDataParams2 = {
         "data"      : barData2
-        //,"id"       : "bardata2"        
         ,"datatype"  : 'bar'        
     }
 
     /**************************************************
     Line data parameters
-    **************************************************/     
-    //let lineData = [[1,2],[2,4],[3,4],[4,4],[5,4],[6,8],[7,4],[8,4]]
+    **************************************************/
     let lineDataParams1 = {
          "data"        : lineDataObject["y1"]
         ,"id"          : "linedata1"         
@@ -180,6 +173,20 @@
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }
+    let lineDataParams2 = {
+         "data"        : lineDataObject["y2"]
+        ,"id"          : "linedata2"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.light_purple
+        ,"drawEase"    : d3.easeCubic
+    }
+    let lineDataParams3 = {
+         "data"        : lineDataObject["y3"]
+        ,"id"          : "linedata3"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.steelblue
+        ,"drawEase"    : d3.easeCubic
+    }    
     /**************************************************
     Animations
     **************************************************/
@@ -212,7 +219,6 @@
     plot2.DrawHistogram({delay:timing, duration:1500, histParams:histDataParams})
  
     timing = timing + 2000
-    //let newAxisParams2 = {'yLabel': '$\\beta + \\text{new!}$','yDomain': [0, 0.6]}
     let newAxisParams2 = {'yDomain': [0, 0.6]}    
     plot2.DrawHistogram({delay:timing, duration:1500, histParams:histDataParams2, plotParams:newAxisParams2 })
 
@@ -246,15 +252,17 @@
     plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams1})
 
     timing = timing + 2000
+    plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams2})
+    plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams3})    
+
+    timing = timing + 2000
     plot4.HideObject({delay:timing, duration:500, id:"linedata1"})
     timing = timing + 1000    
     plot4.Hide({delay:timing, duration :500})
     //*/
 
-
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)
-
 
   </script> 
 
