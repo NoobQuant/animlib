@@ -1,5 +1,6 @@
 import {AnimObject} from './AnimObject.js'
 import {AddMathJax} from '../functions/AddMathJax.js'
+import {PathTween} from '../functions/PathTween.js'
 export class Plot extends AnimObject{
 
 	constructor(params){
@@ -12,7 +13,11 @@ export class Plot extends AnimObject{
 	}
 
 	Draw({delay, duration, type="default"} = {}){				
-		/* Draws axes */
+		/* Draws axes 
+		 - lineFunction probably could be moved under DrawLine().
+		   Now it is included here as well as in _UpdateAxes().
+		*/
+
 	
 		let that = this
 		let yRangeInv = [this.yRange[1], this.yRange[0]]	
@@ -55,6 +60,7 @@ export class Plot extends AnimObject{
 											.tickSize(this.xTickSize)			  	
 											.ticks(this.xTickNo)
 											)
+
 		// Format x-axis tick labels from number to string if not string to begin with 
 		if (this.xTickFormat != "string"){
 			xAxisGroup.call(xAxis.tickFormat(this.xTickFormat))
@@ -102,7 +108,7 @@ export class Plot extends AnimObject{
 		// Show plot based on AnimObject Draw
 		super.Draw({delay:delay, duration:duration, type:type})
 
-		// Line function for later use
+		// Define a line function for to be used with these axes
 		let lineFunction = d3.line()
 							 .x(function(d) {return xScale(d[0])})
 							 .y(function(d) {return yScale(d[1])})
@@ -179,7 +185,10 @@ export class Plot extends AnimObject{
 	}
 
 	MoveScatter({delay, duration, scatterParams, plotParams={}, ease = d3.easeCubic} = {}){
-		/* Not sure how axis label update works here but it just does... */
+		/*
+		Would be cool to merge this with DrawScatter()!
+		Not sure how axis label update works here but it just does...
+		*/
 
 		// Update axes		
 		this._UpdatePlotParams(plotParams)
@@ -366,9 +375,35 @@ export class Plot extends AnimObject{
 					.style("opacity", 1)		
 			}
 		}, delay)
-	
 	}
 	
+	MoveLine({delay, duration, lineParams, plotParams={}, ease = d3.easeCubic} = {}){
+		d3.timeout(() => {		
+			/*
+			Would be cool to merge this with DrawLine()!
+			Not sure how axis label update works here but it just does...
+			*/
+
+			// Update axes		
+			this._UpdatePlotParams(plotParams)
+			this._UpdateAxes(0, duration)
+
+			// Update scatter params
+			this._UpdateLineParams(lineParams)
+
+			// Local scope this
+			let that = this
+			
+			// Update line by tweening
+			this.vis.selectAll("path")
+				.transition()
+				.delay(0)
+				.duration(duration)
+				.ease(ease)
+				.attrTween("d", PathTween(that.lineFunction(that.lineParams.data) ,4))
+		}, delay)		
+	}
+
 
 	_YAxisLabel(opacity=1){
 		this.foYLabel = this.group.append('foreignObject')
@@ -412,7 +447,6 @@ export class Plot extends AnimObject{
 				 .delay(delay)
 				 .duration(duration)
 				 .call(this.yAxis
-				 	.tickFormat(this.yTickFormat)
 				 	.tickSize(this.yTickSize)				
 				 	.ticks(this.yTickNo)
 				  )
@@ -434,14 +468,11 @@ export class Plot extends AnimObject{
 				 .transition()
 				 .delay(delay)
 				 .duration(duration)
-				 .call(this.xAxis
+				 .call(this.xAxis	
 				 	.tickSize(this.xTickSize)				
 				 	.ticks(this.xTickNo)
 				  )
-		// Format x-axis tick labels from number to string if not string to begin with 
-		if (this.xTickFormat != "string"){
-			this.xAxisGroup.call(this.xAxis.tickFormat(this.xTickFormat))
-		}				  
+
 		this.xAxisGroup		
 			.selectAll("text")
 			.style("font-size", this.xTickLabelSize)
@@ -482,6 +513,12 @@ export class Plot extends AnimObject{
 				.delay(delay)
 				.duration(1000)
 				.style("opacity",1)
+
+		// Update line function bound to the axes
+		let that = this
+		this.lineFunction = d3.line()
+							 .x(function(d) {return that.xScale(d[0])})
+							 .y(function(d) {return that.yScale(d[1])})						
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
 		AddMathJax(d3.select('#'+this.svgid))

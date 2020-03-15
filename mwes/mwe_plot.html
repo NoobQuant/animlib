@@ -99,7 +99,7 @@
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
       ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,20]
+      ,"xDomain"            : [0,10]
       ,"id"                 : "plot4"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -194,7 +194,7 @@
     // Scatter plot
     ///*
     timing = timing + 200
-    plot.Draw({delay:timing, duration:3000, type:"movein"})
+    plot.Draw({delay:timing, duration:1500, type:"movein"})
 
     timing = timing + 500
     plot.DrawScatter({delay:timing, duration:500, scatterParams:paramsScatter1})
@@ -202,11 +202,11 @@
     timing = timing + 2000
     let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
     let scatterParams = {'data': CreateScatterData({'x':[-1100,1100], 'y':[0,10]})} 
-    plot.MoveScatter({delay:timing, duration:2000, scatterParams:scatterParams, plotParams:newAxisParams})
+    plot.MoveScatter({delay:timing, duration:1000, scatterParams:scatterParams, plotParams:newAxisParams})
 
-    timing = timing + 3000
+    timing = timing + 1200
     plot2.HideObject({delay:timing, duration:500, id:"myscatter"})
-    timing = timing + 1000    
+    timing = timing + 700    
     plot.Hide({delay:timing, duration :500})
     //*/
 
@@ -216,15 +216,15 @@
     plot2.Draw({delay:timing, duration:500})
 
     timing = timing + 1000    
-    plot2.DrawHistogram({delay:timing, duration:1500, histParams:histDataParams})
+    plot2.DrawHistogram({delay:timing, duration:500, histParams:histDataParams})
  
-    timing = timing + 2000
+    timing = timing + 1000
     let newAxisParams2 = {'yDomain': [0, 0.6]}    
-    plot2.DrawHistogram({delay:timing, duration:1500, histParams:histDataParams2, plotParams:newAxisParams2 })
+    plot2.DrawHistogram({delay:timing, duration:500, histParams:histDataParams2, plotParams:newAxisParams2 })
 
-    timing = timing + 2000
-    plot2.HideObject({delay:timing, duration:1000, id:"hisdata1"})
-    timing = timing + 2000
+    timing = timing + 1000
+    plot2.HideObject({delay:timing, duration:500, id:"hisdata1"})
+    timing = timing + 700
     plot2.Hide({delay:timing, duration :500})
     //*/
 
@@ -249,7 +249,11 @@
     plot4.Draw({delay:timing, duration:500})
 
     timing = timing + 1000  
-    plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams1})
+    plot4.DrawLine({delay:timing, duration:1000, lineParams:lineDataParams1})
+
+    timing = timing + 1500
+    let newParams4 = {'xDomain': [0, 20], 'yDomain': [0, 20]}
+    plot4.MoveLine({delay:timing, duration:1000, lineParams:lineDataParams1, plotParams:newParams4})
 
     timing = timing + 2000
     plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams2})
