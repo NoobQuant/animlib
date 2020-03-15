@@ -17,10 +17,10 @@ export class Plot extends AnimObject{
 		 - lineFunction probably could be moved under DrawLine().
 		   Now it is included here as well as in _UpdateAxes().
 		*/
-
 	
 		let that = this
-		let yRangeInv = [this.yRange[1], this.yRange[0]]	
+		let yRangeInv = [this.yRange[1], this.yRange[0]]
+		
 
 		// Set x-axis call on plot type
 		if (this.xAxisType == 'scaleLinear'){
@@ -39,14 +39,14 @@ export class Plot extends AnimObject{
 
 		// Set y-axis call on plot type
 		if (this.yAxisType == 'scaleLinear'){
-			var yScale = d3.scaleLinear().range(yRangeInv).domain(this.yDomain)
+			var yScale = d3.scaleLinear().range(that.yRange.slice().reverse()).domain(this.yDomain)
 		} else if (this.yAxisType == 'scaleBand'){
 			var yScale = d3.scaleLinear()
 							.domain(this.yDomain)
-							.range(yRangeInv)
+							.range(that.yRange.slice().reverse())
 							.paddingInner(0.05) // still ad hoc!		
 		} else if (this.yAxisType == 'scaleTime'){
-			var yScale = d3.scaleLinear().range(yRangeInv).domain(this.yDomain)
+			var yScale = d3.scaleLinear().range(that.yRange.slice().reverse()).domain(this.yDomain)
 		}		
 
 		// Axis calls
@@ -115,7 +115,6 @@ export class Plot extends AnimObject{
 
 		this.xScale    	  = xScale
 		this.yScale    	  = yScale
-		this.yRangeInv 	  = yRangeInv
 		this.xAxis 		  = xAxis
 		this.yAxis 		  = yAxis
 		this.xAxisGroup   = xAxisGroup		
@@ -436,8 +435,8 @@ export class Plot extends AnimObject{
 	_UpdateAxes(delay, duration){
 
 		// Update axis calls
-		this.xScale.domain(this.xDomain)
-		this.yScale.domain(this.yDomain)
+		this.xScale.range(this.xRange).domain(this.xDomain)
+		this.yScale.range(this.yRange.slice().reverse()).domain(this.yDomain)
 		this.xAxis.scale(this.xScale)
 		this.yAxis.scale(this.yScale)		
 
@@ -526,8 +525,15 @@ export class Plot extends AnimObject{
 
 	_UpdatePlotParams(params){
 		/* Updates plot axis paramters */
+
+		//let yRangeInv0 = 
+		//let yRangeInv = [params.yRange[1], params.yRange[0]]
+		//let yRangeInv 			= (params.yRange) 		  ? (params.yRange) : this.yRange
+		//let yRangeInv 			= (params.yRange) 		  ? (params.yRange.slice().reverse()) : this.yRange		
+		
 		this.xRange 		    = params.xRange  		 || this.xRange
-		this.yRange 			= params.yRange  		 || this.yRange
+		this.yRange 		    = params.yRange  		 || this.yRange		
+		//this.yRange 			= yRangeInv
 		this.xDomain 			= params.xDomain 		 || this.xDomain
 		this.yDomain 			= params.yDomain 		 || this.yDomain
 	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30

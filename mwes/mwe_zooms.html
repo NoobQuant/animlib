@@ -42,23 +42,21 @@
     
     let svg1params = {
          "id"          : "svg1"
-        //,"pos"         : [[100, 100]]
-        ,"dim"         : [1930, 1090]
-        //,"color"       : "steelblue"                 
-        //,"strokeColor" : "green"
-        //,"strokeWidth" : 5
+        ,"pos"         : [[150, 100]]
+        ,"dim"         : [2300, 1090]     
+        ,"strokeColor" : "red"
+        ,"strokeWidth" : 0
     }
     let svg1 = new Svg(svg1params)
-    svg1.Draw({delay:0, duration:0})    
-
+    svg1.Draw({delay:0, duration:0})
     
     // line plot
     let params1 = {
-       "pos"                : [[200,100]]
+       "pos"                : [[0,0]]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
       ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,10]
+      ,"xDomain"            : [0,9]
       ,"id"                 : "plot4"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -73,42 +71,42 @@
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }
-
+    let lineDataParams2 = {
+         "data"        : lineDataObject["y3"]
+        ,"id"          : "linedata2"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
     /*********************************
     Animate
     *********************************/
 
+    // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
-    plot1.DrawLine({delay:timing+300, duration:500, lineParams:lineDataParams1})    
+    plot1.DrawLine({delay:timing+300, duration:500, lineParams:lineDataParams1})
+
+    // Zoom out svg1 and continue x axis
+    timing = timing + 1000
+    svg1.Update({
+      delay:timing,
+      duration:1000,
+      params:{
+        newScale : 0.7
+      }
+    })
+    let newParams1 = {'xDomain': [0, 16], 'xRange': [0, 2300]}
+    plot1.MoveLine({delay:timing, duration:1000, lineParams:lineDataParams1, plotParams:newParams1})
+    
+    // Continue line
+    timing = timing + 1000
+    plot1.DrawLine({delay:timing+700, duration:1500, lineParams:lineDataParams2})
 
 
-    // Zoom svg1
+    // This needs to be added in conjunction with the import above!
+    AddMathJax(svg)
 
-    //// Zoom out svg on bgsvg
-    //timing = timing + 1000
-    //d3.timeout(function() {
-    // svg1.transition()
-    //           .delay(0)
-    //           .duration(1000)  
-    //           .attr("transform", " translate(" + (0) +","+ (220) +") scale(" + 0.5 + ")")         
-    //},timing)
-//
-//
-    //// Zoom out entire bgsvg
-    //timing = timing + 1500
-    //d3.timeout(function() {
-    // svg.transition()
-    //           .delay(0)
-    //           .duration(1000)  
-    //           .attr("transform", " translate(" + (-100) +","+ (220) +") scale(" + 0.5 + ")")         
-    //},timing)
-//
-//
-//
-    //// This needs to be added in conjunction with the import above!
-    //AddMathJax(svg)
-//
   </script> 
 
 </body>
