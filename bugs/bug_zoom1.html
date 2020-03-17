@@ -7,7 +7,7 @@
   <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
 
   <!-- Load data from json-->
-  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
+  <script src="../mwes/data/path_data_plotmwe.json" charset="utf-8"></script>
 
   <!-- Math symbols PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
@@ -100,45 +100,16 @@
         ,"strokeColor" : NQColors.yellow
         ,"drawEase"    : d3.easeCubic
     }    
-    //let lineDataParams2 = {
-    //     "data"        : lineDataObject["y3"]
-    //    ,"id"          : "linedata2"
-    //    ,"strokeWidth" : 3
-    //    ,"strokeColor" : NQColors.orange
-    //    ,"drawEase"    : d3.easeCubic
-    //}
-
-    // Scatter plot
-    //let paramsScatter1 = {
-    //   "data"        : CreateScatterData({'x':[-10,10], 'y':[5,8]})
-    //  ,"id"          : "scatter1"
-    //  ,"strokeWidth" : 4
-    //}    
-    //let params2 = {
-    //   "pos"                : [[200,100]]
-    //  ,"xRange"             : [0,1400]
-    //  ,"yRange"             : [0,770]
-    //  ,"yDomain"            : [-5,15]
-    //  ,"xDomain"            : [-20,20]
-    //  ,"id"                 : "plot2"
-    //  ,"yLabel"             : "$\\alpha + \\text{Time}$"
-    //  ,"yLabelSize"         : 30
-    //  ,"xLabel"             : "dd"      
-    //}
-    //let plot2 = new Plot(params2)
 
     /*********************************
-    Animate - Zoom out line chart and continue drawing the line
-    Notice that line is drawn on  svg1 that originally extends
-    over background svg.
+    Animate
     *********************************/
-    ///*
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
     plot1.DrawLine({delay:timing+300, duration:500, lineParams:lineDataParams1})
 
-    // Zoom out svg1 and continue x axis
+    // Zoom out svg1; etend  x axis and adjust line accordingly 
     timing = timing + 1000
     svg1.Update({
       delay:timing,
@@ -147,41 +118,18 @@
         newScale : 0.7
       }
     })
-
-
     let params1_a = {'xDomain': [0, 16], 'xRange': [0, 2300]}
     plot1.MoveLine({delay:timing, duration:1000, lineParams:lineDataParams1, plotParams:params1_a})
     
-    //// Continue line
-    ////timing = timing + 1000
-    ////plot1.DrawLine({delay:timing+700, duration:1500, lineParams:lineDataParams2})
-//
-    // Zoom so that both lines visible
+    // Adjusting x-axis now produces weird truncating effect for the line!
+    // Luckily works other way arund (if domain extended, not contracted)
     timing = timing + 2000    
     let params1_b = {'xDomain': [0, 9]}
     plot1.MoveLine({delay:timing, duration:5000, lineParams:lineDataParams1, plotParams:params1_b})
 
+    // Seems not to be xScale issue, as new line drawn on the axes comes out as it should
     timing = timing + 6000
     plot1.DrawLine({delay:timing, duration:10000, lineParams:lineDataParams1_copy})    
-
-    //timing = timing + 200000
-    //svg1.Hide({delay:timing, duration:500})
-
-    //*/
-    /*********************************
-    Animate - Zoom in scatter chart
-    This works, but the elements on plot need to be redran again!
-    *********************************/
-   /*
-    timing = timing + 500
-    plot2.Draw({delay:timing, duration:300})
-    plot2.DrawScatter({delay:timing+500, duration:500, scatterParams:paramsScatter1})    
-
-    timing = timing + 1500
-    let newAxisParams = {"yDomain": [3,9], "xDomain": [-11,11]} 
-    plot2.MoveScatter({delay:timing, duration:1000, scatterParams:paramsScatter1, plotParams:newAxisParams})
-    //*/
-
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)

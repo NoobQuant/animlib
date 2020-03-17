@@ -128,7 +128,6 @@ export class Plot extends AnimObject{
 		d3.timeout(() => {
 			d3.select("#"+id)
 				.transition()
-				//.delay(delay)
 				.duration(duration)
 				.style("opacity", "0")
 		},delay)
@@ -136,10 +135,19 @@ export class Plot extends AnimObject{
 
 	RemoveObject(id){
 		d3.select("#"+id).remove();
-	}	
+	}
+
+	UpdateAxes({delay, duration, plotParams = {}}={}){
+		// Updates axes but leaves content unchanged
+		d3.timeout(() => {			
+			this._UpdatePlotParams(plotParams)
+			this._UpdateAxes(0, duration)
+		},delay)
+	}
+	
 
 
-	DrawScatter({delay= 0, duration = 500, scatterParams ={}, plotParams = {}}={}){
+	DrawScatter({delay, duration, scatterParams ={}, plotParams = {}}={}){
 
 		this.scatterParams = {}
 		this._UpdateScatterParams(scatterParams)
@@ -205,6 +213,7 @@ export class Plot extends AnimObject{
 				return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
 			})	
 	}
+
 
 
 	DrawHistogram({delay, duration, histParams, plotParams={}}={}){
@@ -318,6 +327,7 @@ export class Plot extends AnimObject{
 	}
 
 
+
 	DrawLine({delay, duration, lineParams ={}, plotParams={}}={}){
 		d3.timeout(() => {
 			
@@ -332,12 +342,13 @@ export class Plot extends AnimObject{
 			this._UpdateAxes(delay=0,duration=duration)	
 
 			// Group for data binding
-			if (this.vis === undefined){
-				this.vis = this.group.append("g").attr("id", this.lineParams.id)
-			}
+			//if (this.vis === undefined){
+			let vis = this.group.append("g")
+								.attr("id", this.lineParams.id)
+			//}
 
-			let linepath =  this.vis.append("path")
-									.attr("d", this.lineFunction(this.lineParams.data))
+			let linepath =  vis.append("path")
+								.attr("d", this.lineFunction(this.lineParams.data))
 
 			let totalLength = linepath.node().getTotalLength()
 		
@@ -386,7 +397,7 @@ export class Plot extends AnimObject{
 			let that = this
 			
 			// Update line by tweening
-			this.vis.selectAll("path")
+			this.group.select("#"+lineParams.id).selectAll("path")
 				.transition()
 				.delay(0)
 				.duration(duration)
@@ -394,6 +405,7 @@ export class Plot extends AnimObject{
 				.attrTween("d", PathTween(that.lineFunction(that.lineParams.data) ,4))
 		}, delay)		
 	}
+
 
 
 	_YAxisLabel(opacity=1){

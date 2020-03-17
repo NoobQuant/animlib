@@ -257,12 +257,21 @@
 
     timing = timing + 2000
     plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams2})
-    plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams3})    
+    plot4.DrawLine({delay:timing, duration:1500, lineParams:lineDataParams3})
+    
+    timing = timing + 2000
+    let newParams4_b = {'xDomain': [0, 25]}
+    plot4.MoveLine({delay:timing, duration:1500, lineParams:lineDataParams1, plotParams:newParams4_b})
+    
+    // THESE DO NOT WORK!
+    //plot4.MoveLine({delay:timing, duration:1500, lineParams:lineDataParams2, plotParams:newParams4_b})
+    //plot4.MoveLine({delay:timing, duration:1500, lineParams:lineDataParams3, plotParams:newParams4_b})        
 
     timing = timing + 2000
     plot4.HideObject({delay:timing, duration:500, id:"linedata1"})
     timing = timing + 1000    
     plot4.Hide({delay:timing, duration :500})
+    
     //*/
 
     // This needs to be added in conjunction with the import above!
