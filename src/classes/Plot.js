@@ -122,14 +122,6 @@ export class Plot extends AnimObject{
 		this.lineFunction = lineFunction
 	}
 
-	Hide({delay, duration}={}){
-		this.group
-			.transition()
-			.duration(duration)
-			.delay(delay)
-		    .style("opacity",0);		
-	}
-
 	HideObject({delay, duration, id}={}){
 
 		/* Hide object attached to plot group */
