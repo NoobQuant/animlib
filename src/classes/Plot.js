@@ -147,10 +147,11 @@ export class Plot extends AnimObject{
 	
 
 
-	DrawScatter({delay, duration, scatterParams ={}, plotParams = {}}={}){
+	DrawScatter({delay, duration, plotObjParams, plotParams = {}}={}){
 
-		this.scatterParams = {}
-		this._UpdateScatterParams(scatterParams)
+		// Create object to store plot object parameters
+		this[plotObjParams.id] = {}		
+		this._UpdateScatterParams(plotObjParams)
 
 		// Update axes		
 		this._UpdatePlotParams(plotParams)
@@ -158,32 +159,33 @@ export class Plot extends AnimObject{
 
 		let that = this
 
-		// Group for data binding
-		if (this.vis === undefined){
-			this.vis = this.group.append("g").attr("id", this.scatterParams.id)
-		}
-		this.vis.style("opacity", 0.0)
+		// Plot object group
+		let vis = this.group.append("g")
+							.attr("id", plotObjParams.id)
+							.style("opacity", 0.0)
 
-		this.vis.selectAll("circle")
-	      			.data(this.scatterParams.data)
+		// Draw dots
+		this.group.select("#"+plotObjParams.id).selectAll("circle")
+	      			.data(this[plotObjParams.id].data)
 		  			.enter()
 		  			.append("circle")
 		  			.attr("r", function(d) {return d.r})		  
 		  			.style("fill", function(d) {return d.color})		  
-		  			.style("stroke", this.scatterParams.stroke)
-		  			.style("stroke-width", this.scatterParams.strokeWidth)
+		  			.style("stroke", this[plotObjParams.id].stroke)
+		  			.style("stroke-width", this[plotObjParams.id].strokeWidth)
 		  			.attr("transform", function(d) {
 						return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
 		  			})	  			      
-
-		this.vis.transition()
-					.delay(delay)
-					.duration(duration)
-					.style("opacity", 1.0)
+		
+		// Show plot object
+		vis.transition()
+			.delay(delay)
+			.duration(duration)
+			.style("opacity", 1.0)
 
 	}
 
-	MoveScatter({delay, duration, scatterParams, plotParams={}, ease = d3.easeCubic} = {}){
+	MoveScatter({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
 		/*
 		Would be cool to merge this with DrawScatter()!
 		Not sure how axis label update works here but it just does...
@@ -194,21 +196,21 @@ export class Plot extends AnimObject{
 		this._UpdateAxes(delay, duration)
 
 		// Update scatter params
-		this._UpdateScatterParams(scatterParams)
+		this._UpdateScatterParams(plotObjParams)
 
 		// Local scope this
 		let that = this
 
 		// Update scatter
-		this.vis.selectAll("circle")
-			.data(this.scatterParams.data)
+		this.group.select("#"+plotObjParams.id).selectAll("circle")
+			.data(this[plotObjParams.id].data)
 			.transition()
 			.delay(delay)
 			.duration(duration) 
 			.ease(ease)
 			.style("fill", function(d) {return d.color})
-			.style("stroke", this.scatterParams.stroke)
-			.style("stroke-width", this.scatterParams.strokeWidth)			
+			.style("stroke", this[plotObjParams.id].stroke)
+			.style("stroke-width", this[plotObjParams.id].strokeWidth)			
 			.attr("transform", function(d) {
 				return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
 			})	
@@ -328,58 +330,56 @@ export class Plot extends AnimObject{
 
 
 
-	DrawLine({delay, duration, lineParams ={}, plotParams={}}={}){
+	DrawLine({delay, duration, plotObjParams, plotParams={}}={}){
+
+		// Create object to store plot object parameters
+		this[plotObjParams.id] = {}		
+		this._UpdateLineParams(plotObjParams)
+
 		d3.timeout(() => {
 			
-			// Update line parameters
-			if (typeof this.lineParams === 'undefined'){
-				this.lineParams = {}
-			}			
-			this._UpdateLineParams(lineParams)
-
 			// Update axes
 			this._UpdatePlotParams(plotParams)
 			this._UpdateAxes(delay=0,duration=duration)	
 
-			// Group for data binding
-			//if (this.vis === undefined){
+			let that = this
+
+			// Plot object group
 			let vis = this.group.append("g")
-								.attr("id", this.lineParams.id)
-			//}
+								.attr("id", plotObjParams.id)
 
+			// Draw line
 			let linepath =  vis.append("path")
-								.attr("d", this.lineFunction(this.lineParams.data))
-
+								.attr("d", this.lineFunction(that[plotObjParams.id].data))
 			let totalLength = linepath.node().getTotalLength()
-		
-			if (this.lineParams.dashed == false){
+			if (this[plotObjParams.id].dashed == false){
 				linepath
 					.attr("stroke-dasharray", totalLength + " " + totalLength)
 					.attr("stroke-dashoffset", totalLength)
-					.attr("stroke", this.lineParams.strokeColor)
+					.attr("stroke", this[plotObjParams.id].strokeColor)
 					.attr('fill','none')
-					.attr("stroke-width", this.lineParams.strokeWidth)
+					.attr("stroke-width", this[plotObjParams.id].strokeWidth)
 					.transition()
 					.duration(duration)
-					.ease(this.lineParams.drawEase)
+					.ease(this[plotObjParams.id].drawEase)
 					.attr("stroke-dashoffset", 0)
 
-			} else if (this.lineParams.dashed == true){
+			} else if (this[plotObjParams.id].dashed == true){
 				linepath.style("opacity", 0)
 				linepath
 					.attr("stroke-dasharray", 6)
-					.attr("stroke", this.lineParams.strokeColor)
+					.attr("stroke", this[plotObjParams.id].strokeColor)
 					.attr('fill','none')
-					.attr("stroke-width", this.lineParams.strokeWidth)
+					.attr("stroke-width", this[plotObjParams.id].strokeWidth)
 					.transition()
 					.duration(duration)
-					.ease(this.lineParams.drawEase)
+					.ease(this[plotObjParams.id].drawEase)
 					.style("opacity", 1)		
 			}
 		}, delay)
 	}
 	
-	MoveLine({delay, duration, lineParams, plotParams={}, ease = d3.easeCubic} = {}){
+	MoveLine({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
 		d3.timeout(() => {		
 			/*
 			Would be cool to merge this with DrawLine()!
@@ -391,18 +391,18 @@ export class Plot extends AnimObject{
 			this._UpdateAxes(0, duration)
 
 			// Update scatter params
-			this._UpdateLineParams(lineParams)
+			this._UpdateLineParams(plotObjParams)
 
 			// Local scope this
 			let that = this
 			
 			// Update line by tweening
-			this.group.select("#"+lineParams.id).selectAll("path")
+			this.group.select("#"+plotObjParams.id).selectAll("path")
 				.transition()
 				.delay(0)
 				.duration(duration)
 				.ease(ease)
-				.attrTween("d", PathTween(that.lineFunction(that.lineParams.data) ,4))
+				.attrTween("d", PathTween(that.lineFunction(that[plotObjParams.id].data) ,4))
 		}, delay)		
 	}
 
@@ -567,13 +567,10 @@ export class Plot extends AnimObject{
 	}
 
 	_UpdateScatterParams(params){
-		this.scatterParams.data   	   = params.data
-		this.scatterParams.stroke 	   = params.stroke 		 || this.scatterParams.stroke 	   || "#D7E4DB"
-		this.scatterParams.strokeWidth = params.strokeWidth  || this.scatterParams.strokeWidth || 1
-
-		if (this.scatterParams.id === undefined){
-			this.scatterParams.id = params.id
-		}		
+		let id = params.id
+		this[id].data   	   = params.data
+		this[id].stroke 	   = params.stroke 		 || this[id].stroke 	   || "#D7E4DB"
+		this[id].strokeWidth   = params.strokeWidth  || this[id].strokeWidth   || 1		
 	}
 
 	_UpdateHistParams(params){
@@ -588,14 +585,11 @@ export class Plot extends AnimObject{
 	}
 	
 	_UpdateLineParams(params){
-		this.lineParams.data   	  	  = params.data
-		this.lineParams.dashed 	  	  = params.dashed  	     || this.lineParams.dashed 	       || false
-		this.lineParams.strokeWidth   = params.strokeWidth   || this.lineParams.strokeWidth    || 1
-		this.lineParams.strokeColor   = params.strokeColor   || this.lineParams.strokeColor    || "steelblue"
-		this.lineParams.drawEase   	  = params.drawEase   	 || this.lineParams.drawEase 	   || d3.easeLinear		
-		
-		if (this.lineParams.id === undefined){
-			this.lineParams.id = params.id
-		}		
+		let id = params.id
+		this[id].data   	  	  = params.data
+		this[id].dashed 	  	  = params.dashed  	     || this[id].dashed 	    || false
+		this[id].strokeWidth   	  = params.strokeWidth   || this[id].strokeWidth    || 1
+		this[id].strokeColor   	  = params.strokeColor   || this[id].strokeColor    || "steelblue"
+		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
 	}		
 }
