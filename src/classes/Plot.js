@@ -147,6 +147,116 @@ export class Plot extends AnimObject{
 	
 
 
+	DrawHistogram({delay, duration, plotObjParams, plotParams={}}={}){
+		d3.timeout(() => {
+
+			// Update axes
+			this._UpdatePlotParams(plotParams)
+			this._UpdateAxes(0,duration)
+
+			this[plotObjParams.id] = {}	
+			this._UpdateHistParams(plotObjParams)			
+			
+			// Local (convenience) variables
+			let that 	= this		
+			let HEIGHT 	= this.yRange[1] - this.yRange[0]
+
+			// Auxiliary function
+			function height(d) {
+				return HEIGHT - that.yScale(d.y)
+			}
+			function width(d) {
+				if(['normal','precalculated'].includes(that[plotObjParams.id].datatype)){
+					return that.xScale(d.x1) - that.xScale(d.x0)
+				} else if(that[plotObjParams.id].datatype==="bar"){
+					return that.xScale.bandwidth()
+				}
+			}			
+			// create array histogram with elements representing each bin. Each element is an object with
+			//	- y   : bar value
+			//	- x0  : bar start position on x-axis
+			//	- x1  : bar end position on x-axis
+			//	- cum : cumualtive bar y values			
+			let histogram
+			if (this[plotObjParams.id].datatype == 'normal'){
+				histogram = d3.histogram().domain(this.xScale.domain()).thresholds(this[plotObjParams.id].histBins)(this[plotObjParams.id].data)
+				
+				//Calculative cdf
+				// https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
+				let noOfObservations = this[plotObjParams.id].data.length
+				let last = 0
+				for(let i=0; i < histogram.length; i++){
+					// Current bin y value: number of observations in the bin divided by total number of observations 
+					histogram[i]['y'] = histogram[i].length/noOfObservations
+					histogram[i]['cum'] = last + histogram[i]['y']
+					last = histogram[i]['cum']
+				}
+
+			} else if (this[plotObjParams.id].datatype == 'precalculated' || this[plotObjParams.id].datatype == 'bar'){
+				histogram = this[plotObjParams.id].data
+				
+				//Calculative cdf
+				let last = 0
+				for(let i=0; i < histogram.length; i++){
+					histogram[i]['cum'] = last + histogram[i].y
+					last = histogram[i]['cum'];
+				}			
+			}
+
+			// Group for data binding if drawn for first time
+			if (d3.select("#"+plotObjParams.id).empty()){
+				this.group.append("g")
+						  .attr("id", plotObjParams.id)
+			}
+
+			// Define group for bars
+			let bar = this.group.select("#"+plotObjParams.id)
+								.selectAll(".bar")							  
+								.data(histogram)
+								
+			// Save histogram to this
+			this[plotObjParams.id].histogram = histogram
+
+			// EXIT section
+			bar.exit().remove()
+
+			// UPDATE section
+			bar.transition()
+			.duration(duration)
+			.attr("transform", (d, i) => 'translate( '+ that.xScale(d.x0) +','+ that.yScale(d.y) +')')
+
+			bar.select("rect")
+				.transition()
+				.duration(duration)
+				.attr('fill',this[plotObjParams.id].fill)	
+				.attr("height", height)
+				
+			// handle new elements ENTER
+			let barEnter = bar
+							.enter()
+							.append("g")
+							.attr("class", "bar")
+							.attr("transform", function(d) { return "translate(" + that.xScale(d.x0) + "," + HEIGHT + ")" })
+			
+			barEnter.transition()
+					.duration(duration)
+					.attr("transform", (d, i) => `translate(${that.xScale(d.x0)}, ${that.yScale(d.y)})`)
+				
+			let rect = barEnter.append("rect") 
+							.attr('fill',this[plotObjParams.id].fill)
+							.attr("width", width)							
+							.attr("height", 0)
+
+			// handle updated elements
+			// not sure why both this and bar.select("rect").transition() are needed
+			rect.transition()		
+				.duration(duration)
+				.attr("height",height)
+				
+		}, delay)
+	}
+
+
 	DrawScatter({delay, duration, plotObjParams, plotParams = {}}={}){
 
 		// Create object to store plot object parameters
@@ -164,12 +274,12 @@ export class Plot extends AnimObject{
 							.attr("id", plotObjParams.id)
 							.style("opacity", 0.0)
 
-		// Draw dots
+		// Draw scatter
 		this.group.select("#"+plotObjParams.id).selectAll("circle")
 	      			.data(this[plotObjParams.id].data)
 		  			.enter()
 		  			.append("circle")
-		  			.attr("r", function(d) {return d.r})		  
+		  			.attr("r", function(d) {return d.r})
 		  			.style("fill", function(d) {return d.color})		  
 		  			.style("stroke", this[plotObjParams.id].stroke)
 		  			.style("stroke-width", this[plotObjParams.id].strokeWidth)
@@ -187,7 +297,7 @@ export class Plot extends AnimObject{
 
 	MoveScatter({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
 		/*
-		Would be cool to merge this with DrawScatter()!
+		Would be cool to merge this with DrawScatter()! As in DrawHistogram().
 		Not sure how axis label update works here but it just does...
 		*/
 
@@ -195,141 +305,31 @@ export class Plot extends AnimObject{
 		this._UpdatePlotParams(plotParams)
 		this._UpdateAxes(delay, duration)
 
-		// Update scatter params
-		this._UpdateScatterParams(plotObjParams)
+		// Update all scatters
+		if (!Array.isArray(plotObjParams)){
+			plotObjParams = [plotObjParams]
+		}
+		plotObjParams.forEach((el) => {
 
-		// Local scope this
-		let that = this
-
-		// Update scatter
-		this.group.select("#"+plotObjParams.id).selectAll("circle")
-			.data(this[plotObjParams.id].data)
+			this._UpdateScatterParams(el)
+			let that = this
+			this.group.select("#"+el.id).selectAll("circle")
+			.data(this[el.id].data)
 			.transition()
 			.delay(delay)
 			.duration(duration) 
 			.ease(ease)
+			.attr("r", function(d) {return d.r})			
 			.style("fill", function(d) {return d.color})
-			.style("stroke", this[plotObjParams.id].stroke)
-			.style("stroke-width", this[plotObjParams.id].strokeWidth)			
+			.style("stroke", this[el.id].stroke)
+			.style("stroke-width", this[el.id].strokeWidth)			
 			.attr("transform", function(d) {
 				return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
-			})	
+			})
+		})
 	}
 
-
-
-	DrawHistogram({delay, duration, histParams, plotParams={}}={}){
-		d3.timeout(() => {
-
-			// Update axes
-			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0,duration)
-
-			// Update histogram parameters
-			if (typeof this.histParams === 'undefined'){
-				this.histParams = {}
-			}
-			this._UpdateHistParams(histParams)			
-			
-			// Local (convenience) variables
-			let that 	= this		
-			let HEIGHT 	= this.yRange[1] - this.yRange[0]
-
-			// Auxiliary function
-			function height(d) {
-				return HEIGHT - that.yScale(d.y)
-			}
-			function width(d) {
-				if(['normal','precalculated'].includes(that.histParams.datatype)){
-					return that.xScale(d.x1) - that.xScale(d.x0)
-				} else if(that.histParams.datatype==="bar"){
-					return that.xScale.bandwidth()
-				}
-			}			
-			// create array histogram with elements representing each bin. Each element is an object with
-			//	- y   : bar value
-			//	- x0  : bar start position on x-axis
-			//	- x1  : bar end position on x-axis
-			//	- cum : cumualtive bar y values			
-			let histogram
-			if (this.histParams.datatype == 'normal'){
-				histogram = d3.histogram().domain(this.xScale.domain()).thresholds(this.histParams.histBins)(this.histParams.data)
-				
-				//Calculative cdf
-				// https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
-				let noOfObservations = this.histParams.data.length
-				let last = 0
-				for(let i=0; i < histogram.length; i++){
-					// Current bin y value: number of observations in the bin divided by total number of observations 
-					histogram[i]['y'] = histogram[i].length/noOfObservations
-					histogram[i]['cum'] = last + histogram[i]['y']
-					last = histogram[i]['cum']
-				}
-
-			} else if (this.histParams.datatype == 'precalculated' || this.histParams.datatype == 'bar'){
-				histogram = this.histParams.data
-				
-				//Calculative cdf
-				let last = 0
-				for(let i=0; i < histogram.length; i++){
-					histogram[i]['cum'] = last + histogram[i].y
-					last = histogram[i]['cum'];
-				}			
-			}
-
-			// Group for data binding
-			if (this.vis === undefined){
-				this.vis = this.group.append("g").attr("id", this.histParams.id)
-			}
-
-			// Define group for bars
-			let bar = this.vis.selectAll('.bar')
-							  .data(histogram)
-
-			// Save histogram to this
-			this.histParams.histogram = histogram
-
-			// EXIT section
-			bar.exit().remove()
-
-			// UPDATE section
-			bar.transition()
-			.duration(duration)
-			.attr("transform", (d, i) => 'translate( '+ that.xScale(d.x0) +','+ that.yScale(d.y) +')')
-
-			bar.select("rect")
-				.transition()
-				.duration(duration)
-				.attr('fill',this.histParams.fill)	
-				.attr("height", height)
-				
-			// handle new elements ENTER
-			let barEnter = bar
-							.enter()
-							.append("g")
-							.attr("class", "bar")
-							.attr("transform", function(d) { return "translate(" + that.xScale(d.x0) + "," + HEIGHT + ")" })
-			
-			barEnter.transition()
-					.duration(duration)
-					.attr("transform", (d, i) => `translate(${that.xScale(d.x0)}, ${that.yScale(d.y)})`)
-				
-			let rect = barEnter.append("rect") 
-							.attr('fill',this.histParams.fill)
-							.attr("width", width)							
-							.attr("height", 0)
-
-			// handle updated elements
-			// not sure why both this and bar.select("rect").transition() are needed
-			rect.transition()		
-				.duration(duration)
-				.attr("height",height)
-				
-		}, delay)
-	}
-
-
-
+	
 	DrawLine({delay, duration, plotObjParams, plotParams={}}={}){
 
 		// Create object to store plot object parameters
@@ -382,7 +382,7 @@ export class Plot extends AnimObject{
 	MoveLine({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
 		d3.timeout(() => {		
 			/*
-			Would be cool to merge this with DrawLine()!
+			Would be cool to merge this with DrawLine()!  As in DrawHistogram().
 			Not sure how axis label update works here but it just does...
 			*/
 
@@ -390,19 +390,21 @@ export class Plot extends AnimObject{
 			this._UpdatePlotParams(plotParams)
 			this._UpdateAxes(0, duration)
 
-			// Update scatter params
-			this._UpdateLineParams(plotObjParams)
+			// Update all lines
+			if (!Array.isArray(plotObjParams)){
+				plotObjParams = [plotObjParams]
+			}
+			plotObjParams.forEach((el) => {
 
-			// Local scope this
-			let that = this
-			
-			// Update line by tweening
-			this.group.select("#"+plotObjParams.id).selectAll("path")
-				.transition()
-				.delay(0)
-				.duration(duration)
-				.ease(ease)
-				.attrTween("d", PathTween(that.lineFunction(that[plotObjParams.id].data) ,4))
+				this._UpdateLineParams(el)
+				let that = this
+				this.group.select("#"+el.id).selectAll("path")
+					.transition()
+					.delay(0)
+					.duration(duration)
+					.ease(ease)
+					.attrTween("d", PathTween(that.lineFunction(that[el.id].data) ,4))
+			  })
 		}, delay)		
 	}
 
@@ -529,15 +531,9 @@ export class Plot extends AnimObject{
 
 	_UpdatePlotParams(params){
 		/* Updates plot axis paramters */
-
-		//let yRangeInv0 = 
-		//let yRangeInv = [params.yRange[1], params.yRange[0]]
-		//let yRangeInv 			= (params.yRange) 		  ? (params.yRange) : this.yRange
-		//let yRangeInv 			= (params.yRange) 		  ? (params.yRange.slice().reverse()) : this.yRange		
 		
 		this.xRange 		    = params.xRange  		 || this.xRange
 		this.yRange 		    = params.yRange  		 || this.yRange		
-		//this.yRange 			= yRangeInv
 		this.xDomain 			= params.xDomain 		 || this.xDomain
 		this.yDomain 			= params.yDomain 		 || this.yDomain
 	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30
@@ -574,14 +570,11 @@ export class Plot extends AnimObject{
 	}
 
 	_UpdateHistParams(params){
-		this.histParams.data   	  	  = params.data
-		this.histParams.histBins  	  = params.histBins 	 || this.histParams.histBins       || 10
-		this.histParams.fill	  	  = params.fill			 || this.histParams.fill 	       || "#666da3"
-		this.histParams.datatype  	  = params.datatype		 || this.histParams.datatype       || "normal"
-		
-		if (this.histParams.id === undefined){
-			this.histParams.id = params.id
-		}					
+		let id = params.id
+		this[id].data   	  = params.data
+		this[id].histBins  	  = params.histBins 	 || this[id].histBins       || 10
+		this[id].fill	  	  = params.fill			 || this[id].fill 	      || "#666da3"
+		this[id].datatype  	  = params.datatype		 || this[id].datatype       || "normal"				
 	}
 	
 	_UpdateLineParams(params){

@@ -115,51 +115,69 @@
       let max = Math.floor(dd[1])
       return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
     }
-    function CreateScatterData(d){
+    function CreateScatterData(d,color,r){
         let scatterData = []
         for (let i=1;i<=10;i++) {
-          scatterData.push({"x": getRandomIntInclusive(d.x),  "y": getRandomIntInclusive(d.y), "color": NQColors.orange, "r": 10})
+          scatterData.push({"x": getRandomIntInclusive(d.x),  "y": getRandomIntInclusive(d.y), "color": color, "r": r})
         }
         return scatterData  
     }
     
-    let paramsScatter1 = {
-       "data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]})
-      ,"id"          : "myscatter"
+    let paramsScatter1_a = {
+       "id"          : "myscatter"
+      ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)      
       ,"strokeWidth" : 4
+    }
+    let paramsScatter1_b = {
+      'id':"myscatter",
+      'data': CreateScatterData({'x':[-1100,1100], 'y':[0,10]}, NQColors.dark_purple, 10)
+    }
+    let paramsScatter2 = {
+       "id"          : "myscatter2"
+      ,"data"        : CreateScatterData({'x':[500,1100], 'y':[5,9]}, NQColors.brown, 15)
+      ,"strokeWidth" : 2
     }
 
     /**************************************************
     Histogram data parameters
     **************************************************/
-    let histData1 = [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
-    let histData2 = [34,55,23,43,12,32,29] 
+    let histData1_a = [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
+    let histData1_b = [34,55,23,43,12,32,29] 
+    let histData2   = [134,110,199,184,112,174,129]
 
-    let histDataParams = {
-        "data"      : histData1
+    let histDataParams1_a = {
+        "data"      : histData1_a
        ,"id"        : "hisdata1"
        ,'datatype'  : 'precalculated'
     }
-    let histDataParams2 = {
-        "data"      : histData2
+    let histDataParams1_b = {
+        "data"      : histData1_b
+       ,"id"        : "hisdata1"        
        ,"datatype"  : 'normal'
        ,"fill"      : "#fac0a2"
        ,"histBins"  : [0,25,50,75,100,125,150,175,200]
       }
-
+    let histDataParams2 = {
+        "data"      : histData2
+       ,"id"        : "hisdata2"        
+       ,"datatype"  : 'normal'
+       ,"fill"      : NQColors.dark_grey
+       ,"histBins"  : [0,25,50,75,100,125,150,175,200]
+      }
     /**************************************************
     Bar data parameters
     **************************************************/      
-    let barData1 = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
-    let barData2 = [{'x0':'A', "y":4}, {'x0':'B',"y":4}]
+    let barData1_a = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
+    let barData1_b = [{'x0':'A', "y":4}, {'x0':'B',"y":4}]
 
-    let barDataParams1 = {
-        "data"      : barData1
-        ,"id"       : "bardata1"        
+    let barDataParams1_a = {
+        "data"       : barData1_a
+        ,"id"        : "barData1"
         ,"datatype"  : 'bar'        
     }
-    let barDataParams2 = {
-        "data"      : barData2
+    let barDataParams1_b = {
+        "data"       : barData1_b
+        ,"id"        : "barData1"        
         ,"datatype"  : 'bar'        
     }
 
@@ -197,17 +215,20 @@
     plot.Draw({delay:timing, duration:1500, type:"movein"})
 
     timing = timing + 500
-    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter1})
+    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter1_a})
 
     timing = timing + 2000
     let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
-    let scatterParams = {'id':"myscatter",'data': CreateScatterData({'x':[-1100,1100], 'y':[0,10]})} 
-    plot.MoveScatter({delay:timing, duration:1000, plotObjParams:scatterParams, plotParams:newAxisParams})
+    plot.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
 
     timing = timing + 1200
+    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter2})
+
+    timing = timing + 1000
     plot2.HideObject({delay:timing, duration:500, id:"myscatter"})
-    timing = timing + 700    
-    plot.Hide({delay:timing, duration :500})
+    plot2.HideObject({delay:timing+300, duration:500, id:"myscatter2"})    
+    timing = timing + 1000
+    plot.Hide({delay:timing, duration :300})
     //*/
 
     // Histogram plot 
@@ -216,15 +237,19 @@
     plot2.Draw({delay:timing, duration:500})
 
     timing = timing + 1000    
-    plot2.DrawHistogram({delay:timing, duration:500, histParams:histDataParams})
+    plot2.DrawHistogram({delay:timing, duration:500, plotObjParams:histDataParams1_a})
  
     timing = timing + 1000
     let newAxisParams2 = {'yDomain': [0, 0.6]}    
-    plot2.DrawHistogram({delay:timing, duration:500, histParams:histDataParams2, plotParams:newAxisParams2 })
+    plot2.DrawHistogram({delay:timing, duration:500, plotObjParams:histDataParams1_b, plotParams:newAxisParams2 })
+
+    timing = timing + 1000
+    plot2.DrawHistogram({delay:timing, duration:500, plotObjParams:histDataParams2})
 
     timing = timing + 1000
     plot2.HideObject({delay:timing, duration:500, id:"hisdata1"})
-    timing = timing + 700
+    plot2.HideObject({delay:timing+300, duration:500, id:"hisdata2"})    
+    timing = timing + 900
     plot2.Hide({delay:timing, duration :500})
     //*/
 
@@ -234,10 +259,10 @@
     plot3.Draw({delay:timing, duration:500})
     
     timing = timing + 1000
-    plot3.DrawHistogram({delay:timing, duration:1000, histParams:barDataParams1})  
+    plot3.DrawHistogram({delay:timing, duration:1000, plotObjParams:barDataParams1_a})  
 
     timing = timing + 1500
-    plot3.DrawHistogram({delay:timing, duration:1000, histParams:barDataParams2, plotParams:{'yDomain': [0, 5] }})
+    plot3.DrawHistogram({delay:timing, duration:1000, plotObjParams:barDataParams1_b, plotParams:{'yDomain': [0, 5] }})
     
     timing = timing + 1500    
     plot3.Hide({delay:timing, duration :500})
@@ -261,14 +286,14 @@
     
     timing = timing + 2000
     let newParams4_b = {'xDomain': [0, 25]}
-    plot4.MoveLine({delay:timing, duration:1500, plotObjParams:lineDataParams1, plotParams:newParams4_b})
-    
-    // THESE DO NOT WORK!
-    //plot4.MoveLine({delay:timing, duration:1500, plotObjParams:lineDataParams2, plotParams:newParams4_b})
-    //plot4.MoveLine({delay:timing, duration:1500, plotObjParams:lineDataParams3, plotParams:newParams4_b})        
+    plot4.MoveLine({delay:timing, duration:1500,
+                    plotObjParams:[lineDataParams1, lineDataParams2, lineDataParams3],
+                    plotParams:newParams4_b})
 
     timing = timing + 2000
     plot4.HideObject({delay:timing, duration:500, id:"linedata1"})
+    plot4.HideObject({delay:timing, duration:500, id:"linedata2"})
+    plot4.HideObject({delay:timing, duration:500, id:"linedata3"})
     timing = timing + 1000    
     plot4.Hide({delay:timing, duration :500})
     
