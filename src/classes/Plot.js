@@ -263,35 +263,39 @@ export class Plot extends AnimObject{
 		this[plotObjParams.id] = {}		
 		this._UpdateScatterParams(plotObjParams)
 
-		// Update axes		
-		this._UpdatePlotParams(plotParams)
-		this._UpdateAxes(delay, duration)		
+		d3.timeout(() => {
 
-		let that = this
+			// Update axes		
+			this._UpdatePlotParams(plotParams)
+			this._UpdateAxes(0, duration)		
 
-		// Plot object group
-		let vis = this.group.append("g")
-							.attr("id", plotObjParams.id)
-							.style("opacity", 0.0)
+			let that = this
 
-		// Draw scatter
-		this.group.select("#"+plotObjParams.id).selectAll("circle")
-	      			.data(this[plotObjParams.id].data)
-		  			.enter()
-		  			.append("circle")
-		  			.attr("r", function(d) {return d.r})
-		  			.style("fill", function(d) {return d.color})		  
-		  			.style("stroke", this[plotObjParams.id].stroke)
-		  			.style("stroke-width", this[plotObjParams.id].strokeWidth)
-		  			.attr("transform", function(d) {
-						return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
-		  			})	  			      
-		
-		// Show plot object
-		vis.transition()
-			.delay(delay)
-			.duration(duration)
-			.style("opacity", 1.0)
+			// Plot object group
+			let vis = this.group.append("g")
+								.attr("id", plotObjParams.id)
+								.style("opacity", 0.0)
+
+			// Draw scatter
+			this.group.select("#"+plotObjParams.id).selectAll("circle")
+						.data(this[plotObjParams.id].data)
+						.enter()
+						.append("circle")
+						.attr("r", function(d) {return d.r})
+						.style("fill", function(d) {return d.color})		  
+						.style("stroke", this[plotObjParams.id].stroke)
+						.style("stroke-width", this[plotObjParams.id].strokeWidth)
+						.attr("transform", function(d) {
+							return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
+						})	  			      
+			
+			// Show plot object
+			vis.transition()
+				.delay(0)
+				.duration(duration)
+				.style("opacity", 1.0)
+
+			}, delay)				
 
 	}
 
@@ -300,33 +304,34 @@ export class Plot extends AnimObject{
 		Would be cool to merge this with DrawScatter()! As in DrawHistogram().
 		Not sure how axis label update works here but it just does...
 		*/
+		d3.timeout(() => {	
+			// Update axes		
+			this._UpdatePlotParams(plotParams)
+			this._UpdateAxes(0, duration)
 
-		// Update axes		
-		this._UpdatePlotParams(plotParams)
-		this._UpdateAxes(delay, duration)
+			// Update all scatters
+			if (!Array.isArray(plotObjParams)){
+				plotObjParams = [plotObjParams]
+			}
+			plotObjParams.forEach((el) => {
 
-		// Update all scatters
-		if (!Array.isArray(plotObjParams)){
-			plotObjParams = [plotObjParams]
-		}
-		plotObjParams.forEach((el) => {
-
-			this._UpdateScatterParams(el)
-			let that = this
-			this.group.select("#"+el.id).selectAll("circle")
-			.data(this[el.id].data)
-			.transition()
-			.delay(delay)
-			.duration(duration) 
-			.ease(ease)
-			.attr("r", function(d) {return d.r})			
-			.style("fill", function(d) {return d.color})
-			.style("stroke", this[el.id].stroke)
-			.style("stroke-width", this[el.id].strokeWidth)			
-			.attr("transform", function(d) {
-				return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
+				this._UpdateScatterParams(el)
+				let that = this
+				this.group.select("#"+el.id).selectAll("circle")
+				.data(this[el.id].data)
+				.transition()
+				.delay(0)
+				.duration(duration) 
+				.ease(ease)
+				.attr("r", function(d) {return d.r})			
+				.style("fill", function(d) {return d.color})
+				.style("stroke", this[el.id].stroke)
+				.style("stroke-width", this[el.id].strokeWidth)			
+				.attr("transform", function(d) {
+					return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
+				})
 			})
-		})
+		}, delay)			
 	}
 
 	

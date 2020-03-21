@@ -124,20 +124,24 @@
     }
     
     let paramsScatter1_a = {
-       "id"          : "myscatter"
+       "id"          : "myscatter1"
       ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)      
       ,"strokeWidth" : 4
     }
     let paramsScatter1_b = {
-      'id':"myscatter",
-      'data': CreateScatterData({'x':[-1100,1100], 'y':[0,10]}, NQColors.dark_purple, 10)
+      'id'           :"myscatter1",
+      'data'         : CreateScatterData({'x':[-1100,1100], 'y':[0,10]}, NQColors.dark_purple, 10)
     }
     let paramsScatter2 = {
        "id"          : "myscatter2"
       ,"data"        : CreateScatterData({'x':[500,1100], 'y':[5,9]}, NQColors.brown, 15)
       ,"strokeWidth" : 2
     }
-
+    let paramsScatter3 = {
+       "id"          : "myscatter3"
+      ,"data"        : CreateScatterData({'x':[5,12], 'y':[5,15]}, NQColors.orange, 5)      
+      ,"strokeWidth" : 4
+    }
     /**************************************************
     Histogram data parameters
     **************************************************/
@@ -291,9 +295,13 @@
                     plotParams:newParams4_b})
 
     timing = timing + 2000
+    plot4.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter3})
+
+    timing = timing + 2000
     plot4.HideObject({delay:timing, duration:500, id:"linedata1"})
     plot4.HideObject({delay:timing, duration:500, id:"linedata2"})
     plot4.HideObject({delay:timing, duration:500, id:"linedata3"})
+    plot4.HideObject({delay:timing, duration:500, id:"myscatter3"})    
     timing = timing + 1000    
     plot4.Hide({delay:timing, duration :500})
     
