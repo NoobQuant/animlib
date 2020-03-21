@@ -110,16 +110,16 @@
 
     // Scatter plot
     let paramsScatter1 = {
-       "data"        : CreateScatterData({'x':[-10,10], 'y':[5,8]})
+       "data"        : CreateScatterData({'x':[5,7], 'y':[1,6]})
       ,"id"          : "scatter1"
       ,"strokeWidth" : 4
     }    
     let params2 = {
-       "pos"                : [[200,100]]
+       "pos"                : [[150,150]]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
-      ,"yDomain"            : [-5,15]
-      ,"xDomain"            : [-20,20]
+      ,"yDomain"            : [0,9]      
+      ,"xDomain"            : [4,8]
       ,"id"                 : "plot2"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -132,7 +132,7 @@
     Notice that line is drawn on  svg1 that originally extends
     over background svg.
     *********************************/
-    ///*
+    /*
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
@@ -155,6 +155,10 @@
     plot1.DrawLine({delay:timing, duration:1500, plotObjParams:lineDataParams2})
 
     timing = timing + 2000
+    let params1_b = {'xDomain': [0, 12]}
+    plot1.MoveLine({delay:timing, duration:1000, plotObjParams:[lineDataParams1,lineDataParams2], plotParams:params1_b})
+
+    timing = timing + 2000
     plot1.Hide({delay:timing, duration:300})    
     //*/
 
@@ -162,14 +166,24 @@
     Animate - Zoom in scatter chart
     *********************************/
     ///*
-    timing = timing + 500
-    plot2.Draw({delay:timing, duration:300})
-    plot2.DrawScatter({delay:timing+500, duration:500, plotObjParams:paramsScatter1})    
+    timing = timing + 0
+    plot2.Draw({delay:timing, duration:0})
+    plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})    
 
-    timing = timing + 1500
-    let newAxisParams = {"yDomain": [3,9], "xDomain": [-11,11]} 
-    plot2.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1, plotParams:newAxisParams})
+    //timing = timing + 1500
+    //let newAxisParams = {"yDomain": [3,9], "xDomain": [0,11]} 
+    //plot2.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1, plotParams:newAxisParams})
     //*/
+
+    //timing = timing + 1500    
+		//d3.timeout(() => {
+
+
+
+
+		//}, timing)	
+
+
 
 
 

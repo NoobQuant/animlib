@@ -18,7 +18,7 @@ export class Plot extends AnimObject{
 		   Now it is included here as well as in _UpdateAxes().
 		*/
 	
-		let that = this
+		var that = this
 		let yRangeInv = [this.yRange[1], this.yRange[0]]
 		
 
@@ -120,6 +120,32 @@ export class Plot extends AnimObject{
 		this.xAxisGroup   = xAxisGroup		
 		this.yAxisGroup   = yAxisGroup 
 		this.lineFunction = lineFunction
+
+		//////////////////////////////////////////////////
+		// TESTING FOR ZOOM
+		d3.select("#plot2")
+			.append("defs")
+			.append("group:clipPath")    
+			.attr("id", "clip")
+			.append("group:rect")
+			.attr("width", this.xRange[1] )
+			.attr("height", this.yRange[1] )
+
+
+		let zoom = d3.zoom(this)
+					  	.scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+					  	.extent([[0, 0], [this.xRange[1], this.yRange[1]]])
+						.on("zoom", this._ZoomUpdate.bind(this))					  
+
+		d3.select("#plot2")
+		  	.append("rect")
+		  	.attr("width", this.xRange[1])
+		  	.attr("height", this.yRange[1])
+		  	.style("fill", "none")
+		  	.style("pointer-events", "all")
+		  	.call(zoom)
+		//////////////////////////////////////////////////
+
 	}
 
 	HideObject({delay, duration, id}={}){
@@ -267,13 +293,14 @@ export class Plot extends AnimObject{
 
 			// Update axes		
 			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0, duration)		
+			this._UpdateAxes(0, duration)
 
 			let that = this
 
 			// Plot object group
 			let vis = this.group.append("g")
 								.attr("id", plotObjParams.id)
+								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
 								.style("opacity", 0.0)
 
 			// Draw scatter
@@ -589,5 +616,75 @@ export class Plot extends AnimObject{
 		this[id].strokeWidth   	  = params.strokeWidth   || this[id].strokeWidth    || 1
 		this[id].strokeColor   	  = params.strokeColor   || this[id].strokeColor    || "steelblue"
 		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
-	}		
+	}
+	
+	_ZoomUpdate(){
+
+		let newXScale = d3.event.transform.rescaleX(this.xScale)
+		let newYScale = d3.event.transform.rescaleY(this.yScale)
+		
+
+		////////////////////////////////////////////////////////////////
+		// From here merge with _UpdateAxes
+		this.xAxis.scale(newXScale)
+		this.yAxis.scale(newYScale)		
+
+		// Update y axis
+		this.yAxisGroup
+				 .call(
+					 this.yAxis
+				 		 .tickSize(this.yTickSize)				
+				 		 .ticks(this.yTickNo)
+				  )
+		this.yAxisGroup		
+			.selectAll("text")
+			.style("font-size", this.yTickLabelSize)
+			.style("fill",this.yTickLabelFill)
+		this.yAxisGroup
+			.selectAll("line")
+			.style("stroke", this.yTickStroke)
+			.style("stroke-width", this.yTickStrokeWidth)												
+		this.yAxisGroup
+			.selectAll("path")
+			.attr("stroke" , this.axisStroke)
+			.style("stroke-width", this.axisStrokeWidth)
+
+		// Update x axis
+		this.xAxisGroup
+				 .call(
+					this.xAxis
+				 		.tickSize(this.xTickSize)				
+				 		.ticks(this.xTickNo)
+				  )
+		this.xAxisGroup		
+			.selectAll("text")
+			.style("font-size", this.xTickLabelSize)
+			.style("fill",this.xTickLabelFill)
+		this.xAxisGroup
+			.selectAll("line")
+			.style("stroke", this.xTickStroke)
+			.style("stroke-width", this.xTickStrokeWidth)												
+		this.xAxisGroup
+			.selectAll("path")
+			.attr("stroke" , this.axisStroke)
+			.style("stroke-width", this.axisStrokeWidth)
+		
+		// Update line function bound to the axes
+		let that = this
+		this.lineFunction = d3.line()
+							 .x(function(d) {return that.xScale(d[0])})
+							 .y(function(d) {return that.yScale(d[1])})	
+		// END OF MERGE PART
+		////////////////////////////////////////////////////////////////
+
+
+		// Update plot object - now only scatter! NEEDS GENERALIZATION!
+		d3.select("#scatter1")
+			.selectAll("circle")
+			.attr("transform", function(d) {
+				return " translate(" + (newXScale(d.x)) +","+ (newYScale(d.y)) +")"
+		})	  									
+
+	}
+
 }
