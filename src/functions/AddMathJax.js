@@ -6,9 +6,11 @@ export function AddMathJax(svg){
 	  MathJax.Hub.Config({
 	    tex2jax: {
 	      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-	      processEscapes: true
-
-	    }
+		  processEscapes: true,
+		  preview: "none" // https://github.com/mathjax/mathjax-docs/wiki/Hide-render-statusbar
+		},
+		// https://github.com/mathjax/mathjax-docs/wiki/Hide-render-statusbar
+		messageStyle: "none"
 	  })
 	  
 	  MathJax.Hub.Register.StartupHook("End", function() {
