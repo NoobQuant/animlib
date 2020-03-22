@@ -470,13 +470,26 @@ export class Plot extends AnimObject{
 		   			 .html(this.xLabel)	
 	}	
 
-	_UpdateAxes(delay, duration){
+	_UpdateAxes(delay, duration, type="update"){
 
-		// Update axis calls
-		this.xScale.range(this.xRange).domain(this.xDomain)
-		this.yScale.range(this.yRange.slice().reverse()).domain(this.yDomain)
-		this.xAxis.scale(this.xScale)
-		this.yAxis.scale(this.yScale)		
+		let newXScale
+		let newYScale
+		if (type=="update"){
+
+			newXScale = this.xScale.copy().range(this.xRange).domain(this.xDomain)
+			newYScale = this.yScale.copy().range(this.yRange.slice().reverse()).domain(this.yDomain)
+			
+		} else if(type=="zoom"){
+			newXScale = d3.event.transform.rescaleX(this.xScale)
+			newYScale = d3.event.transform.rescaleY(this.yScale)
+
+		}
+		// For some unexplainable reason, cannot update this.xScale/this.yScale -> zoom blows up!
+		this.newXScale = newXScale
+		this.newYScale = newYScale
+
+		this.xAxis.scale(newXScale)
+		this.yAxis.scale(newYScale)		
 
 		// Update y axis
 		this.yAxisGroup
@@ -550,7 +563,7 @@ export class Plot extends AnimObject{
 				.delay(delay)
 				.duration(1000)
 				.style("opacity",1)
-
+		
 		// Update line function bound to the axes
 		let that = this
 		this.lineFunction = d3.line()
@@ -618,71 +631,20 @@ export class Plot extends AnimObject{
 		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
 	}
 	
+	_UpdateScale(){
+		
+	}
+
 	_ZoomUpdate(){
-
-		let newXScale = d3.event.transform.rescaleX(this.xScale)
-		let newYScale = d3.event.transform.rescaleY(this.yScale)
-		
-
-		////////////////////////////////////////////////////////////////
-		// From here merge with _UpdateAxes
-		this.xAxis.scale(newXScale)
-		this.yAxis.scale(newYScale)		
-
-		// Update y axis
-		this.yAxisGroup
-				 .call(
-					 this.yAxis
-				 		 .tickSize(this.yTickSize)				
-				 		 .ticks(this.yTickNo)
-				  )
-		this.yAxisGroup		
-			.selectAll("text")
-			.style("font-size", this.yTickLabelSize)
-			.style("fill",this.yTickLabelFill)
-		this.yAxisGroup
-			.selectAll("line")
-			.style("stroke", this.yTickStroke)
-			.style("stroke-width", this.yTickStrokeWidth)												
-		this.yAxisGroup
-			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
-
-		// Update x axis
-		this.xAxisGroup
-				 .call(
-					this.xAxis
-				 		.tickSize(this.xTickSize)				
-				 		.ticks(this.xTickNo)
-				  )
-		this.xAxisGroup		
-			.selectAll("text")
-			.style("font-size", this.xTickLabelSize)
-			.style("fill",this.xTickLabelFill)
-		this.xAxisGroup
-			.selectAll("line")
-			.style("stroke", this.xTickStroke)
-			.style("stroke-width", this.xTickStrokeWidth)												
-		this.xAxisGroup
-			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
-		
-		// Update line function bound to the axes
-		let that = this
-		this.lineFunction = d3.line()
-							 .x(function(d) {return that.xScale(d[0])})
-							 .y(function(d) {return that.yScale(d[1])})	
-		// END OF MERGE PART
-		////////////////////////////////////////////////////////////////
-
+	
+		this._UpdateAxes(0, 0, "zoom")
 
 		// Update plot object - now only scatter! NEEDS GENERALIZATION!
+		let that = this
 		d3.select("#scatter1")
 			.selectAll("circle")
-			.attr("transform", function(d) {
-				return " translate(" + (newXScale(d.x)) +","+ (newYScale(d.y)) +")"
+			.attr("transform", function(d) {	
+				return " translate(" + (that.newXScale(d.x)) +","+ (that.newYScale(d.y)) +")"				
 		})	  									
 
 	}
