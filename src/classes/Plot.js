@@ -123,27 +123,33 @@ export class Plot extends AnimObject{
 
 		//////////////////////////////////////////////////
 		// TESTING FOR ZOOM
-		d3.select("#plot2")
-			.append("defs")
-			.append("group:clipPath")    
-			.attr("id", "clip")
-			.append("group:rect")
-			.attr("width", this.xRange[1] )
-			.attr("height", this.yRange[1] )
-
-
+		
+		// Create zoom behavior
 		let zoom = d3.zoom(this)
-					  	.scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-					  	.extent([[0, 0], [this.xRange[1], this.yRange[1]]])
-						.on("zoom", this._ZoomUpdate.bind(this))					  
+					 .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+					 .extent([[0, 0], [this.xRange[1], this.yRange[1]]])
+					 .on("zoom", this._ZoomUpdate.bind(this))
+		this.zoom = zoom
 
+		// Append clipping area
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
 		d3.select("#plot2")
-		  	.append("rect")
-		  	.attr("width", this.xRange[1])
-		  	.attr("height", this.yRange[1])
-		  	.style("fill", "none")
-		  	.style("pointer-events", "all")
-		  	.call(zoom)
+		  .append("defs")
+		  .append("group:clipPath")    
+		  .attr("id","clip")
+		  .append("group:rect")
+		  .attr("width", this.xRange[1] )
+		  .attr("height", this.yRange[1] )
+		
+		// Append zoom base
+		d3.select("#plot2")
+		  .append("rect")
+		  .attr("id","zoomBase")
+		  .attr("width", this.xRange[1])
+		  .attr("height", this.yRange[1])
+		  .style("fill", "none")
+		  .style("pointer-events", "all")
+		  .call(zoom)
 		//////////////////////////////////////////////////
 
 	}
@@ -445,7 +451,7 @@ export class Plot extends AnimObject{
 	_YAxisLabel(opacity=1){
 		this.foYLabel = this.group.append('foreignObject')
 					       .attr('width',1000) // ad hoc
-						   .attr('height',1000) // ad hoc
+						   .attr('height',100) // ad hoc
 						   .attr("transform",
 						   "translate(" + (this.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
 						   .style('opacity',opacity)
@@ -459,7 +465,7 @@ export class Plot extends AnimObject{
 	_XAxisLabel(opacity=1){
 		this.foXLabel = this.group.append('foreignObject')
 					        .attr('width',1000) // ad hoc
-						    .attr('height',1000) // ad hoc
+						    .attr('height',100) // ad hoc
 						    .attr("transform",
 						   		"translate(" + (this.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.yRange[1] + this.xLabelCorrector[1] ) + ")")
 							.style('opacity',opacity)		
@@ -648,5 +654,77 @@ export class Plot extends AnimObject{
 		})	  									
 
 	}
+
+	ActivateZoom({delay, duration} = {}){
+
+		d3.timeout(() => {
+
+			let zoom = this.zoom
+
+			let pixelSpaceXStart = this.xScale.range()[0]
+			let pixelSpaceXEnd 	 = this.xScale.range()[1]
+			let pixelSpaceYStart = this.yScale.range()[1]			
+			let pixelSpaceYEnd 	 = this.yScale.range()[0]			
+			
+			let dataSpaceXStartOld  = this.xScale.domain()[0]			
+			let dataSpaceXEndOld 	= this.xScale.domain()[1]
+			let dataSpaceYStartOld  = this.yScale.domain()[0]		
+			let dataSpaceYEndOld    = this.yScale.domain()[1]			
+
+			let dataSpaceXStartNew  = -5
+			let dataSpaceXEndNew	= 5
+			let dataSpaceYStartNew  = -8		
+			let dataSpaceYEndNew    = 6		
+
+			let oldScale = d3.zoomTransform(zoom).k
+			let newScale = 1.5
+			
+			let pixelSpaceCenter = [(pixelSpaceXEnd-pixelSpaceXStart) / 2, (pixelSpaceYEnd-pixelSpaceYStart) / 2]
+			let dataSpaceCenter  = [this.xScale.invert((pixelSpaceXEnd-pixelSpaceXStart)/2) , this.yScale.invert((pixelSpaceYEnd-pixelSpaceYStart)/ 2)]			
+
+			let dataSpaceFocus  = [0,-2]
+			let pixelSpaceFocus  = [this.xScale(dataSpaceFocus[0]),this.yScale(dataSpaceFocus[1])]			
+
+			let pixelSpaceDiff = [pixelSpaceFocus[0] - pixelSpaceCenter[0], pixelSpaceFocus[1] - pixelSpaceCenter[1]]
+
+
+
+			let zoomTransform = d3.zoomIdentity
+								  .translate(10, 10)
+								  .scale(2.2)
+								  //.scale((pixelSpaceXEnd - pixelSpaceXStart) /
+								  //		 (this.xScale(dataSpaceXEndNew) - this.xScale(dataSpaceXStartNew)) )
+								  //.translate(-this.xScale(dataSpaceXStartNew), 0)
+								  //.scale(newScale)
+								  //.translate(
+								//	 pixelSpaceCenter[0] + pixelSpaceDiff[0] / oldScale * newScale, 
+								//	 pixelSpaceCenter[1] + pixelSpaceDiff[1] / oldScale * newScale)							  
+		
+			d3.select("#zoomBase")
+			  .transition()
+			  .duration(duration)
+			  .ease(d3.easeLinear)
+			  .call(zoom.transform, zoomTransform)
+
+		},delay)
+
+	}
+
+	ResetZoom({delay, duration} = {}){
+
+		d3.timeout(() => {
+
+			let zoom = this.zoom
+			let zoomTransform = d3.zoomIdentity
+		
+			d3.select("#zoomBase")
+			  .transition()
+			  .duration(duration)
+			  .ease(d3.easeLinear)
+			  .call(zoom.transform, zoomTransform)
+
+		},delay)
+
+	}	
 
 }

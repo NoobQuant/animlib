@@ -36,21 +36,15 @@
 
     /*********************************
     Auxiliaries
-    *********************************/
-    function pseudorandom(seed) {
-        // https://stackoverflow.com/a/19303725/7037299
-        //let seed = 1
-        let x = Math.sin(seed++) * 10000
-        return x - Math.floor(x)
-    }    
+    *********************************/  
     function getRandomIntInclusive(dd, seed) {
       let min = Math.ceil(dd[0])
       let max = Math.floor(dd[1])
-      return Math.floor(pseudorandom(seed) * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+      return Math.floor(Math.random(seed) * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
     }
     function CreateScatterData(d){
         let scatterData = []
-        for (let i=1;i<=10;i++) {
+        for (let i=1;i<=30;i++) {
           scatterData.push({"x": getRandomIntInclusive(d.x, i),  "y": getRandomIntInclusive(d.y, i), "color": NQColors.orange, "r": 10})
         }
         return scatterData  
@@ -110,16 +104,16 @@
 
     // Scatter plot
     let paramsScatter1 = {
-       "data"        : CreateScatterData({'x':[5,7], 'y':[1,6]})
+       "data"        : CreateScatterData({'x':[-9,19], 'y':[-8,8]})
       ,"id"          : "scatter1"
       ,"strokeWidth" : 4
     }    
     let params2 = {
-       "pos"                : [[150,150]]
+       "pos"                : [[100,100]]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,9]      
-      ,"xDomain"            : [4,8]
+      ,"yDomain"            : [-10,10]      
+      ,"xDomain"            : [-10,20]
       ,"id"                 : "plot2"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -169,6 +163,13 @@
     timing = timing + 0
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})    
+
+
+    //timing = timing + 1500
+    //plot2.ActivateZoom({delay:timing, duration:1000})
+
+    //timing = timing + 1500
+    //plot2.ResetZoom({delay:timing, duration:2000})    
 
     //timing = timing + 1500
     //let newAxisParams = {"yDomain": [3,9], "xDomain": [0,11]} 
