@@ -6,6 +6,9 @@
   <!-- d3-->
   <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
 
+  <!-- temporary d3-xyzoom-->
+  <script src="http://localhost:8000/d3-xyzoom-1.5.0/build/d3-xyzoom.min.js"></script>  
+
   <!-- Load data from json-->
   <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
 
@@ -165,8 +168,8 @@
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})    
 
 
-    //timing = timing + 1500
-    //plot2.ActivateZoom({delay:timing, duration:1000})
+    timing = timing + 1500
+    plot2.ActivateZoom({delay:timing, duration:1000})
 
     //timing = timing + 1500
     //plot2.ResetZoom({delay:timing, duration:2000})    

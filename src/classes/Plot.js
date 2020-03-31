@@ -125,10 +125,17 @@ export class Plot extends AnimObject{
 		// TESTING FOR ZOOM
 		
 		// Create zoom behavior
-		let zoom = d3.zoom(this)
-					 .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-					 .extent([[0, 0], [this.xRange[1], this.yRange[1]]])
-					 .on("zoom", this._ZoomUpdate.bind(this))
+		//let zoom = d3.zoom(this)
+		//			 .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+		//			 .extent([[0, 0], [this.xRange[1], this.yRange[1]]])
+		//			 .on("zoom", this._ZoomUpdate.bind(this))
+
+		let zoom = d3.xyzoom(this)
+					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
+					 .scaleExtent([[0.5, 20], [0.5, 20]])
+					 //.scaleRatio([1, 1])
+					 .on('zoom', this._ZoomUpdate.bind(this))
+
 		this.zoom = zoom
 
 		// Append clipping area
@@ -148,7 +155,7 @@ export class Plot extends AnimObject{
 		  .attr("width", this.xRange[1])
 		  .attr("height", this.yRange[1])
 		  .style("fill", "none")
-		  .style("pointer-events", "all")
+		  //.style("pointer-events", "all")
 		  .call(zoom)
 		//////////////////////////////////////////////////
 
@@ -661,37 +668,54 @@ export class Plot extends AnimObject{
 
 			let zoom = this.zoom
 
-			let pixelSpaceXStart = this.xScale.range()[0]
-			let pixelSpaceXEnd 	 = this.xScale.range()[1]
-			let pixelSpaceYStart = this.yScale.range()[1]			
-			let pixelSpaceYEnd 	 = this.yScale.range()[0]			
 			
 			let dataSpaceXStartOld  = this.xScale.domain()[0]			
 			let dataSpaceXEndOld 	= this.xScale.domain()[1]
 			let dataSpaceYStartOld  = this.yScale.domain()[0]		
 			let dataSpaceYEndOld    = this.yScale.domain()[1]			
 
-			let dataSpaceXStartNew  = -5
-			let dataSpaceXEndNew	= 5
-			let dataSpaceYStartNew  = -8		
-			let dataSpaceYEndNew    = 6		
+			let dataSpaceXStartNew  = 0
+			let dataSpaceXEndNew	= 20
+			let dataSpaceYStartNew  = -10		
+			let dataSpaceYEndNew    = 10
 
-			let oldScale = d3.zoomTransform(zoom).k
-			let newScale = 1.5
+
+
+			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartOld)
+			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndOld)
+
+			//let pixelSpaceYStartOld  = this.yScale(dataSpaceYStartOld)			
+			//let pixelSpaceYEndOld 	 = this.yScale(dataSpaceYEndOld)
+			// Inverse y
+			let pixelSpaceYEndOld  = this.yScale(dataSpaceYStartOld)			
+			let pixelSpaceYStartOld 	 = this.yScale(dataSpaceYEndOld)
+
+			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartNew)
+			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndNew)
 			
-			let pixelSpaceCenter = [(pixelSpaceXEnd-pixelSpaceXStart) / 2, (pixelSpaceYEnd-pixelSpaceYStart) / 2]
-			let dataSpaceCenter  = [this.xScale.invert((pixelSpaceXEnd-pixelSpaceXStart)/2) , this.yScale.invert((pixelSpaceYEnd-pixelSpaceYStart)/ 2)]			
+			//let pixelSpaceYStartNew  = this.yScale(dataSpaceYStartNew)			
+			//let pixelSpaceYEndNew 	 = this.yScale(dataSpaceYEndNew)
+			// Inverse y
+			let pixelSpaceYEndNew  = this.yScale(dataSpaceYStartNew)			
+			let pixelSpaceYStartNew 	 = this.yScale(dataSpaceYEndNew)			
 
-			let dataSpaceFocus  = [0,-2]
-			let pixelSpaceFocus  = [this.xScale(dataSpaceFocus[0]),this.yScale(dataSpaceFocus[1])]			
-
-			let pixelSpaceDiff = [pixelSpaceFocus[0] - pixelSpaceCenter[0], pixelSpaceFocus[1] - pixelSpaceCenter[1]]
+			
 
 
+			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
+			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
 
-			let zoomTransform = d3.zoomIdentity
-								  .translate(10, 10)
-								  .scale(2.2)
+			// Somwthing wrong with scales!!! CONTINUE HERE!!!
+			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
+			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
+
+
+			//let zoomTransform = d3.zoomIdentity
+			let zoomTransform = d3.xyzoomIdentity			
+								  //.translate(10, 10)
+								  //.scale(2,2)
+								  .translate(-tx, -ty)
+								  .scale(kx,ky)								  
 								  //.scale((pixelSpaceXEnd - pixelSpaceXStart) /
 								  //		 (this.xScale(dataSpaceXEndNew) - this.xScale(dataSpaceXStartNew)) )
 								  //.translate(-this.xScale(dataSpaceXStartNew), 0)
