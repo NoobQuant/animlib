@@ -662,93 +662,64 @@ export class Plot extends AnimObject{
 
 	}
 
-	ActivateZoom({delay, duration} = {}){
+	ActivateZoom({delay, duration, zoomParams = {}}={}){
 
 		d3.timeout(() => {
 
+			let type 		    = zoomParams.type    || "activate"
+			// These now rely on the assumption that scales are updated!
+			let xDomain 		= zoomParams.xDomain || this.xScale.domain()			
+			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
+			let zoomEase		= zoomParams.zoomEase || d3.easeLinear
+
 			let zoom = this.zoom
 
-			
 			let dataSpaceXStartOld  = this.xScale.domain()[0]			
 			let dataSpaceXEndOld 	= this.xScale.domain()[1]
 			let dataSpaceYStartOld  = this.yScale.domain()[0]		
-			let dataSpaceYEndOld    = this.yScale.domain()[1]			
-
-			let dataSpaceXStartNew  = 0
-			let dataSpaceXEndNew	= 20
-			let dataSpaceYStartNew  = -10		
-			let dataSpaceYEndNew    = 10
-
+			let dataSpaceYEndOld    = this.yScale.domain()[1]
+			let dataSpaceXStartNew  = xDomain[0]
+			let dataSpaceXEndNew	= xDomain[1]
+			let dataSpaceYStartNew  = yDomain[0]
+			let dataSpaceYEndNew    = yDomain[1]
 
 
-			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartOld)
-			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndOld)
-
-			//let pixelSpaceYStartOld  = this.yScale(dataSpaceYStartOld)			
-			//let pixelSpaceYEndOld 	 = this.yScale(dataSpaceYEndOld)
-			// Inverse y
-			let pixelSpaceYEndOld  = this.yScale(dataSpaceYStartOld)			
-			let pixelSpaceYStartOld 	 = this.yScale(dataSpaceYEndOld)
-
-			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartNew)
-			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndNew)
-			
-			//let pixelSpaceYStartNew  = this.yScale(dataSpaceYStartNew)			
-			//let pixelSpaceYEndNew 	 = this.yScale(dataSpaceYEndNew)
-			// Inverse y
-			let pixelSpaceYEndNew  = this.yScale(dataSpaceYStartNew)			
-			let pixelSpaceYStartNew 	 = this.yScale(dataSpaceYEndNew)			
-
-			
-
-
+			// Notice the pixel space values are "inverted" as per what is "new" and what is "old"
+			// This means we need to "start" the zoom from value we want to be the resulting domain limit
+			// Notice also inverted y-axis values (zero is in top-left corner)
+			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartOld)
+			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndOld)
+			let pixelSpaceYEndNew    = this.yScale(dataSpaceYStartOld)			
+			let pixelSpaceYStartNew  = this.yScale(dataSpaceYEndOld)
+			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartNew)
+			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndNew)
+			let pixelSpaceYEndOld    = this.yScale(dataSpaceYStartNew)			
+			let pixelSpaceYStartOld  = this.yScale(dataSpaceYEndNew)
 			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
 			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
-
-			// Somwthing wrong with scales!!! CONTINUE HERE!!!
 			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
 			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
 
+			if (type=="reset"){
+				tx = 0; ty = 0; kx = 1; ky = 1
+			}
 
-			//let zoomTransform = d3.zoomIdentity
 			let zoomTransform = d3.xyzoomIdentity			
-								  //.translate(10, 10)
-								  //.scale(2,2)
-								  .translate(-tx, -ty)
-								  .scale(kx,ky)								  
-								  //.scale((pixelSpaceXEnd - pixelSpaceXStart) /
-								  //		 (this.xScale(dataSpaceXEndNew) - this.xScale(dataSpaceXStartNew)) )
-								  //.translate(-this.xScale(dataSpaceXStartNew), 0)
-								  //.scale(newScale)
-								  //.translate(
-								//	 pixelSpaceCenter[0] + pixelSpaceDiff[0] / oldScale * newScale, 
-								//	 pixelSpaceCenter[1] + pixelSpaceDiff[1] / oldScale * newScale)							  
+								  .translate(tx, ty)
+								  .scale(kx,ky)
 		
 			d3.select("#zoomBase")
 			  .transition()
 			  .duration(duration)
-			  .ease(d3.easeLinear)
+			  .ease(zoomEase)
 			  .call(zoom.transform, zoomTransform)
+
+
+			// Axis information needs update now!
 
 		},delay)
 
 	}
-
-	ResetZoom({delay, duration} = {}){
-
-		d3.timeout(() => {
-
-			let zoom = this.zoom
-			let zoomTransform = d3.zoomIdentity
-		
-			d3.select("#zoomBase")
-			  .transition()
-			  .duration(duration)
-			  .ease(d3.easeLinear)
-			  .call(zoom.transform, zoomTransform)
-
-		},delay)
-
-	}	
+	
 
 }

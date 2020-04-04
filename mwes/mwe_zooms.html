@@ -169,10 +169,16 @@
 
 
     timing = timing + 1500
-    plot2.ActivateZoom({delay:timing, duration:1000})
+    let zoomparams = {
+       "yDomain"    : [5,9]
+      ,"xDomain"    : [-10,-8]
+      ,"zoomEase"   : d3.easeCubic
+    }    
+    plot2.ActivateZoom({delay:timing, duration:2000, zoomParams:zoomparams})
 
-    //timing = timing + 1500
-    //plot2.ResetZoom({delay:timing, duration:2000})    
+    timing = timing + 3000
+    plot2.ActivateZoom({delay:timing, duration:2000, zoomParams:{"type":"reset"}})
+ 
 
     //timing = timing + 1500
     //let newAxisParams = {"yDomain": [3,9], "xDomain": [0,11]} 
