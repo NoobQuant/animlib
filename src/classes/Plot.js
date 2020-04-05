@@ -123,17 +123,10 @@ export class Plot extends AnimObject{
 
 		//////////////////////////////////////////////////
 		// TESTING FOR ZOOM
-		
-		// Create zoom behavior
-		//let zoom = d3.zoom(this)
-		//			 .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-		//			 .extent([[0, 0], [this.xRange[1], this.yRange[1]]])
-		//			 .on("zoom", this._ZoomUpdate.bind(this))
 
 		let zoom = d3.xyzoom(this)
 					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
 					 .scaleExtent([[0.5, 20], [0.5, 20]])
-					 //.scaleRatio([1, 1])
 					 .on('zoom', this._ZoomUpdate.bind(this))
 
 		this.zoom = zoom
@@ -155,7 +148,6 @@ export class Plot extends AnimObject{
 		  .attr("width", this.xRange[1])
 		  .attr("height", this.yRange[1])
 		  .style("fill", "none")
-		  //.style("pointer-events", "all")
 		  .call(zoom)
 		//////////////////////////////////////////////////
 
@@ -485,24 +477,23 @@ export class Plot extends AnimObject{
 
 	_UpdateAxes(delay, duration, type="update"){
 
-		let newXScale
-		let newYScale
+
 		if (type=="update"){
 
-			newXScale = this.xScale.copy().range(this.xRange).domain(this.xDomain)
-			newYScale = this.yScale.copy().range(this.yRange.slice().reverse()).domain(this.yDomain)
+			this.xScale = this.xScale.copy().range(this.xRange).domain(this.xDomain)
+			this.yScale = this.yScale.copy().range(this.yRange.slice().reverse()).domain(this.yDomain)
 			
+			this.xAxis.scale(this.xScale)
+			this.yAxis.scale(this.yScale)
+
 		} else if(type=="zoom"){
-			newXScale = d3.event.transform.rescaleX(this.xScale)
-			newYScale = d3.event.transform.rescaleY(this.yScale)
 
+			this.zoomedXScale = d3.event.transform.rescaleX(this.xScale)
+			this.zoomedYScale = d3.event.transform.rescaleY(this.yScale)
+						
+			this.xAxis.scale(this.zoomedXScale)
+			this.yAxis.scale(this.zoomedYScale)		
 		}
-		// For some unexplainable reason, cannot update this.xScale/this.yScale -> zoom blows up!
-		this.newXScale = newXScale
-		this.newYScale = newYScale
-
-		this.xAxis.scale(newXScale)
-		this.yAxis.scale(newYScale)		
 
 		// Update y axis
 		this.yAxisGroup
@@ -578,6 +569,8 @@ export class Plot extends AnimObject{
 				.style("opacity",1)
 		
 		// Update line function bound to the axes
+		// This is problematic if scales change and this change is not reflected
+		// in xScale and yScale!
 		let that = this
 		this.lineFunction = d3.line()
 							 .x(function(d) {return that.xScale(d[0])})
@@ -657,12 +650,12 @@ export class Plot extends AnimObject{
 		d3.select("#scatter1")
 			.selectAll("circle")
 			.attr("transform", function(d) {	
-				return " translate(" + (that.newXScale(d.x)) +","+ (that.newYScale(d.y)) +")"				
+				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
 		})	  									
 
 	}
 
-	ActivateZoom({delay, duration, zoomParams = {}}={}){
+	Zoom({delay, duration, zoomParams = {}}={}){
 
 		d3.timeout(() => {
 
@@ -683,7 +676,6 @@ export class Plot extends AnimObject{
 			let dataSpaceYStartNew  = yDomain[0]
 			let dataSpaceYEndNew    = yDomain[1]
 
-
 			// Notice the pixel space values are "inverted" as per what is "new" and what is "old"
 			// This means we need to "start" the zoom from value we want to be the resulting domain limit
 			// Notice also inverted y-axis values (zero is in top-left corner)
@@ -699,7 +691,10 @@ export class Plot extends AnimObject{
 			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
 			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
 			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
-
+			
+			// If type reset, override calculated values with identity zoom tranformation.
+			// How does this know which is "identity"? Must be somehow connected to original scales
+			// of the plot!
 			if (type=="reset"){
 				tx = 0; ty = 0; kx = 1; ky = 1
 			}
@@ -713,9 +708,6 @@ export class Plot extends AnimObject{
 			  .duration(duration)
 			  .ease(zoomEase)
 			  .call(zoom.transform, zoomTransform)
-
-
-			// Axis information needs update now!
 
 		},delay)
 

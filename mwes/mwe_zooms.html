@@ -4,10 +4,10 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <!-- d3-->
-  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>  
 
-  <!-- temporary d3-xyzoom-->
-  <script src="http://localhost:8000/d3-xyzoom-1.5.0/build/d3-xyzoom.min.js"></script>  
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
 
   <!-- Load data from json-->
   <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
@@ -69,47 +69,54 @@
     let svg1 = new Svg(svg1params)
     svg1.Draw({delay:0, duration:0})
     
-    // line plot
-    let params1 = {
-       "pos"                : [[0,0]]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,9]
-      ,"id"                 : "plot1"
-      ,"yLabel"             : "$\\alpha + \\text{Time}$"
-      ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"
-      ,"svgid"              :"svg1"
-    }
-    let plot1 = new Plot(params1)
-    let lineDataParams1 = {
-         "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata1"         
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
-    }
-    let lineDataParams1_copy = {
-         "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata1_copy"         
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.yellow
-        ,"drawEase"    : d3.easeCubic
-    }    
-    let lineDataParams2 = {
-         "data"        : lineDataObject["y3"]
-        ,"id"          : "linedata2"
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
-    }
+    //// line plot
+    //let params1 = {
+    //   "pos"                : [[0,0]]
+    //  ,"xRange"             : [0,1400]
+    //  ,"yRange"             : [0,770]
+    //  ,"yDomain"            : [0,10]
+    //  ,"xDomain"            : [0,9]
+    //  ,"id"                 : "plot1"
+    //  ,"yLabel"             : "$\\alpha + \\text{Time}$"
+    //  ,"yLabelSize"         : 30
+    //  ,"xLabel"             : "dd"
+    //  ,"svgid"              :"svg1"
+    //}
+    //let plot1 = new Plot(params1)
+    //let lineDataParams1 = {
+    //     "data"        : lineDataObject["y1"]
+    //    ,"id"          : "linedata1"         
+    //    ,"strokeWidth" : 3
+    //    ,"strokeColor" : NQColors.orange
+    //    ,"drawEase"    : d3.easeCubic
+    //}
+    //let lineDataParams1_copy = {
+    //     "data"        : lineDataObject["y1"]
+    //    ,"id"          : "linedata1_copy"         
+    //    ,"strokeWidth" : 3
+    //    ,"strokeColor" : NQColors.yellow
+    //    ,"drawEase"    : d3.easeCubic
+    //}    
+    //let lineDataParams2 = {
+    //     "data"        : lineDataObject["y3"]
+    //    ,"id"          : "linedata2"
+    //    ,"strokeWidth" : 3
+    //    ,"strokeColor" : NQColors.orange
+    //    ,"drawEase"    : d3.easeCubic
+    //}
 
-    // Scatter plot
+    // Scatter + line plot
     let paramsScatter1 = {
        "data"        : CreateScatterData({'x':[-9,19], 'y':[-8,8]})
       ,"id"          : "scatter1"
       ,"strokeWidth" : 4
+    }
+    let lineDataParams3 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata3"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
     }    
     let params2 = {
        "pos"                : [[100,100]]
@@ -166,6 +173,7 @@
     timing = timing + 0
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})    
+    plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams3})
 
 
     timing = timing + 1500
@@ -174,10 +182,10 @@
       ,"xDomain"    : [-10,-8]
       ,"zoomEase"   : d3.easeCubic
     }    
-    plot2.ActivateZoom({delay:timing, duration:2000, zoomParams:zoomparams})
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams})
 
     timing = timing + 3000
-    plot2.ActivateZoom({delay:timing, duration:2000, zoomParams:{"type":"reset"}})
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:{"type":"reset"}})
  
 
     //timing = timing + 1500
