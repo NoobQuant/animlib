@@ -1,8 +1,25 @@
 # animlib
 
-Library for recording browser-based animations. Builds heavily on [d3](https://github.com/d3/d3). Recording of animations is performed using [puppeteer](https://github.com/GoogleChrome/puppeteer) packgage of Node.js, [ffmpeg](https://ffmpeg.org), and some trickery dealing with d3-transitions and internal timer of the browser (inspired by examples in [here](https://github.com/veltman/gifs) and [here](https://roadtolarissa.com/d3-mp4/)).
+Library for recording browser-based animations.
 
-Used mainly for my own projects. That is, some parts of the program can be sloppily written. Ships with no warranty, so usage at one's own risk! 
+Builds heavily on [d3](https://github.com/d3/d3). Recording of animations is performed using library [puppeteer](https://github.com/GoogleChrome/puppeteer) of Node.js, [ffmpeg](https://ffmpeg.org), and some trickery dealing with d3-transitions and internal timer of the browser (inspired by examples in [here](https://github.com/veltman/gifs) and [here](https://roadtolarissa.com/d3-mp4/)).
+
+Used mainly for my own projects. That is, some parts of the program can be sloppily written. Usage at one's own risk!
+
+Copyright (c) 2020 NoobQuant/Ville Voutilainen.
+
+## Dependencies
+
+### Animations
+ 
+ - [d3](https://github.com/d3/d3) v5.15.1. Stored under *src/dependencies/d3*.
+ - [d3-xyzoom](https://github.com/wiremind/d3-xyzoom) v1.5.0. Stored under *src/dependencies/d3-xyzoom*.
+
+### Recording
+
+Have following installed on your computer:
+ - [ffmpeg](https://ffmpeg.org)
+ - Node.js with libary [puppeteer](https://github.com/GoogleChrome/puppeteer)
 
 ## How to use:
 

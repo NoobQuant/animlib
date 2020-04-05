@@ -1,9 +1,16 @@
 # Exclude all ipynb checkpoint files
 .ipynb_checkpoints/
+
 # Exclude all vscode specific files
 .vscode/
+
 # Exclude all .pyc/__pycahche__ files
 *.pyc
 __pycache__/*
+
 # exclude contents of png folder
 png/*
+
+# exclude content of dependencies folder
+src/dependencies/*
+!src/dependencies/info.txt
