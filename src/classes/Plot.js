@@ -109,9 +109,7 @@ export class Plot extends AnimObject{
 		super.Draw({delay:delay, duration:duration, type:type})
 
 		// Define a line function for to be used with these axes
-		let lineFunction = d3.line()
-							 .x(function(d) {return xScale(d[0])})
-							 .y(function(d) {return yScale(d[1])})
+		this._DefineLineData()
 
 		this.xScale    	  = xScale
 		this.yScale    	  = yScale
@@ -119,17 +117,11 @@ export class Plot extends AnimObject{
 		this.yAxis 		  = yAxis
 		this.xAxisGroup   = xAxisGroup		
 		this.yAxisGroup   = yAxisGroup 
-		this.lineFunction = lineFunction
+
 
 		//////////////////////////////////////////////////
 		// TESTING FOR ZOOM
-
-		let zoom = d3.xyzoom(this)
-					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
-					 .scaleExtent([[0.5, 20], [0.5, 20]])
-					 .on('zoom', this._ZoomUpdate.bind(this))
-
-		this.zoom = zoom
+		this._DefineZoom()
 
 		// Append clipping area
 		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
@@ -148,7 +140,7 @@ export class Plot extends AnimObject{
 		  .attr("width", this.xRange[1])
 		  .attr("height", this.yRange[1])
 		  .style("fill", "none")
-		  .call(zoom)
+		  .call(this.zoom)
 		//////////////////////////////////////////////////
 
 	}
@@ -384,6 +376,7 @@ export class Plot extends AnimObject{
 			// Plot object group
 			let vis = this.group.append("g")
 								.attr("id", plotObjParams.id)
+								.attr("clip-path", "url(#clip)") // needed for zoom clipping!								
 
 			// Draw line
 			let linepath =  vis.append("path")
@@ -492,7 +485,7 @@ export class Plot extends AnimObject{
 			this.zoomedYScale = d3.event.transform.rescaleY(this.yScale)
 						
 			this.xAxis.scale(this.zoomedXScale)
-			this.yAxis.scale(this.zoomedYScale)		
+			this.yAxis.scale(this.zoomedYScale)
 		}
 
 		// Update y axis
@@ -647,13 +640,47 @@ export class Plot extends AnimObject{
 
 		// Update plot object - now only scatter! NEEDS GENERALIZATION!
 		let that = this
-		d3.select("#scatter1")
+
+		// Zoom all scatter circles
+		this.group
 			.selectAll("circle")
 			.attr("transform", function(d) {	
 				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
-		})	  									
+		})
+
+		// Zoom all lines
+		let zoomedLineFunction = d3.line()
+							 .x(function(d) {return that.zoomedXScale(d[0])})
+							 .y(function(d) {return that.zoomedYScale(d[1])})
+		
+		let gg = ["linedata2","linedata3"]
+		gg.forEach((el) => {
+			that.group.select("#"+el)
+			.selectAll("path")
+			.attr("d", zoomedLineFunction(that[el].data))
+		})							 
+
+
+		// Zoom all histograms
 
 	}
+	
+	_DefineZoom(){
+
+		let zoom = d3.xyzoom(this)
+					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
+					 .scaleExtent([[0.5, 20], [0.5, 20]])
+					 .on('zoom', this._ZoomUpdate.bind(this))
+		this.zoom = zoom		
+	}
+
+	_DefineLineData(){
+		let lineFunction = d3.line()
+							 .x(function(d) {return xScale(d[0])})
+							 .y(function(d) {return yScale(d[1])})
+		this.lineFunction = lineFunction
+	}
+
 
 	Zoom({delay, duration, zoomParams = {}}={}){
 
