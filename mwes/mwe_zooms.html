@@ -69,34 +69,34 @@
     let svg1 = new Svg(svg1params)
     svg1.Draw({delay:0, duration:0})
     
-    //// line plot
-    //let params1 = {
-    //   "pos"                : [[0,0]]
-    //  ,"xRange"             : [0,1400]
-    //  ,"yRange"             : [0,770]
-    //  ,"yDomain"            : [0,10]
-    //  ,"xDomain"            : [0,9]
-    //  ,"id"                 : "plot1"
-    //  ,"yLabel"             : "$\\alpha + \\text{Time}$"
-    //  ,"yLabelSize"         : 30
-    //  ,"xLabel"             : "dd"
-    //  ,"svgid"              :"svg1"
-    //}
-    //let plot1 = new Plot(params1)
-    //let lineDataParams1 = {
-    //     "data"        : lineDataObject["y1"]
-    //    ,"id"          : "linedata1"         
-    //    ,"strokeWidth" : 3
-    //    ,"strokeColor" : NQColors.orange
-    //    ,"drawEase"    : d3.easeCubic
-    //}
-    //let lineDataParams1_copy = {
-    //     "data"        : lineDataObject["y1"]
-    //    ,"id"          : "linedata1_copy"         
-    //    ,"strokeWidth" : 3
-    //    ,"strokeColor" : NQColors.yellow
-    //    ,"drawEase"    : d3.easeCubic
-    //}    
+    // line plot
+    let params1 = {
+       "pos"                : [[0,0]]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,10]
+      ,"xDomain"            : [0,9]
+      ,"id"                 : "plot1"
+      ,"yLabel"             : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize"         : 30
+      ,"xLabel"             : "dd"
+      ,"svgid"              :"svg1"
+    }
+    let plot1 = new Plot(params1)
+    let lineDataParams1 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+    let lineDataParams1_copy = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1_copy"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.yellow
+        ,"drawEase"    : d3.easeCubic
+    }    
     let lineDataParams2 = {
          "data"        : lineDataObject["y3"]
         ,"id"          : "linedata2"
@@ -136,7 +136,7 @@
     Notice that line is drawn on  svg1 that originally extends
     over background svg.
     *********************************/
-    /*
+    ///*
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
@@ -167,17 +167,17 @@
     //*/
 
     /*********************************
-    Animate - Zoom in scatter chart
+    Animate - Zoom in chart with scatter and lines
     *********************************/
     ///*
-    timing = timing + 0
+    timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})
     plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})    
-    plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams3})
+    plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
 
-    timing = timing + 1500
+    timing = timing + 2000
     let zoomparams = {
        "yDomain"    : [2,8]
       ,"xDomain"    : [-0,10]
@@ -188,24 +188,6 @@
     timing = timing + 7000
     plot2.Zoom({delay:timing, duration:2000, zoomParams:{"type":"reset"}})
  
-
-    //timing = timing + 1500
-    //let newAxisParams = {"yDomain": [3,9], "xDomain": [0,11]} 
-    //plot2.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1, plotParams:newAxisParams})
-    //*/
-
-    //timing = timing + 1500    
-		//d3.timeout(() => {
-
-
-
-
-		//}, timing)	
-
-
-
-
-
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)
 

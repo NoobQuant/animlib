@@ -6,6 +6,9 @@
   <!-- d3-->
   <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
 
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
   <!-- Load data from json-->
   <script src="../mwes/data/path_data_plotmwe.json" charset="utf-8"></script>
 
@@ -107,7 +110,7 @@
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
-    plot1.DrawLine({delay:timing+300, duration:500, lineParams:lineDataParams1})
+    plot1.DrawLine({delay:timing+300, duration:500, plotObjParams:lineDataParams1})
 
     // Zoom out svg1; etend  x axis and adjust line accordingly 
     timing = timing + 1000
@@ -119,17 +122,17 @@
       }
     })
     let params1_a = {'xDomain': [0, 16], 'xRange': [0, 2300]}
-    plot1.MoveLine({delay:timing, duration:1000, lineParams:lineDataParams1, plotParams:params1_a})
+    plot1.MoveLine({delay:timing, duration:1000, plotObjParams:lineDataParams1, plotParams:params1_a})
     
     // Adjusting x-axis now produces weird truncating effect for the line!
     // Luckily works other way arund (if domain extended, not contracted)
     timing = timing + 2000    
     let params1_b = {'xDomain': [0, 9]}
-    plot1.MoveLine({delay:timing, duration:5000, lineParams:lineDataParams1, plotParams:params1_b})
+    plot1.MoveLine({delay:timing, duration:5000, plotObjParams:lineDataParams1, plotParams:params1_b})
 
     // Seems not to be xScale issue, as new line drawn on the axes comes out as it should
     timing = timing + 6000
-    plot1.DrawLine({delay:timing, duration:10000, lineParams:lineDataParams1_copy})    
+    plot1.DrawLine({delay:timing, duration:10000, plotObjParams:lineDataParams1_copy})    
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)

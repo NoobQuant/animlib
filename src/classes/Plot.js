@@ -14,7 +14,7 @@ export class Plot extends AnimObject{
 
 	Draw({delay, duration, type="default"} = {}){				
 		/* Draws axes 
-		 - lineFunction probably could be moved under DrawLine().
+		 - this._DefineLineData() probably could be moved under DrawLine().
 		   Now it is included here as well as in _UpdateAxes().
 		*/
 	
@@ -109,7 +109,7 @@ export class Plot extends AnimObject{
 		super.Draw({delay:delay, duration:duration, type:type})
 
 		// Define a line function for to be used with these axes
-		this._DefineLineData()
+		this._DefineLineData(this.xScale, this.yScale)		
 
 		this.xScale    	  = xScale
 		this.yScale    	  = yScale
@@ -118,30 +118,8 @@ export class Plot extends AnimObject{
 		this.xAxisGroup   = xAxisGroup		
 		this.yAxisGroup   = yAxisGroup 
 
-
-		//////////////////////////////////////////////////
-		// TESTING FOR ZOOM
+		// Define zoom behaviour for plot
 		this._DefineZoom()
-
-		// Append clipping area
-		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-		d3.select("#plot2")
-		  .append("defs")
-		  .append("group:clipPath")    
-		  .attr("id","clip")
-		  .append("group:rect")
-		  .attr("width", this.xRange[1] )
-		  .attr("height", this.yRange[1] )
-		
-		// Append zoom base
-		d3.select("#plot2")
-		  .append("rect")
-		  .attr("id","zoomBase")
-		  .attr("width", this.xRange[1])
-		  .attr("height", this.yRange[1])
-		  .style("fill", "none")
-		  .call(this.zoom)
-		//////////////////////////////////////////////////
 
 	}
 
@@ -234,6 +212,7 @@ export class Plot extends AnimObject{
 
 			// Define group for bars
 			let bar = this.group.select("#"+plotObjParams.id)
+								.attr("clip-path", "url(#clip)") // needed for zoom clipping!			
 								.selectAll(".bar")							  
 								.data(histogram)
 								
@@ -376,6 +355,7 @@ export class Plot extends AnimObject{
 			// Plot object group
 			let vis = this.group.append("g")
 								.attr("id", plotObjParams.id)
+								.attr("class","plotLine")
 								.attr("clip-path", "url(#clip)") // needed for zoom clipping!								
 
 			// Draw line
@@ -438,6 +418,64 @@ export class Plot extends AnimObject{
 		}, delay)		
 	}
 
+
+	Zoom({delay, duration, zoomParams = {}}={}){
+
+		d3.timeout(() => {
+
+			let type 		    = zoomParams.type    || "activate"
+			// These now rely on the assumption that scales are updated!
+			let xDomain 		= zoomParams.xDomain || this.xScale.domain()			
+			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
+			let zoomEase		= zoomParams.zoomEase || d3.easeLinear
+
+			let zoom = this.zoom
+
+			let dataSpaceXStartOld  = this.xScale.domain()[0]			
+			let dataSpaceXEndOld 	= this.xScale.domain()[1]
+			let dataSpaceYStartOld  = this.yScale.domain()[0]		
+			let dataSpaceYEndOld    = this.yScale.domain()[1]
+			let dataSpaceXStartNew  = xDomain[0]
+			let dataSpaceXEndNew	= xDomain[1]
+			let dataSpaceYStartNew  = yDomain[0]
+			let dataSpaceYEndNew    = yDomain[1]
+
+			// Notice the pixel space values are "inverted" as per what is "new" and what is "old"
+			// This means we need to "start" the zoom from value we want to be the resulting domain limit
+			// Notice also inverted y-axis values (zero is in top-left corner)
+			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartOld)
+			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndOld)
+			let pixelSpaceYEndNew    = this.yScale(dataSpaceYStartOld)			
+			let pixelSpaceYStartNew  = this.yScale(dataSpaceYEndOld)
+			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartNew)
+			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndNew)
+			let pixelSpaceYEndOld    = this.yScale(dataSpaceYStartNew)			
+			let pixelSpaceYStartOld  = this.yScale(dataSpaceYEndNew)
+			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
+			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
+			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
+			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
+			
+			// If type reset, override calculated values with identity zoom tranformation.
+			// How does this know which is "identity"? Must be somehow connected to original scales
+			// of the plot!
+			if (type=="reset"){
+				tx = 0; ty = 0; kx = 1; ky = 1
+			}
+
+			let zoomTransform = d3.xyzoomIdentity			
+								  .translate(tx, ty)
+								  .scale(kx,ky)
+		
+			d3.select("#zoomBase")
+			  .transition()
+			  .duration(duration)
+			  .ease(zoomEase)
+			  .call(zoom.transform, zoomTransform)
+
+		},delay)
+
+	}
 
 
 	_YAxisLabel(opacity=1){
@@ -564,10 +602,7 @@ export class Plot extends AnimObject{
 		// Update line function bound to the axes
 		// This is problematic if scales change and this change is not reflected
 		// in xScale and yScale!
-		let that = this
-		this.lineFunction = d3.line()
-							 .x(function(d) {return that.xScale(d[0])})
-							 .y(function(d) {return that.yScale(d[1])})						
+		this._DefineLineData(this.xScale, this.yScale)
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
 		AddMathJax(d3.select('#'+this.svgid))
@@ -634,6 +669,41 @@ export class Plot extends AnimObject{
 		
 	}
 
+	_DefineLineData(xScale, yScale){
+		let lineFunction = d3.line()
+							 .x(function(d) {return xScale(d[0])})
+							 .y(function(d) {return yScale(d[1])})
+		this.lineFunction = lineFunction
+	}	
+	
+	_DefineZoom(){
+
+		let zoom = d3.xyzoom(this)
+					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
+					 .scaleExtent([[0.5, 20], [0.5, 20]]) // STILL AD-HOC!!!!
+					 .on('zoom', this._ZoomUpdate.bind(this))
+		this.zoom = zoom
+
+		// Append clipping area
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+		d3.select("#"+this.id)
+		  .append("defs")
+		  .append("group:clipPath")    
+		  .attr("id","clip")
+		  .append("group:rect")
+		  .attr("width", this.xRange[1] )
+		  .attr("height", this.yRange[1] )
+		
+		// Append zoom base
+		d3.select("#"+this.id)
+		  .append("rect")
+		  .attr("id","zoomBase")
+		  .attr("width", this.xRange[1])
+		  .attr("height", this.yRange[1])
+		  .style("fill", "none")
+		  .call(this.zoom)
+	}
+
 	_ZoomUpdate(){
 	
 		this._UpdateAxes(0, 0, "zoom")
@@ -648,97 +718,19 @@ export class Plot extends AnimObject{
 				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
 		})
 
-		// Zoom all lines
+		// Zoom all lines (only in class plotLine)
 		let zoomedLineFunction = d3.line()
 							 .x(function(d) {return that.zoomedXScale(d[0])})
 							 .y(function(d) {return that.zoomedYScale(d[1])})
-		
-		let gg = ["linedata2","linedata3"]
+		let gg = this.group.selectAll(".plotLine")._groups[0]		
 		gg.forEach((el) => {
-			that.group.select("#"+el)
+			that.group.select("#"+el.id)
 			.selectAll("path")
-			.attr("d", zoomedLineFunction(that[el].data))
+			.attr("d", zoomedLineFunction(that[el.id].data))
 		})							 
-
 
 		// Zoom all histograms
 
-	}
-	
-	_DefineZoom(){
-
-		let zoom = d3.xyzoom(this)
-					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
-					 .scaleExtent([[0.5, 20], [0.5, 20]])
-					 .on('zoom', this._ZoomUpdate.bind(this))
-		this.zoom = zoom		
-	}
-
-	_DefineLineData(){
-		let lineFunction = d3.line()
-							 .x(function(d) {return xScale(d[0])})
-							 .y(function(d) {return yScale(d[1])})
-		this.lineFunction = lineFunction
-	}
-
-
-	Zoom({delay, duration, zoomParams = {}}={}){
-
-		d3.timeout(() => {
-
-			let type 		    = zoomParams.type    || "activate"
-			// These now rely on the assumption that scales are updated!
-			let xDomain 		= zoomParams.xDomain || this.xScale.domain()			
-			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
-			let zoomEase		= zoomParams.zoomEase || d3.easeLinear
-
-			let zoom = this.zoom
-
-			let dataSpaceXStartOld  = this.xScale.domain()[0]			
-			let dataSpaceXEndOld 	= this.xScale.domain()[1]
-			let dataSpaceYStartOld  = this.yScale.domain()[0]		
-			let dataSpaceYEndOld    = this.yScale.domain()[1]
-			let dataSpaceXStartNew  = xDomain[0]
-			let dataSpaceXEndNew	= xDomain[1]
-			let dataSpaceYStartNew  = yDomain[0]
-			let dataSpaceYEndNew    = yDomain[1]
-
-			// Notice the pixel space values are "inverted" as per what is "new" and what is "old"
-			// This means we need to "start" the zoom from value we want to be the resulting domain limit
-			// Notice also inverted y-axis values (zero is in top-left corner)
-			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartOld)
-			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndOld)
-			let pixelSpaceYEndNew    = this.yScale(dataSpaceYStartOld)			
-			let pixelSpaceYStartNew  = this.yScale(dataSpaceYEndOld)
-			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartNew)
-			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndNew)
-			let pixelSpaceYEndOld    = this.yScale(dataSpaceYStartNew)			
-			let pixelSpaceYStartOld  = this.yScale(dataSpaceYEndNew)
-			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
-			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
-			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
-			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
-			
-			// If type reset, override calculated values with identity zoom tranformation.
-			// How does this know which is "identity"? Must be somehow connected to original scales
-			// of the plot!
-			if (type=="reset"){
-				tx = 0; ty = 0; kx = 1; ky = 1
-			}
-
-			let zoomTransform = d3.xyzoomIdentity			
-								  .translate(tx, ty)
-								  .scale(kx,ky)
-		
-			d3.select("#zoomBase")
-			  .transition()
-			  .duration(duration)
-			  .ease(zoomEase)
-			  .call(zoom.transform, zoomTransform)
-
-		},delay)
-
-	}
-	
+	}	
 
 }
