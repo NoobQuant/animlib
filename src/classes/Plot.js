@@ -49,6 +49,9 @@ export class Plot extends AnimObject{
 			var yScale = d3.scaleLinear().range(that.yRange.slice().reverse()).domain(this.yDomain)
 		}		
 
+		this.xScale    	  = xScale
+		this.yScale    	  = yScale
+
 		// Axis calls
 		let xAxis = d3.axisBottom().scale(xScale)
 		let yAxis = d3.axisLeft().scale(yScale)
@@ -104,22 +107,42 @@ export class Plot extends AnimObject{
 
 		// y axis label
 		this._YAxisLabel()
-		
+
+		this.xAxis 		  = xAxis
+		this.yAxis 		  = yAxis
+		this.xAxisGroup   = xAxisGroup		
+		this.yAxisGroup   = yAxisGroup 		
+
 		// Show plot based on AnimObject Draw
 		super.Draw({delay:delay, duration:duration, type:type})
 
 		// Define a line function for to be used with these axes
 		this._DefineLineData(this.xScale, this.yScale)		
 
-		this.xScale    	  = xScale
-		this.yScale    	  = yScale
-		this.xAxis 		  = xAxis
-		this.yAxis 		  = yAxis
-		this.xAxisGroup   = xAxisGroup		
-		this.yAxisGroup   = yAxisGroup 
-
+		// Append plot base area, equal to xRange and yRange.
+		// Zooming behavior will use this area as base.		
+		// Append same size clip area. All object on plot
+		// will be clipped relative to this area.
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+		d3.select("#"+this.id)
+		  .append("group:clipPath")
+		  .attr("id","clip")
+		  .append("rect")
+		  .attr("class","rect")		  
+		  .attr("width", this.xRange[1])
+		  .attr("height", this.yRange[1])
+		d3.select("#"+this.id)
+		  .append("g")    
+		  .attr("id","baseAreaGroup")
+		  .append("rect")
+		  .attr("id","baseArea")
+		  .attr("class","rect")
+		  .attr("width", this.xRange[1] )
+		  .attr("height", this.yRange[1] )
+		  .style("fill", "none")
+		  
 		// Define zoom behaviour for plot
-		this._DefineZoom()
+		this._DefineZoom()		  
 
 	}
 
@@ -467,7 +490,7 @@ export class Plot extends AnimObject{
 								  .translate(tx, ty)
 								  .scale(kx,ky)
 		
-			d3.select("#zoomBase")
+			d3.select("#baseArea")
 			  .transition()
 			  .duration(duration)
 			  .ease(zoomEase)
@@ -516,6 +539,55 @@ export class Plot extends AnimObject{
 			
 			this.xAxis.scale(this.xScale)
 			this.yAxis.scale(this.yScale)
+
+			// Re-define base area and clip
+			let mydata = [{"width":this.xRange[1], "height":this.yRange[1], "fill":"none", "id":"baseArea"}]
+			const t = d3.transition()
+								.delay(delay)			
+								 .duration(duration)
+								 	
+			this.group.select("#baseAreaGroup")
+				.selectAll(".rect")
+				.data(mydata, function(d) { return d })
+				.join(
+					enter => enter.append("rect")
+						.attr("class","rect")
+						.attr("id", d => d.id)
+						.attr("fill", d => d.fill)
+					.call(enter => enter.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					update => update
+						.attr("fill", d => d.fill)						
+					.call(update => update.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					exit => exit
+					.call(exit => exit.transition(t)
+						.remove()
+						)				
+				)
+				this.group.select("#clip")
+				.selectAll(".rect")
+				.data(mydata, function(d) { return d })
+				.join(
+					enter => enter.append("rect")
+						.attr("class","rect")
+					.call(enter => enter.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					update => update
+					.call(update => update.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					exit => exit
+					.call(exit => exit.transition(t)
+						.remove()
+						)				
+				)				
+
+			// If axes are updated, re-define zoom area and behavior also
+			this._DefineZoom()
 
 		} else if(type=="zoom"){
 
@@ -684,23 +756,7 @@ export class Plot extends AnimObject{
 					 .on('zoom', this._ZoomUpdate.bind(this))
 		this.zoom = zoom
 
-		// Append clipping area
-		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-		d3.select("#"+this.id)
-		  .append("defs")
-		  .append("group:clipPath")    
-		  .attr("id","clip")
-		  .append("group:rect")
-		  .attr("width", this.xRange[1] )
-		  .attr("height", this.yRange[1] )
-		
-		// Append zoom base
-		d3.select("#"+this.id)
-		  .append("rect")
-		  .attr("id","zoomBase")
-		  .attr("width", this.xRange[1])
-		  .attr("height", this.yRange[1])
-		  .style("fill", "none")
+		d3.select("#"+this.id).select("#baseArea")
 		  .call(this.zoom)
 	}
 

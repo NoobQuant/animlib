@@ -68,7 +68,7 @@
     let svg1params = {
          "id"          : "svg1"
         ,"pos"         : [[150, 100]]
-        ,"dim"         : [2300, 1090]     
+        ,"dim"         : [2400, 1090]     
         ,"strokeColor" : "red"
         ,"strokeWidth" : 3
     }
@@ -104,16 +104,28 @@
         ,"drawEase"    : d3.easeCubic
     }    
 
+
+    let paramsScatter = {
+       "id"          : "myscatter"
+      ,"data"        : [{x: 9, y: 5, color: "#F09B0C", r: 15}, {x: 5, y: 5, color: "#F09B0C", r: 15}]
+      ,"strokeWidth" : 2
+    }
+
+    
+
     /*********************************
     Animate
     *********************************/
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
-    plot1.DrawLine({delay:timing+300, duration:500, plotObjParams:lineDataParams1})
+
+    timing = timing + 1000
+    plot1.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams1})
+    plot1.DrawScatter({delay:timing, duration:1000, plotObjParams:paramsScatter})
 
     // Zoom out svg1; etend  x axis and adjust line accordingly 
-    timing = timing + 1000
+    timing = timing + 2000
     svg1.Update({
       delay:timing,
       duration:1000,
@@ -121,17 +133,30 @@
         newScale : 0.7
       }
     })
-    let params1_a = {'xDomain': [0, 16], 'xRange': [0, 2300]}
-    plot1.MoveLine({delay:timing, duration:1000, plotObjParams:lineDataParams1, plotParams:params1_a})
+
+    //timing = timing + 2000
+    //let params1_a = {'xDomain': [0, 5], 'xRange': [0, 1800]}
+    //plot1.MoveLine({delay:timing, duration:10000, plotObjParams:lineDataParams1, plotParams:params1_a})
+    //plot1.MoveScatter({delay:timing, duration:10000, plotObjParams:paramsScatter})
     
+    timing = timing + 2000    
+    let params1_b = {'xRange': [0, 2000]}
+    plot1.MoveLine({delay:timing, duration:10000, plotObjParams:lineDataParams1, plotParams:params1_b})
+    plot1.MoveScatter({delay:timing, duration:10000, plotObjParams:paramsScatter})
+
     // Adjusting x-axis now produces weird truncating effect for the line!
     // Luckily works other way arund (if domain extended, not contracted)
-    timing = timing + 2000    
-    let params1_b = {'xDomain': [0, 9]}
-    plot1.MoveLine({delay:timing, duration:5000, plotObjParams:lineDataParams1, plotParams:params1_b})
+    timing = timing + 11000
+    let paramsScatterNew = {
+       "id"          : "myscatter"
+      ,"data"        : [{x: 9, y: 5, color: "#F09B0C", r: 15}, {x: 7.5, y: 5, color: "#F09B0C", r: 15}]
+    }    
+    plot1.MoveScatter({delay:timing, duration:2000, plotObjParams:paramsScatterNew})
 
     // Seems not to be xScale issue, as new line drawn on the axes comes out as it should
-    timing = timing + 6000
+    // With zoom clip enabled, both get clipped to zoomBase/clipper rect.
+    // Without zoom clipper, get drawn longer, untill where?
+    timing = timing + 3000
     plot1.DrawLine({delay:timing, duration:10000, plotObjParams:lineDataParams1_copy})    
 
     // This needs to be added in conjunction with the import above!
