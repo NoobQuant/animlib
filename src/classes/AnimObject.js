@@ -57,6 +57,13 @@ export class AnimObject{
 		  .style("opacity",0.0)
 	}
 
+	Remove({delay}={}){
+		/* Remove AnimObject*/
+		d3.timeout(() => {
+			d3.select('#'+ this.id).remove()
+		},delay)
+	}	
+
 	Update({delay, duration, params}={}){
 	// General update method for AnimObject: position and scale
 

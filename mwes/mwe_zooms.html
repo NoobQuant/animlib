@@ -159,11 +159,15 @@
     plot1.DrawLine({delay:timing, duration:1500, plotObjParams:lineDataParams2})
 
     timing = timing + 2000
-    let params1_b = {'xDomain': [0, 12]}
+    let params1_b = {'xDomain': [0, 12], 'xRange': [0, 2600]}
     plot1.MoveLine({delay:timing, duration:1000, plotObjParams:[lineDataParams1,lineDataParams2], plotParams:params1_b})
 
     timing = timing + 2000
-    plot1.Hide({delay:timing, duration:300})    
+    
+    svg1.Hide({delay:timing, duration:300})
+    // Need to destroy svg/plot1, as clip area is used there and will mess up
+    // clip areawith same id in next plot
+    svg1.Remove({delay:timing+300})   
     //*/
 
     /*********************************
@@ -176,11 +180,10 @@
     plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})    
     plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
-
     timing = timing + 2000
     let zoomparams = {
        "yDomain"    : [2,8]
-      ,"xDomain"    : [-0,10]
+      ,"xDomain"    : [-0,7]
       ,"zoomEase"   : d3.easeCubic
     }    
     plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams})

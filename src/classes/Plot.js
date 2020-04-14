@@ -147,8 +147,7 @@ export class Plot extends AnimObject{
 	}
 
 	HideObject({delay, duration, id}={}){
-
-		/* Hide object attached to plot group */
+		/* Hide object attached to plot group*/
 		d3.timeout(() => {
 			d3.select("#"+id)
 				.transition()
@@ -157,8 +156,11 @@ export class Plot extends AnimObject{
 		},delay)
 	}	
 
-	RemoveObject(id){
-		d3.select("#"+id).remove();
+	RemoveObject({delay, id}={}){
+		/* Remove object attached to plot group*/
+		d3.timeout(() => {
+			d3.select("#"+id).remove()
+		},delay)
 	}
 
 	UpdateAxes({delay, duration, plotParams = {}}={}){
@@ -385,7 +387,7 @@ export class Plot extends AnimObject{
 			let linepath =  vis.append("path")
 								.attr("d", this.lineFunction(that[plotObjParams.id].data))
 			let totalLength = linepath.node().getTotalLength()
-			if (this[plotObjParams.id].dashed == false){
+			if (this[plotObjParams.id].drawType == "drawpath"){
 				linepath
 					.attr("stroke-dasharray", totalLength + " " + totalLength)
 					.attr("stroke-dashoffset", totalLength)
@@ -396,11 +398,16 @@ export class Plot extends AnimObject{
 					.duration(duration)
 					.ease(this[plotObjParams.id].drawEase)
 					.attr("stroke-dashoffset", 0)
+					// Set stroke-dasharray to 0 after line has been drawn,
+					// otherwise bad behavior when moved/zoomed
+					.on('end', function () {
+						linepath.attr("stroke-dasharray", 0)
+					})
 
-			} else if (this[plotObjParams.id].dashed == true){
+			} else if (this[plotObjParams.id].drawType == "appear"){
 				linepath.style("opacity", 0)
 				linepath
-					.attr("stroke-dasharray", 6)
+					//.attr("stroke-dasharray", 6)
 					.attr("stroke", this[plotObjParams.id].strokeColor)
 					.attr('fill','none')
 					.attr("stroke-width", this[plotObjParams.id].strokeWidth)
@@ -731,7 +738,7 @@ export class Plot extends AnimObject{
 	_UpdateLineParams(params){
 		let id = params.id
 		this[id].data   	  	  = params.data
-		this[id].dashed 	  	  = params.dashed  	     || this[id].dashed 	    || false
+		this[id].drawType 	  	  = params.drawType  	 || this[id].drawType 	    || "drawpath"
 		this[id].strokeWidth   	  = params.strokeWidth   || this[id].strokeWidth    || 1
 		this[id].strokeColor   	  = params.strokeColor   || this[id].strokeColor    || "steelblue"
 		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
