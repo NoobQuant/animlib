@@ -41,3 +41,27 @@ def WriteDfToJsonVar(dff,path,orientation,varname="lineDataObject"):
         json = "let " + varname + " = " + json
         with open(path, 'w') as outfile:
                 outfile.write(json)
+
+def WriteScatter(dff, path, varname, x_col, y_col):
+        """
+        Write scatter data from pandas dataframe to json object to be used in scatter
+        plots in animlib. Dataframe needs to have columun x_col, y_col, "color", and "r".
+        """
+        json = '['
+        counter = 0
+        for index, row in dff.iterrows():
+                counter += 1
+                json_p = '{' + \
+                        '"'+"x"+'":' + str(row[x_col]) + ',' + \
+                        '"'+"y"+'":' + str(row[y_col]) + ',' + \
+                        '"'+"color"+'":' + '"' + str(row["color"]) + '"' + ',' + \
+                        '"'+"r"+'":' + str(row["r"]) + \
+                        '}'
+                if counter != len(dff):
+                        json_p = json_p + ', '
+                json = json + json_p 
+        json = json + ']'
+        json = "let " + varname + " = " + json
+
+        with open(path, 'w') as outfile:
+                outfile.write(json)        
