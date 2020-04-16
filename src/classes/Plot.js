@@ -508,36 +508,80 @@ export class Plot extends AnimObject{
 	}
 
 
-	_YAxisLabel(opacity=1){
-		this.foYLabel = this.group.append('foreignObject')
-					       .attr('width',1000) // ad hoc
-						   .attr('height',100) // ad hoc
-						   .attr("transform",
-						   "translate(" + (this.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
-						   .style('opacity',opacity)
-		this.foYLabel.append('xhtml:div')			
-		   		.style("color", this.yLabelColor)										
-		   		.style("font-size", this.yLabelSize + "px")
-		   		.append("text")
-		   		.html(this.yLabel)
+	_YAxisLabel(){
+		this.yLabelFo = this.group.append('foreignObject')
+					        .attr('width',1000) // ad hoc
+						    .attr('height',100) // ad hoc
+						    .attr("transform",
+						    "translate(" + (this.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
+						    .style('opacity',1)
+
+		this.yLabelDiv = this.yLabelFo.append('xhtml:div')
+		   							  .style("color", this.yLabelColor)										
+									  .style("font-size", this.yLabelSize + "px")
+		
+		// Update call with immediate transition
+		this._AxisLabelUpdate("y",d3.transition().duration(0))
 	}
 
-	_XAxisLabel(opacity=1){
-		this.foXLabel = this.group.append('foreignObject')
+	_XAxisLabel(){
+		this.xLabelFo = this.group.append('foreignObject')
 					        .attr('width',1000) // ad hoc
 						    .attr('height',100) // ad hoc
 						    .attr("transform",
 						   		"translate(" + (this.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.yRange[1] + this.xLabelCorrector[1] ) + ")")
-							.style('opacity',opacity)		
-		this.foXLabel.append('xhtml:div')			
+							.style('opacity',1)
+
+		this.xLabelDiv = this.xLabelFo.append('xhtml:div')			
 		   			 .style("color", this.xLabelColor)										
 		   			 .style("font-size", this.xLabelSize + "px")
-		   			 .append("text")
-		   			 .html(this.xLabel)	
+						
+		// Update call with immediate transition
+		this._AxisLabelUpdate("x",d3.transition().duration(0))						
 	}	
 
-	_UpdateAxes(delay, duration, type="update"){
+	_AxisLabelUpdate(label, t){
 
+		// Letting exit selection exit first beofre entering new. Otherwise entering text
+		// will aling after exiting text in the div
+		const halfDuration = t.duration()/2
+		const t2 = d3.transition().delay(t.delay()).duration(halfDuration)
+		const t3 = d3.transition().delay(t.delay()+halfDuration).duration(halfDuration)
+		
+		let selection
+		let labelText
+		if (label=="y"){
+			selection = this.yLabelDiv
+			labelText = this.yLabel
+		} else if(label=="x"){
+			selection = this.xLabelDiv
+			labelText = this.xLabel			
+		}
+
+		selection.selectAll("text")
+			.data([labelText], d => d)			
+			.join(
+				enter => enter.append("text")
+							  .style("opacity",0)
+							  .text(d => d)							  
+							.call(enter => enter.transition(t3)
+												.style("opacity",1)
+							),
+				update => update
+							.call(update => update.transition(t3)
+												  .style("opacity",1)							
+							),
+				exit => exit.call(exit => exit.transition(t2)
+											  .style("opacity",0)
+											  .remove()
+							)
+			)
+	}		
+
+	_UpdateAxes(delay, duration, type="update"){
+		const t = d3.transition()
+					.delay(delay)			
+					.duration(duration)
 
 		if (type=="update"){
 
@@ -549,10 +593,7 @@ export class Plot extends AnimObject{
 
 			// Re-define base area and clip
 			let mydata = [{"width":this.xRange[1], "height":this.yRange[1], "fill":"none", "id":"baseArea"}]
-			const t = d3.transition()
-								.delay(delay)			
-								 .duration(duration)
-								 	
+
 			this.group.select("#baseAreaGroup")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
@@ -651,32 +692,10 @@ export class Plot extends AnimObject{
 			.style("stroke-width", this.axisStrokeWidth)
 		
 		// Update yLabel
-		// HACKY, MAYBE THERE IS ENTER+UPDATE+EXIT LOGIC POSSIBILITY
-		this.foYLabel
-				 .transition()
-				 .delay(delay)
-				 .duration(1000)
-				 .style("opacity",0)		
-		this._YAxisLabel(0)
-		this.foYLabel
-				.transition()
-				.delay(delay)
-				.duration(1000)
-				.style("opacity",1)
+		this._AxisLabelUpdate("y", t)
 
 		// Update xLabel
-		// HACKY, MAYBE THERE IS ENTER+UPDATE+EXIT LOGIC POSSIBILITY
-		this.foXLabel
-				 .transition()
-				 .delay(delay)
-				 .duration(1000)
-				 .style("opacity",0)		
-		this._XAxisLabel(0)
-		this.foXLabel
-				.transition()
-				.delay(delay)
-				.duration(1000)
-				.style("opacity",1)
+		this._AxisLabelUpdate("x", t)		
 		
 		// Update line function bound to the axes
 		// This is problematic if scales change and this change is not reflected
@@ -684,6 +703,9 @@ export class Plot extends AnimObject{
 		this._DefineLineData(this.xScale, this.yScale)
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
+		//d3.timeout(() => {
+		//	AddMathJax(d3.select('#'+this.svgid))			
+		//},delay+duration+50)
 		AddMathJax(d3.select('#'+this.svgid))
 	}
 

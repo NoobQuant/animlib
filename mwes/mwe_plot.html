@@ -68,7 +68,7 @@
       ,"yDomain"     : [0, 0.10] 
       ,"id"          : "plot2"
       ,"xTickNo"     : 5
-      ,"yLabel"      : "$\\alpha + \\text{Time}$"      
+      ,"yLabel"      : "$\\alpha + \\text{Time}$"
       ,"xLabel"      : "x label"
       ,"yTickFormat" : d3.format('.2f')
       ,"xAxisType"   : "scaleLinear"  
@@ -221,14 +221,14 @@
     timing = timing + 200
     plot.Draw({delay:timing, duration:1500, type:"movein"})
 
-    timing = timing + 500
-    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter1_a})
+    timing = timing + 2500
+    plot.DrawScatter({delay:timing, duration:1500, plotObjParams:paramsScatter1_a})
 
     timing = timing + 2000
     let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
-    plot.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
+    plot.MoveScatter({delay:timing, duration:2000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
 
-    timing = timing + 1200
+    timing = timing + 2500
     plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter2})
 
     timing = timing + 1000
@@ -307,7 +307,6 @@
     plot4.HideObject({delay:timing, duration:500, id:"myscatter3"})    
     timing = timing + 1000    
     plot4.Hide({delay:timing, duration :500})
-    
     //*/
 
     // This needs to be added in conjunction with the import above!
