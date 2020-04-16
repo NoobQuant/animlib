@@ -181,15 +181,19 @@
     plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
     timing = timing + 2000
-    let zoomparams = {
+    let zoomparams_a = {
        "yDomain"    : [2,8]
-      ,"xDomain"    : [-0,7]
+      ,"xDomain"    : [0,7]
       ,"zoomEase"   : d3.easeCubic
-    }    
-    plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams})
+    }
+    plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
 
     timing = timing + 7000
-    plot2.Zoom({delay:timing, duration:2000, zoomParams:{"type":"reset"}})
+    let zoomparams_b = {
+      "yDomain"  : [-10,10],
+      "xDomain"  : [-10,20]
+    }    
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
  
     // This needs to be added in conjunction with the import above!
     AddMathJax(svg)

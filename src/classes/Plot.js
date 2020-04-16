@@ -453,7 +453,6 @@ export class Plot extends AnimObject{
 
 		d3.timeout(() => {
 
-			let type 		    = zoomParams.type    || "activate"
 			// These now rely on the assumption that scales are updated!
 			let xDomain 		= zoomParams.xDomain || this.xScale.domain()			
 			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
@@ -486,18 +485,11 @@ export class Plot extends AnimObject{
 			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
 			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
 			
-			// If type reset, override calculated values with identity zoom tranformation.
-			// How does this know which is "identity"? Must be somehow connected to original scales
-			// of the plot!
-			if (type=="reset"){
-				tx = 0; ty = 0; kx = 1; ky = 1
-			}
-
-			let zoomTransform = d3.xyzoomIdentity			
+			let zoomTransform = d3.xyzoomIdentity		
 								  .translate(tx, ty)
 								  .scale(kx,ky)
 		
-			d3.select("#baseArea")
+			this.group.select("#baseArea")
 			  .transition()
 			  .duration(duration)
 			  .ease(zoomEase)
@@ -779,11 +771,24 @@ export class Plot extends AnimObject{
 	
 	_DefineZoom(){
 		
-		let zoom = d3.xyzoom(this)
+		this.zoom = d3.xyzoom(this)
 					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
 					 .scaleExtent([],[]) // scale extent [0, inf] for both
 					 .on('zoom', this._ZoomUpdate.bind(this))
-		this.zoom = zoom
+
+		// When zoom ends, update scales
+		this.zoom.on("end", d => {
+			this.xScale = this.zoomedXScale
+			this.yScale = this.zoomedYScale
+			this.xDomain = this.xScale.domain()
+			this.yDomain = this.yScale.domain()
+
+			// Update baseArea such that new zoomed position is zoomIdentity
+			this.group.select("#baseArea")._groups[0][0].__zoom.kx = 1
+			this.group.select("#baseArea")._groups[0][0].__zoom.ky = 1		
+			this.group.select("#baseArea")._groups[0][0].__zoom.x = 0
+			this.group.select("#baseArea")._groups[0][0].__zoom.y = 0		
+		})
 
 		d3.select("#"+this.id).select("#baseArea")
 		  .call(this.zoom)
