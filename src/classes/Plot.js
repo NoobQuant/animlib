@@ -778,10 +778,10 @@ export class Plot extends AnimObject{
 	}	
 	
 	_DefineZoom(){
-
+		
 		let zoom = d3.xyzoom(this)
 					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
-					 .scaleExtent([[0.5, 20], [0.5, 20]]) // STILL AD-HOC!!!!
+					 .scaleExtent([],[]) // scale extent [0, inf] for both
 					 .on('zoom', this._ZoomUpdate.bind(this))
 		this.zoom = zoom
 
