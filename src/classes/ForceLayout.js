@@ -2,7 +2,7 @@ export class ForceLayout{
 
 	constructor(params){	
 		
-		this.svgid				   = params.svgid || "bgsvg"
+		this.parentId				   = params.parentId || "bgsvg"
 		this.nodes        		   = params.nodes
 		this.id					   = params.id
 		this.forcemanybodystrength = params.forcemanybodystrength || -2
@@ -32,7 +32,7 @@ export class ForceLayout{
 							)
 							.stop()
 							
-		this.node = d3.select('#'+this.svgid)
+		this.node = d3.select('#'+this.parentId)
 					 .append("g")
 					 .attr("id",this.id)					             
 					 .attr("stroke", 'black')

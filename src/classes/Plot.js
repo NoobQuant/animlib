@@ -17,48 +17,14 @@ export class Plot extends AnimObject{
 		 - this._DefineLineData() probably could be moved under DrawLine().
 		   Now it is included here as well as in _UpdateAxes().
 		*/
-	
-		var that = this
-		let yRangeInv = [this.yRange[1], this.yRange[0]]
-		
-
-		// Set x-axis call on plot type
-		if (this.xAxisType == 'scaleLinear'){
-			var xScale = d3.scaleLinear().range(this.xRange).domain(this.xDomain)
-			
-		} else if (this.xAxisType == 'scaleBand'){
-
-			var xScale = d3.scaleBand()
-							.domain(this.xDomain)
-							.range(this.xRange)
-							.paddingInner(0.05) // still ad hoc!	
-
-		} else if (this.xAxisType == 'scaleTime'){			
-			var xScale = d3.scaleTime().range(this.xRange).domain(this.xDomain)
-		}
-
-		// Set y-axis call on plot type
-		if (this.yAxisType == 'scaleLinear'){
-			var yScale = d3.scaleLinear().range(that.yRange.slice().reverse()).domain(this.yDomain)
-		} else if (this.yAxisType == 'scaleBand'){
-			var yScale = d3.scaleLinear()
-							.domain(this.yDomain)
-							.range(that.yRange.slice().reverse())
-							.paddingInner(0.05) // still ad hoc!		
-		} else if (this.yAxisType == 'scaleTime'){
-			var yScale = d3.scaleLinear().range(that.yRange.slice().reverse()).domain(this.yDomain)
-		}		
-
-		this.xScale    	  = xScale
-		this.yScale    	  = yScale
 
 		// Axis calls
-		let xAxis = d3.axisBottom().scale(xScale)
-		let yAxis = d3.axisLeft().scale(yScale)
+		let xAxis = d3.axisBottom().scale(this.attrVar.xScale)
+		let yAxis = d3.axisLeft().scale(this.attrVar.yScale)
 
 		// x-axis
-		let xAxisGroup = this.group.append("g")
-									.attr("transform", "translate("+ this.yRange[0] + "," + this.yRange[1] + ")")
+		let xAxisGroup = this.ao.append("g")
+									.attr("transform", "translate("+ this.attrVar.yRange[0] + "," + this.attrVar.yRange[1] + ")")
 									.call(xAxis																
 											.tickSize(this.xTickSize)			  	
 											.ticks(this.xTickNo)
@@ -86,7 +52,7 @@ export class Plot extends AnimObject{
 		this._XAxisLabel()			  
 
 		// y-axis
-		let yAxisGroup = this.group.append("g")
+		let yAxisGroup = this.ao.append("g")
 									.call(yAxis						
 											.tickFormat(this.yTickFormat)
 											.tickSize(this.yTickSize)
@@ -117,33 +83,9 @@ export class Plot extends AnimObject{
 		super.Draw({delay:delay, duration:duration, type:type})
 
 		// Define a line function for to be used with these axes
+		// To be removed and use one defined on AnimObject
 		this._DefineLineData(this.xScale, this.yScale)		
-
-		// Append plot base area, equal to xRange and yRange.
-		// Zooming behavior will use this area as base.		
-		// Append same size clip area. All object on plot
-		// will be clipped relative to this area.
-		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-		d3.select("#"+this.id)
-		  .append("group:clipPath")
-		  .attr("id","clip")
-		  .append("rect")
-		  .attr("class","rect")		  
-		  .attr("width", this.xRange[1])
-		  .attr("height", this.yRange[1])
-		d3.select("#"+this.id)
-		  .append("g")    
-		  .attr("id","baseAreaGroup")
-		  .append("rect")
-		  .attr("id","baseArea")
-		  .attr("class","rect")
-		  .attr("width", this.xRange[1] )
-		  .attr("height", this.yRange[1] )
-		  .style("fill", "none")
-		  
-		// Define zoom behaviour for plot
-		this._DefineZoom()		  
-
+		
 	}
 
 	HideObject({delay, duration, id}={}){
@@ -185,7 +127,7 @@ export class Plot extends AnimObject{
 			
 			// Local (convenience) variables
 			let that 	= this		
-			let HEIGHT 	= this.yRange[1] - this.yRange[0]
+			let HEIGHT 	= this.attrVar.yRange[1] - this.attrVar.yRange[0]
 
 			// Auxiliary function
 			function height(d) {
@@ -231,12 +173,12 @@ export class Plot extends AnimObject{
 
 			// Group for data binding if drawn for first time
 			if (d3.select("#"+plotObjParams.id).empty()){
-				this.group.append("g")
+				this.ao.append("g")
 						  .attr("id", plotObjParams.id)
 			}
 
 			// Define group for bars
-			let bar = this.group.select("#"+plotObjParams.id)
+			let bar = this.ao.select("#"+plotObjParams.id)
 								.attr("clip-path", "url(#clip)") // needed for zoom clipping!			
 								.selectAll(".bar")							  
 								.data(histogram)
@@ -299,13 +241,13 @@ export class Plot extends AnimObject{
 			let that = this
 
 			// Plot object group
-			let vis = this.group.append("g")
+			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
 								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
 								.style("opacity", 0.0)
 
 			// Draw scatter
-			this.group.select("#"+plotObjParams.id).selectAll("circle")
+			this.ao.select("#"+plotObjParams.id).selectAll("circle")
 						.data(this[plotObjParams.id].data)
 						.enter()
 						.append("circle")
@@ -345,7 +287,7 @@ export class Plot extends AnimObject{
 
 				this._UpdateScatterParams(el)
 				let that = this
-				this.group.select("#"+el.id).selectAll("circle")
+				this.ao.select("#"+el.id).selectAll("circle")
 				.data(this[el.id].data)
 				.transition()
 				.delay(0)
@@ -378,7 +320,7 @@ export class Plot extends AnimObject{
 			let that = this
 
 			// Plot object group
-			let vis = this.group.append("g")
+			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
 								.attr("class","plotLine")
 								.attr("clip-path", "url(#clip)") // needed for zoom clipping!								
@@ -438,7 +380,7 @@ export class Plot extends AnimObject{
 
 				this._UpdateLineParams(el)
 				let that = this
-				this.group.select("#"+el.id).selectAll("path")
+				this.ao.select("#"+el.id).selectAll("path")
 					.transition()
 					.delay(0)
 					.duration(duration)
@@ -448,64 +390,12 @@ export class Plot extends AnimObject{
 		}, delay)		
 	}
 
-
-	Zoom({delay, duration, zoomParams = {}}={}){
-
-		d3.timeout(() => {
-
-			// These now rely on the assumption that scales are updated!
-			let xDomain 		= zoomParams.xDomain || this.xScale.domain()			
-			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
-			let zoomEase		= zoomParams.zoomEase || d3.easeLinear
-
-			let zoom = this.zoom
-
-			let dataSpaceXStartOld  = this.xScale.domain()[0]			
-			let dataSpaceXEndOld 	= this.xScale.domain()[1]
-			let dataSpaceYStartOld  = this.yScale.domain()[0]		
-			let dataSpaceYEndOld    = this.yScale.domain()[1]
-			let dataSpaceXStartNew  = xDomain[0]
-			let dataSpaceXEndNew	= xDomain[1]
-			let dataSpaceYStartNew  = yDomain[0]
-			let dataSpaceYEndNew    = yDomain[1]
-
-			// Notice the pixel space values are "inverted" as per what is "new" and what is "old"
-			// This means we need to "start" the zoom from value we want to be the resulting domain limit
-			// Notice also inverted y-axis values (zero is in top-left corner)
-			let pixelSpaceXStartNew  = this.xScale(dataSpaceXStartOld)
-			let pixelSpaceXEndNew 	 = this.xScale(dataSpaceXEndOld)
-			let pixelSpaceYEndNew    = this.yScale(dataSpaceYStartOld)			
-			let pixelSpaceYStartNew  = this.yScale(dataSpaceYEndOld)
-			let pixelSpaceXStartOld  = this.xScale(dataSpaceXStartNew)
-			let pixelSpaceXEndOld 	 = this.xScale(dataSpaceXEndNew)
-			let pixelSpaceYEndOld    = this.yScale(dataSpaceYStartNew)			
-			let pixelSpaceYStartOld  = this.yScale(dataSpaceYEndNew)
-			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
-			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
-			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
-			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld			
-			
-			let zoomTransform = d3.xyzoomIdentity		
-								  .translate(tx, ty)
-								  .scale(kx,ky)
-		
-			this.group.select("#baseArea")
-			  .transition()
-			  .duration(duration)
-			  .ease(zoomEase)
-			  .call(zoom.transform, zoomTransform)
-
-		},delay)
-
-	}
-
-
 	_YAxisLabel(){
-		this.yLabelFo = this.group.append('foreignObject')
+		this.yLabelFo = this.ao.append('foreignObject')
 					        .attr('width',1000) // ad hoc
 						    .attr('height',100) // ad hoc
 						    .attr("transform",
-						    "translate(" + (this.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
+						    "translate(" + (this.attrVar.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
 						    .style('opacity',1)
 
 		this.yLabelDiv = this.yLabelFo.append('xhtml:div')
@@ -517,11 +407,11 @@ export class Plot extends AnimObject{
 	}
 
 	_XAxisLabel(){
-		this.xLabelFo = this.group.append('foreignObject')
+		this.xLabelFo = this.ao.append('foreignObject')
 					        .attr('width',1000) // ad hoc
 						    .attr('height',100) // ad hoc
 						    .attr("transform",
-						   		"translate(" + (this.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.yRange[1] + this.xLabelCorrector[1] ) + ")")
+						   		"translate(" + (this.attrVar.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] + this.xLabelCorrector[1] ) + ")")
 							.style('opacity',1)
 
 		this.xLabelDiv = this.xLabelFo.append('xhtml:div')			
@@ -571,68 +461,16 @@ export class Plot extends AnimObject{
 	}		
 
 	_UpdateAxes(delay, duration, type="update"){
-		const t = d3.transition()
-					.delay(delay)			
-					.duration(duration)
+		//const t = d3.transition()
+		//			.delay(delay)			
+		//			.duration(duration)
 
 		if (type=="update"){
-
-			this.xScale = this.xScale.copy().range(this.xRange).domain(this.xDomain)
-			this.yScale = this.yScale.copy().range(this.yRange.slice().reverse()).domain(this.yDomain)
 			
 			this.xAxis.scale(this.xScale)
 			this.yAxis.scale(this.yScale)
 
-			// Re-define base area and clip
-			let mydata = [{"width":this.xRange[1], "height":this.yRange[1], "fill":"none", "id":"baseArea"}]
-
-			this.group.select("#baseAreaGroup")
-				.selectAll(".rect")
-				.data(mydata, function(d) { return d })
-				.join(
-					enter => enter.append("rect")
-						.attr("class","rect")
-						.attr("id", d => d.id)
-						.attr("fill", d => d.fill)
-					.call(enter => enter.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					update => update
-						.attr("fill", d => d.fill)						
-					.call(update => update.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					exit => exit
-					.call(exit => exit.transition(t)
-						.remove()
-						)				
-				)
-				this.group.select("#clip")
-				.selectAll(".rect")
-				.data(mydata, function(d) { return d })
-				.join(
-					enter => enter.append("rect")
-						.attr("class","rect")
-					.call(enter => enter.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					update => update
-					.call(update => update.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					exit => exit
-					.call(exit => exit.transition(t)
-						.remove()
-						)				
-				)				
-
-			// If axes are updated, re-define zoom area and behavior also
-			this._DefineZoom()
-
 		} else if(type=="zoom"){
-
-			this.zoomedXScale = d3.event.transform.rescaleX(this.xScale)
-			this.zoomedYScale = d3.event.transform.rescaleY(this.yScale)
 						
 			this.xAxis.scale(this.zoomedXScale)
 			this.yAxis.scale(this.zoomedYScale)
@@ -696,18 +534,18 @@ export class Plot extends AnimObject{
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
 		//d3.timeout(() => {
-		//	AddMathJax(d3.select('#'+this.svgid))			
+		//	AddMathJax(d3.select('#'+this.parentId))			
 		//},delay+duration+50)
-		AddMathJax(d3.select('#'+this.svgid))
+		AddMathJax(d3.select('#'+this.parentId))
 	}
 
 	_UpdatePlotParams(params){
 		/* Updates plot axis paramters */
 		
-		this.xRange 		    = params.xRange  		 || this.xRange
-		this.yRange 		    = params.yRange  		 || this.yRange		
-		this.xDomain 			= params.xDomain 		 || this.xDomain
-		this.yDomain 			= params.yDomain 		 || this.yDomain
+		//this.attrVar.xRange 		    = params.xRange  		 || this.attrVar.xRange
+		//this.attrVar.yRange 		    = params.yRange  		 || this.attrVar.yRange		
+		//this.xDomain 			= params.xDomain 		 || this.xDomain
+		//this.yDomain 			= params.yDomain 		 || this.yDomain
 	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30
 		this.xLabel 			= params.xLabel 	 	 || this.xLabel 	 	  || ""
 		this.xLabelColor 		= params.xLabelColor 	 || this.xLabelColor 	  || "#D7E4DB" 
@@ -758,9 +596,6 @@ export class Plot extends AnimObject{
 		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
 	}
 	
-	_UpdateScale(){
-		
-	}
 
 	_DefineLineData(xScale, yScale){
 		let lineFunction = d3.line()
@@ -768,7 +603,7 @@ export class Plot extends AnimObject{
 							 .y(function(d) {return yScale(d[1])})
 		this.lineFunction = lineFunction
 	}	
-	
+	/*
 	_DefineZoom(){
 		
 		this.zoom = d3.xyzoom(this)
@@ -784,10 +619,10 @@ export class Plot extends AnimObject{
 			this.yDomain = this.yScale.domain()
 
 			// Update baseArea such that new zoomed position is zoomIdentity
-			this.group.select("#baseArea")._groups[0][0].__zoom.kx = 1
-			this.group.select("#baseArea")._groups[0][0].__zoom.ky = 1		
-			this.group.select("#baseArea")._groups[0][0].__zoom.x = 0
-			this.group.select("#baseArea")._groups[0][0].__zoom.y = 0		
+			this.ao.select("#baseArea")._groups[0][0].__zoom.kx = 1
+			this.ao.select("#baseArea")._groups[0][0].__zoom.ky = 1		
+			this.ao.select("#baseArea")._groups[0][0].__zoom.x = 0
+			this.ao.select("#baseArea")._groups[0][0].__zoom.y = 0		
 		})
 
 		d3.select("#"+this.id).select("#baseArea")
@@ -802,7 +637,7 @@ export class Plot extends AnimObject{
 		let that = this
 
 		// Zoom all scatter circles
-		this.group
+		this.ao
 			.selectAll("circle")
 			.attr("transform", function(d) {	
 				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
@@ -812,7 +647,7 @@ export class Plot extends AnimObject{
 		let zoomedLineFunction = d3.line()
 							 .x(function(d) {return that.zoomedXScale(d[0])})
 							 .y(function(d) {return that.zoomedYScale(d[1])})
-		let gg = this.group.selectAll(".plotLine")._groups[0]		
+		let gg = this.ao.selectAll(".plotLine")._groups[0]		
 		gg.forEach((el) => {
 			that.group.select("#"+el.id)
 			.selectAll("path")
@@ -822,5 +657,6 @@ export class Plot extends AnimObject{
 		// Zoom all histograms
 
 	}	
+	*/
 
 }

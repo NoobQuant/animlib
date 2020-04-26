@@ -17,7 +17,7 @@ export class Path extends AnimObject{
 		this.curve		   = params.curve || d3.curveLinear
 		this.fill		   = params.fill || "none"		
 		
-		let path = this.group.append("path")
+		let path = this.ao.append("path")
 							 .data([this.pathData])						
 							 .attr("class", "line")
 							 .style('stroke', this.color)
@@ -26,7 +26,7 @@ export class Path extends AnimObject{
 							 .style('stroke-width', this.strokeWidth)
 							 .attr("d", (d) =>{ return LineData(d, this.curve)} )		  
 		
-		//this.group 		 = group
+		//this.ao 		 = group
 		this.path 		 = path
 		this.totalLength = path.node().getTotalLength()
 	}

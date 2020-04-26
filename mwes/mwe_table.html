@@ -8,14 +8,8 @@
 
 </head>
 
-<style>
-</style>
-
 <body>
   <script type="module">
-    /* 
-    Table
-    */
 
     // Module imports
     import {Canvas} from '../src/functions/Canvas.js'
@@ -30,7 +24,6 @@
     let timing = 0
     
     // Canvas
-    //const svg = Canvas(1930,1090, false, "white")
     const svg = Canvas({})
 
     /*********************************************
@@ -38,11 +31,11 @@
     *********************************************/
     let params = 
     {
-      id: "datatable1"
-      ,pos: [[200, 100], [200, 500]]   
+       id: "datatable1"
+      ,pos: [200, 100]
       ,path: "data/table_data.json"
       ,width: 1500
-      ,svgid: "bgsvg"
+      ,parentId: "bgsvg"
     }
     let dt = new Table(params)
 
@@ -54,10 +47,11 @@
     dt.Draw({delay:timing, duration:1000})
   
     timing = timing + 1500
-    dt.Update({delay:timing, duration:1500, params:{moveStepNo:1}})
+    let paramsUpdt = {pos: [200, 500]}
+    dt.Update({delay:timing, duration:1500, params:paramsUpdt})
     
     timing = timing + 2000
-    dt.Hide({delay:timing, duration:500})    
+    dt.Hide({delay:timing, duration:500})
 
   </script> 
 

@@ -3,7 +3,7 @@ export class Rectangle extends Shape{
     constructor(params){
         super(params)
         this.dim = params.dim
-        let rectangle = this.group.append("rect")
+        let rectangle = this.ao.append("rect")
                                         .attr("class", "animShape")        
                                         .attr("width", this.dim[0])
                                         .attr("height", this.dim[1])

@@ -8,7 +8,7 @@ export class Svg extends AnimObject{
         this.strokeWidth = params.strokeWidth || 0
         this.dim         = params.dim || [1930, 1090]
 
-        let svg = this.group
+        let svg = this.ao
                     .append("svg")
                     .attr("width", this.dim[0])
                     .attr("height", this.dim[1])

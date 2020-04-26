@@ -12,7 +12,7 @@ export class TextObject extends AnimObject{
 		this.textAlign       = params.textAlign || "left"
 
 		// Foreign object to hold html text
-		let fo = this.group.append('foreignObject')
+		let fo = this.ao.append('foreignObject')
 					       .attr('width',this.textAreaWidth)
 						   .attr('height',this.textAreaHeight)
 						   .style("position", "relative")			
@@ -86,7 +86,7 @@ export class TextObject extends AnimObject{
 			.style("opacity",1)
 
 			// Make sure latex works
-			window.AddMathJax(d3.select('#'+this.svgid))			
+			window.AddMathJax(d3.select('#'+this.parentId))			
 			
 		},delay)
 

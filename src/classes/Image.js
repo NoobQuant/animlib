@@ -22,9 +22,9 @@ is placed. Position and scaling operates on the placed svg.
         this.moveInEase   = params.moveInEase || d3.easeLinear
         this.drawType     = params.drawType || "scalein"
         this.initSize     = (this.drawType == "scalein") ? (params.initSize || 1/4) : null
-		this.svgid        = params.svgid || "bgsvg"
+		this.parentId        = params.parentId || "bgsvg"
 
-        this.g = d3.select('#'+this.svgid).append('g')
+        this.g = d3.select('#'+this.parentId).append('g')
                     .attr('id', this.id)			
                     .style('opacity', 0.0)
 

@@ -3,7 +3,7 @@ export class Arrow extends Path {
     constructor(params) {
 
 		super(params)
-		var arrow = this.group
+		var arrow = this.ao
 					  .append("svg:path")
 					  .attr("d", d3.symbol().type(d3.symbolTriangle))
 					  .style('stroke', this.color)

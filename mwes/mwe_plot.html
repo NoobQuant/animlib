@@ -44,8 +44,9 @@
     /**************************************************
     Scatter plot params
     **************************************************/
+   ///*
     let params = {
-       "pos"                : [[200,100]]
+       "pos"                : [200,100]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
       ,"yDomain"            : [0,20]
@@ -56,10 +57,11 @@
       ,"xLabel"             : "dd"      
     }
     let plot = new Plot(params)
-
+    //*/
     /**************************************************
     Histogram plot parameters
     **************************************************/
+    /*
     let params2 = {
       "pos"          : [[200,250]]
       ,"xRange"      : [0,1400]
@@ -74,10 +76,11 @@
       ,"xAxisType"   : "scaleLinear"  
     };
     let plot2 = new Plot(params2)
-
+    //*/
     /**************************************************
     Bar plot parameters
     **************************************************/
+    /*    
     let gg = d3.range(20);
 
     let params3 = {
@@ -93,10 +96,11 @@
       ,"xTickFormat" : "string"      
     };
     let plot3 = new Plot(params3)
-
+    //*/
     /**************************************************
     Line plot params
     **************************************************/
+    /*    
     let params4 = {
        "pos"                : [[200,100]]
       ,"xRange"             : [0,1400]
@@ -109,10 +113,11 @@
       ,"xLabel"             : "dd"      
     }
     let plot4 = new Plot(params4)    
-    
+    //*/    
     /**************************************************
     Scatter data paramaters
     **************************************************/
+    ///*    
     function getRandomIntInclusive(dd) {
       let min = Math.ceil(dd[0])
       let max = Math.floor(dd[1])
@@ -145,9 +150,11 @@
       ,"data"        : CreateScatterData({'x':[5,12], 'y':[5,15]}, NQColors.orange, 5)      
       ,"strokeWidth" : 4
     }
+    //*/    
     /**************************************************
     Histogram data parameters
     **************************************************/
+    /*
     let histData1_a = [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
     let histData1_b = [34,55,23,43,12,32,29] 
     let histData2   = [134,110,199,184,112,174,129]
@@ -171,9 +178,11 @@
        ,"fill"      : NQColors.dark_grey
        ,"histBins"  : [0,25,50,75,100,125,150,175,200]
       }
+    //*/      
     /**************************************************
     Bar data parameters
     **************************************************/      
+    /*
     let barData1_a = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
     let barData1_b = [{'x0':'A', "y":4}, {'x0':'B',"y":4}]
 
@@ -187,10 +196,11 @@
         ,"id"        : "barData1"        
         ,"datatype"  : 'bar'        
     }
-
+    //*/
     /**************************************************
     Line data parameters
     **************************************************/
+    /*    
     let lineDataParams1 = {
          "data"        : lineDataObject["y1"]
         ,"id"          : "linedata1"         
@@ -211,11 +221,11 @@
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.steelblue
         ,"drawEase"    : d3.easeCubic
-    }    
+    }
+    //*/     
     /**************************************************
     Animations
     **************************************************/
-   
     // Scatter plot
     ///*
     timing = timing + 200
@@ -224,22 +234,22 @@
     timing = timing + 2500
     plot.DrawScatter({delay:timing, duration:1500, plotObjParams:paramsScatter1_a})
 
-    timing = timing + 2000
-    let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
-    plot.MoveScatter({delay:timing, duration:2000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
-
-    timing = timing + 2500
-    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter2})
-
-    timing = timing + 1000
-    plot2.HideObject({delay:timing, duration:500, id:"myscatter"})
-    plot2.HideObject({delay:timing+300, duration:500, id:"myscatter2"})    
-    timing = timing + 1000
-    plot.Hide({delay:timing, duration :300})
+    //timing = timing + 2000
+    //let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
+    //plot.MoveScatter({delay:timing, duration:2000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
+//
+    //timing = timing + 2500
+    //plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter2})
+//
+    //timing = timing + 1000
+    //plot2.HideObject({delay:timing, duration:500, id:"myscatter"})
+    //plot2.HideObject({delay:timing+300, duration:500, id:"myscatter2"})    
+    //timing = timing + 1000
+    //plot.Hide({delay:timing, duration :300})
     //*/
 
     // Histogram plot 
-    ///*  
+    /*  
     timing = timing + 1000    
     plot2.Draw({delay:timing, duration:500})
 
@@ -261,7 +271,7 @@
     //*/
 
     // Bar plot
-    ///*
+    /*
     timing = timing + 1000
     plot3.Draw({delay:timing, duration:500})
     
@@ -276,7 +286,7 @@
     //*/
 
     // Line plot
-    ///*
+    /*
     timing = timing + 1000
     plot4.Draw({delay:timing, duration:500})
 

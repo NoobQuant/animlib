@@ -4,7 +4,7 @@ export class Circle extends Shape{
 
 		super(params)
 		this.r     = params.r || 10
-		let circle = this.group.append("circle")
+		let circle = this.ao.append("circle")
 								.attr("class", "animShape")
 		                		.attr("r", this.r)
 		                		.style("fill", this.color)
