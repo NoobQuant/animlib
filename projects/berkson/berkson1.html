@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+  
+  <!-- Load data from json-->
+  <script src="regline_sub.json" charset="utf-8"></script>
+  <script src="regline_full.json" charset="utf-8"></script>  
+  <script src="scatterAbove.json" charset="utf-8"></script>
+  <script src="scatterBelow.json" charset="utf-8"></script>
+  <script src="triangle.json" charset="utf-8"></script>
+
+  <!-- Math symbols PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+  #redspan{color:#ff8080}
+  #yellowspan{color:#e1da51}
+  #purplespan{color:#9575bd}
+  #bluespan{color:#4682B4}
+  #orangespan{color:#F09B0C}  
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Examples on text objects.
+    */
+
+    import {Canvas} from '../../src/functions/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
+    import {Plot} from '../../src/classes/Plot.js'
+    import {AddMathJax} from '../../src/functions/AddMathJax.js'
+    import {TextObject} from '../../src/classes/TextObject.js'
+
+    // AddMathJax needs to be bound to window for text updates to work!!!
+    window.AddMathJax = AddMathJax
+
+    if (document.URL.includes('berkson_1')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    var timing = 0
+    
+    /*********************************
+    Define objects 
+    *********************************/
+    const svg = Canvas({})
+      
+
+    let plot1Params = {
+       "pos"                : [[150,250]]
+      ,"xRange"             : [0,1600]
+      ,"yRange"             : [0,640]
+      ,"yDomain"            : [0,11]
+      ,"xDomain"            : [0,11]
+      ,"id"                 : "plot1"
+      ,"yLabel"             : "Niceness"
+      ,"yLabelSize"         : 50
+      ,"yLabelCorrector"    : [120,130]
+      ,"xLabel"             : "Attractiveness"
+      ,"xLabelCorrector"    : [-200,70]      
+      ,"xLabelSize"         : 50      
+    }
+    let plot1 = new Plot(plot1Params)
+
+    let scatterAboveParams_a = {
+       "id"          : "scatterAbove"
+      ,"data"        : scatterAbove 
+      ,"strokeWidth" : 1
+    }
+
+    let scatterAboveClone = JSON.parse(JSON.stringify(scatterAbove))
+
+    Object.keys(scatterAboveClone).forEach(d => {
+      scatterAboveClone[d].color = "#F09B0C"
+    })
+    let scatterAboveParams_b = {
+       "id"          : "scatterAbove"
+      ,"data"        : scatterAboveClone 
+      ,"strokeWidth" : 1
+    }    
+
+    let scatterBelowParams = {
+       "id"          : "scatterBelow"
+      ,"data"        : scatterBelow 
+      ,"strokeWidth" : 1
+    }
+
+    let lineParamsTriangle = {
+         "data"        : triangle["y"]
+        ,"id"          : "line_triangle"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }  
+
+    let lineParamsReglineFull = {
+         "data"        : regline_full["y"]
+        ,"id"          : "line_regline_full"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.steelblue
+        ,"drawEase"    : d3.easeCubic
+    }
+
+    let lineParamsReglineSub = {
+         "data"        : regline_sub["y"]
+        ,"id"          : "line_regline_sub"         
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.yellow
+        ,"drawEase"    : d3.easeCubic
+    }
+
+
+  let text0Params = {
+      "pos"            : [[150,500]],
+      "textAreaWidth"  : 1600,
+      "textAreaHeight" : 600,      
+      "id"             : "text0",
+      "text"           : "Berkson's paradox",      
+      "fontSize"       : 80,
+      "textAlign"      : "center",
+      "textColor"      : NQTextColors.white,
+    }
+    let text0 = new TextObject(text0Params)
+
+    let textChange1Text = `Alex wants to go on a date.`
+    let textChange1Params = {
+      "pos"            : [[720,100]],
+      "textAreaWidth"  : 890,
+      "textAreaHeight" : 400, 
+      "id"             : "textChange1",
+      "text"           : textChange1Text,
+      "fontSize"       : 46,
+      "textColor"      : NQTextColors.white,
+    }
+    let textChange1 = new TextObject(textChange1Params)
+
+
+    let text1Params = {
+      "pos"            : [[1115-60,100], [200,170]],
+      "textAreaWidth"  : 800,
+      "textAreaHeight" : 300,      
+      "id"             : "text1",
+      "text"           : "dating candidates",
+      "fontSize"       : 46,
+      "textColor"      : NQColors.orange,
+    }
+    let text1 = new TextObject(text1Params)
+
+    let text2Params = {
+      "pos"            : [[200,170]],
+      "textAreaWidth"  : 800,
+      "textAreaHeight" : 300,      
+      "id"             : "text2",
+      "text"           : "Slope = -0.53",
+      "fontSize"       : 50,
+      "textColor"      : NQTextColors.yellow,
+    }
+    let text2 = new TextObject(text2Params)
+
+    let text3Params = {
+      "pos"            : [[200,100]],
+      "textAreaWidth"  : 800,
+      "textAreaHeight" : 300,      
+      "id"             : "text3",
+      "text"           : "Full population",
+      "fontSize"       : 46,
+      "textColor"      : NQColors.light_purple,
+    }
+    let text3 = new TextObject(text3Params)
+
+
+    let text5Text = `This is the Ellenberg example of the <tspan id = 'redspan'>Berkson's paradox</tspan>: <tspan id = 'orangespan'>among the candidates Alex dates</tspan>, more attractive ones are, on average, more jerks.
+    This happens even if these traits are <b>uncorrelated</b> in the <tspan id = 'purplespan'>total population</tspan>.
+    `
+    let text5Params = {
+      "pos"            : [[720,100]],
+      "textAreaWidth"  : 1000,
+      "textAreaHeight" : 400, 
+      "id"             : "txt5",
+      "text"           : text5Text,
+      "fontSize"       : 38,
+      "textColor"      : NQTextColors.white,
+    }
+    let text5 = new TextObject(text5Params)   
+
+    let textCopyrightParams = {
+      "pos"            : [[1460,980]],
+      "textAreaWidth"  : 700,
+      "textAreaHeight" : 200, 
+      "id"             : "textCopyright",
+      "text"           : "@VilleEcon / noobquant.site<br>Source: <i>wikipedia.org/wiki/Berkson's_paradox</i>",
+      "fontSize"       : 20,
+      "textColor"      : NQTextColors.grey,
+    }
+    let textCopyright = new TextObject(textCopyrightParams)
+
+    /*********************************
+    Draw
+    *********************************/
+    timing = timing + 500
+    textCopyright.Draw({delay:timing, duration:100})
+    
+    timing = timing + 500
+    text0.Draw({delay:timing, duration:1000})
+
+    timing = timing + 2000
+    text0.Hide({delay:timing, duration:1000})
+
+    timing = timing + 1000
+    textChange1.Draw({delay:timing, duration:600})
+
+    timing = timing + 1500
+    textChange1Text = "She picks a date based on two attributes: <i>attractiveness</i> and <i>niceness</i>, with scales 1 to 10."
+    textChange1.UpdateText({delay:timing, duration:2000, params:{text:textChange1Text}})
+
+    timing = timing + 1800
+    plot1.Draw({delay:timing, duration:3000})
+    plot1.DrawScatter({delay:timing, duration:3000, plotObjParams:scatterAboveParams_a})
+    plot1.DrawScatter({delay:timing, duration:3000, plotObjParams:scatterBelowParams})
+    text3.Draw({delay:timing, duration:3000})
+
+
+    timing = timing + 3500
+    textChange1Text = "In full population, the attributes are uncorrelated <tspan id = 'bluespan'>(regression slope -0.04)</tspan>."
+    textChange1.UpdateText({delay:timing, duration:2000, params:{text:textChange1Text}})
+
+    timing = timing + 3000
+    plot1.DrawLine({delay:timing, duration:2000, plotObjParams:lineParamsReglineFull})
+
+    timing = timing + 3000
+    textChange1Text = "Alex will consider <tspan id = 'orangespan'>dating candidates</tspan> if the total score <i>attractiveness</i> + <i>niceness</i> is above 13."
+    textChange1.UpdateText({delay:timing, duration:2000, params:{text:textChange1Text}})
+
+    timing = timing + 3000
+    plot1.DrawLine({delay:timing, duration:2000, plotObjParams:lineParamsTriangle})    
+    plot1.MoveScatter({delay:timing+1000, duration:2000, plotObjParams:scatterAboveParams_b})
+
+    timing = timing + 3500
+    plot1.HideObject({delay:timing, duration:1000, id:"line_triangle"})
+
+    // Move "dating candidates" to left
+    timing = timing + 2000
+    text1.Draw({delay:timing, duration:0})
+    text1.Update({delay:timing+5, duration:2000, params:{moveStepNo:1, ease:d3.easeCubic}})
+    let zoomparams = {
+       "yDomain"    : [4,11]
+      ,"xDomain"    : [4,10.5]
+      ,"zoomEase"   : d3.easeCubic
+    }
+    plot1.Zoom({delay:timing, duration:2000, zoomParams:zoomparams})
+
+    timing = timing + 1500
+    textChange1Text = "Among dateable candidates there's a negative correlation between <i>attractiveness</i> and <i>niceness</i> <tspan id = 'yellowspan'>(regression slope -0.53)</tspan>."    
+    textChange1.UpdateText({delay:timing, duration:2000, params:{text:textChange1Text}})
+    
+    timing = timing + 2500
+    plot1.DrawLine({delay:timing, duration:2000, plotObjParams:lineParamsReglineSub})
+
+    // Final text
+    timing = timing + 5000
+    textChange1.Hide({delay:timing, duration:1500})
+    text5.Draw({delay:timing, duration:2000})
+    
+    
+    AddMathJax(svg)
+
+  </script> 
+
+</body>
+</html>
