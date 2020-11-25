@@ -224,7 +224,7 @@ export class Plot extends AnimObject{
 			rect.transition()
 				.duration(duration)
 				.attr("height",height)
-		}, delay+5)
+		}, delay+25)
 	}
 
 
@@ -274,7 +274,7 @@ export class Plot extends AnimObject{
 			vis.transition()
 				.duration(duration)
 				.style("opacity", 1)
-		}, delay+5)
+		}, delay+25)
 
 	}
 
@@ -322,7 +322,7 @@ export class Plot extends AnimObject{
 						(that.attrVar.yScale(d.y)) +")"
 				})
 			})
-		}, delay+5)
+		}, delay+25)
 	}
 
 	
@@ -388,7 +388,7 @@ export class Plot extends AnimObject{
 					.ease(this[plotObjParams.id].drawEase)
 					.style("opacity", 1)		
 			}
-		}, delay)
+		}, delay+25)
 	}
 	
 	MoveLine({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
@@ -430,7 +430,7 @@ export class Plot extends AnimObject{
 					.ease(ease)
 					.attrTween("d", PathTween(that.lineFunction(that[el.id].data) ,4))
 			  })
-		}, delay+5)
+		}, delay+25)
 	}
 
 	_YAxisLabel(){

@@ -21,6 +21,29 @@ export class AnimObject{
 		if (this.attrFix.hasInnerSpace === true){
 			this._InitInnerSpace()
 		}
+
+		// Append plot base area, equal to xRange and yRange.
+		// Zooming behavior will use this area as base.
+		// Append same size clip area. All object on plot
+		// will be clipped relative to this area.
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+		//d3.select("#"+this.attrFix.id)
+		//  .append("group:clipPath")
+		//  .attr("id","clip")
+		//  .append("rect")
+		//  .attr("class","rect")
+		//  .attr("width", this.attrVar.xRange[1])
+		//  .attr("height", this.attrVar.yRange[1])
+		//d3.select("#"+this.attrFix.id)
+		//  .append("g")
+		//  .attr("id","baseAreaGroup")
+		//  .append("rect")
+		//  .attr("id","baseArea")
+		//  .attr("class","rect")
+		//  .attr("width", this.attrVar.xRange[1] )
+		//  .attr("height", this.attrVar.yRange[1] )
+		//  .style("fill", "none")
+
 	}
 
 	Draw({delay, duration, params={}}={}){
