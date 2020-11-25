@@ -3,88 +3,78 @@ import {AddMathJax} from '../functions/AddMathJax.js'
 import {PathTween} from '../functions/PathTween.js'
 export class Plot extends AnimObject{
 
-	constructor(params){
-		super(params)
+	constructor(params, aoParent){
+		super(params, aoParent)
 		this._UpdatePlotParams(params)
-
-		// Scale types
-		this.xAxisType = params.xAxisType || "scaleLinear"
-		this.yAxisType = params.yAxisType || "scaleLinear"		
 	}
 
-	Draw({delay, duration, type="default"} = {}){				
+	Draw({delay, duration, params={}} = {}){
 		/* Draws axes 
 		 - this._DefineLineData() probably could be moved under DrawLine().
 		   Now it is included here as well as in _UpdateAxes().
 		*/
 
-		// Axis calls
+		// init axes for plot
 		let xAxis = d3.axisBottom().scale(this.attrVar.xScale)
 		let yAxis = d3.axisLeft().scale(this.attrVar.yScale)
 
-		// x-axis
+		// init x-axis decorations
 		let xAxisGroup = this.ao.append("g")
-									.attr("transform", "translate("+ this.attrVar.yRange[0] + "," + this.attrVar.yRange[1] + ")")
-									.call(xAxis																
-											.tickSize(this.xTickSize)			  	
-											.ticks(this.xTickNo)
-											)
-
-		// Format x-axis tick labels from number to string if not string to begin with 
+			.attr("transform", "translate("+ 0 + "," +
+				this.attrFix.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
+			.call(xAxis
+				.tickSize(this.xTickSize)
+				.ticks(this.xTickNo)
+			) 
 		if (this.xTickFormat != "string"){
 			xAxisGroup.call(xAxis.tickFormat(this.xTickFormat))
 		}
-		
-		xAxisGroup		
+		xAxisGroup
 			.selectAll("text")
 			.style("font-size", this.xTickLabelSize)
 			.style("fill",this.xTickLabelFill)
 		xAxisGroup
 			.selectAll("line")
 			.style("stroke", this.xTickStroke)
-			.style("stroke-width", this.xTickStrokeWidth)												
+			.style("stroke-width", this.xTickStrokeWidth)
 		xAxisGroup
 			.selectAll("path")
 			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)																						
+			.style("stroke-width", this.axisStrokeWidth)
+		this._XAxisLabel()
 
-		// x axis label
-		this._XAxisLabel()			  
-
-		// y-axis
+		// init y-axis decorations
 		let yAxisGroup = this.ao.append("g")
-									.call(yAxis						
-											.tickFormat(this.yTickFormat)
-											.tickSize(this.yTickSize)
-											.ticks(this.yTickNo)
-											)
-		yAxisGroup		
+			.call(yAxis
+				.tickFormat(this.yTickFormat)
+				.tickSize(this.yTickSize)
+				.ticks(this.yTickNo)
+			)
+		yAxisGroup
 			.selectAll("text")
 			.style("font-size", this.yTickLabelSize)
 			.style("fill",this.yTickLabelFill)
 		yAxisGroup
 			.selectAll("line")
 			.style("stroke", this.yTickStroke)
-			.style("stroke-width", this.yTickStrokeWidth)												
+			.style("stroke-width", this.yTickStrokeWidth)
 		yAxisGroup
 			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)									
-
-		// y axis label
+			.attr("stroke", this.axisStroke)
+			.style("stroke-width", this.axisStrokeWidth)
 		this._YAxisLabel()
-
+		
 		this.xAxis 		  = xAxis
 		this.yAxis 		  = yAxis
-		this.xAxisGroup   = xAxisGroup		
-		this.yAxisGroup   = yAxisGroup 		
+		this.xAxisGroup   = xAxisGroup
+		this.yAxisGroup   = yAxisGroup
 
 		// Show plot based on AnimObject Draw
-		super.Draw({delay:delay, duration:duration, type:type})
+		super.Draw({delay:delay, duration:duration, params:params})
 
 		// Define a line function for to be used with these axes
 		// To be removed and use one defined on AnimObject
-		this._DefineLineData(this.xScale, this.yScale)		
+		//this._DefineLineData(this.xScale, this.yScale)		
 		
 	}
 
@@ -113,31 +103,44 @@ export class Plot extends AnimObject{
 		},delay)
 	}
 	
-
-
 	DrawHistogram({delay, duration, plotObjParams, plotParams={}}={}){
+
 		d3.timeout(() => {
 
-			// Update axes
+			// Update AnimObject 
+			this.Update({delay:0, duration:duration, params:plotParams})
+
+			// Update plot parameters
 			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0,duration)
+
+		}, delay=delay)
+
+		// For some reason cannot get this to work without separating updating
+		// and drwaing into two separate timeouts with this latter being delayed
+		// by an amount epsilonm here 5
+		d3.timeout(() => {
+
+			// Update axes based on updated AnimObject
+			this._UpdateAxes(0, duration)
+			
+			// From here on out updating bars
 
 			this[plotObjParams.id] = {}	
-			this._UpdateHistParams(plotObjParams)			
+			this._UpdateHistParams(plotObjParams)
 			
 			// Local (convenience) variables
-			let that 	= this		
+			let that 	= this
 			let HEIGHT 	= this.attrVar.yRange[1] - this.attrVar.yRange[0]
 
 			// Auxiliary function
 			function height(d) {
-				return HEIGHT - that.yScale(d.y)
+				return HEIGHT - that.attrVar.yScale(d.y)
 			}
 			function width(d) {
 				if(['normal','precalculated'].includes(that[plotObjParams.id].datatype)){
-					return that.xScale(d.x1) - that.xScale(d.x0)
+					return that.attrVar.xScale(d.x1) - that.attrVar.xScale(d.x0)
 				} else if(that[plotObjParams.id].datatype==="bar"){
-					return that.xScale.bandwidth()
+					return that.attrVar.xScale.bandwidth()
 				}
 			}			
 			// create array histogram with elements representing each bin. Each element is an object with
@@ -147,7 +150,7 @@ export class Plot extends AnimObject{
 			//	- cum : cumualtive bar y values			
 			let histogram
 			if (this[plotObjParams.id].datatype == 'normal'){
-				histogram = d3.histogram().domain(this.xScale.domain()).thresholds(this[plotObjParams.id].histBins)(this[plotObjParams.id].data)
+				histogram = d3.histogram().domain(this.attrVar.xScale.domain()).thresholds(this[plotObjParams.id].histBins)(this[plotObjParams.id].data)
 				
 				//Calculative cdf
 				// https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
@@ -179,8 +182,8 @@ export class Plot extends AnimObject{
 
 			// Define group for bars
 			let bar = this.ao.select("#"+plotObjParams.id)
-								.attr("clip-path", "url(#clip)") // needed for zoom clipping!			
-								.selectAll(".bar")							  
+								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
+								.selectAll(".bar")
 								.data(histogram)
 								
 			// Save histogram to this
@@ -191,8 +194,8 @@ export class Plot extends AnimObject{
 
 			// UPDATE section
 			bar.transition()
-			.duration(duration)
-			.attr("transform", (d, i) => 'translate( '+ that.xScale(d.x0) +','+ that.yScale(d.y) +')')
+				.duration(duration)
+				.attr("transform", (d, i) => 'translate( '+ that.attrVar.xScale(d.x0) +','+ that.attrVar.yScale(d.y) +')')
 
 			bar.select("rect")
 				.transition()
@@ -205,11 +208,11 @@ export class Plot extends AnimObject{
 							.enter()
 							.append("g")
 							.attr("class", "bar")
-							.attr("transform", function(d) { return "translate(" + that.xScale(d.x0) + "," + HEIGHT + ")" })
+							.attr("transform", function(d) { return "translate(" + that.attrVar.xScale(d.x0) + "," + HEIGHT + ")" })
 			
 			barEnter.transition()
 					.duration(duration)
-					.attr("transform", (d, i) => `translate(${that.xScale(d.x0)}, ${that.yScale(d.y)})`)
+					.attr("transform", (d, i) => `translate(${that.attrVar.xScale(d.x0)}, ${that.attrVar.yScale(d.y)})`)
 				
 			let rect = barEnter.append("rect") 
 							.attr('fill',this[plotObjParams.id].fill)
@@ -218,25 +221,33 @@ export class Plot extends AnimObject{
 
 			// handle updated elements
 			// not sure why both this and bar.select("rect").transition() are needed
-			rect.transition()		
+			rect.transition()
 				.duration(duration)
 				.attr("height",height)
-				
-		}, delay)
+		}, delay+5)
 	}
 
 
 	DrawScatter({delay, duration, plotObjParams, plotParams = {}}={}){
 
-		// Create object to store plot object parameters
-		this[plotObjParams.id] = {}		
-		this._UpdateScatterParams(plotObjParams)
+		d3.timeout(() => {
+
+			// Update AnimObject 
+			this.Update({delay:0, duration:duration, params:plotParams})
+
+			// Update plot parameters
+			this._UpdatePlotParams(plotParams)
+
+		}, delay)
 
 		d3.timeout(() => {
 
-			// Update axes		
-			this._UpdatePlotParams(plotParams)
+			// Update axes based on updated AnimObject
 			this._UpdateAxes(0, duration)
+
+			// Create object to store plot object parameters
+			this[plotObjParams.id] = {}
+			this._UpdateScatterParams(plotObjParams)
 
 			let that = this
 
@@ -244,28 +255,26 @@ export class Plot extends AnimObject{
 			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
 								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
-								.style("opacity", 0.0)
+								.style("opacity", 0)
 
 			// Draw scatter
 			this.ao.select("#"+plotObjParams.id).selectAll("circle")
-						.data(this[plotObjParams.id].data)
-						.enter()
-						.append("circle")
-						.attr("r", function(d) {return d.r})
-						.style("fill", function(d) {return d.color})		  
-						.style("stroke", this[plotObjParams.id].stroke)
-						.style("stroke-width", this[plotObjParams.id].strokeWidth)
-						.attr("transform", function(d) {
-							return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
-						})	  			      
+				.data(this[plotObjParams.id].data)
+				.enter()
+				.append("circle")
+				.attr("r", function(d) {return d.r})
+				.style("fill", function(d) {return d.color})
+				.style("stroke", this[plotObjParams.id].stroke)
+				.style("stroke-width", this[plotObjParams.id].strokeWidth)
+				.attr("transform", function(d) {
+					return " translate(" + (that.attrVar.xScale(d.x)) +","+ (that.attrVar.yScale(d.y)) +")"
+				})
 			
 			// Show plot object
 			vis.transition()
-				.delay(0)
 				.duration(duration)
-				.style("opacity", 1.0)
-
-			}, delay)				
+				.style("opacity", 1)
+		}, delay+5)
 
 	}
 
@@ -274,9 +283,20 @@ export class Plot extends AnimObject{
 		Would be cool to merge this with DrawScatter()! As in DrawHistogram().
 		Not sure how axis label update works here but it just does...
 		*/
-		d3.timeout(() => {	
-			// Update axes		
+
+		d3.timeout(() => {
+
+			// Update AnimObject
+			this.Update({delay:0, duration:duration, params:plotParams})
+
+			// Update plot parameters
 			this._UpdatePlotParams(plotParams)
+
+		}, delay)
+
+		d3.timeout(() => {
+
+			// Update axes based on updated AnimObject
 			this._UpdateAxes(0, duration)
 
 			// Update all scatters
@@ -293,29 +313,39 @@ export class Plot extends AnimObject{
 				.delay(0)
 				.duration(duration) 
 				.ease(ease)
-				.attr("r", function(d) {return d.r})			
+				.attr("r", function(d) {return d.r})
 				.style("fill", function(d) {return d.color})
 				.style("stroke", this[el.id].stroke)
-				.style("stroke-width", this[el.id].strokeWidth)			
+				.style("stroke-width", this[el.id].strokeWidth)
 				.attr("transform", function(d) {
-					return " translate(" + (that.xScale(d.x)) +","+ (that.yScale(d.y)) +")"
+					return " translate(" + (that.attrVar.xScale(d.x)) + "," +
+						(that.attrVar.yScale(d.y)) +")"
 				})
 			})
-		}, delay)			
+		}, delay+5)
 	}
 
 	
 	DrawLine({delay, duration, plotObjParams, plotParams={}}={}){
 
-		// Create object to store plot object parameters
-		this[plotObjParams.id] = {}		
-		this._UpdateLineParams(plotObjParams)
+		d3.timeout(() => {
+
+			// Update AnimObject
+			this.Update({delay:0, duration:duration, params:plotParams})
+
+			// Update plot parameters
+			this._UpdatePlotParams(plotParams)
+
+		}, delay)
 
 		d3.timeout(() => {
 			
 			// Update axes
-			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(delay=0,duration=duration)	
+			this._UpdateAxes(0, duration)
+
+			// Create object to store plot object parameters
+			this[plotObjParams.id] = {}
+			this._UpdateLineParams(plotObjParams)
 
 			let that = this
 
@@ -323,7 +353,7 @@ export class Plot extends AnimObject{
 			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
 								.attr("class","plotLine")
-								.attr("clip-path", "url(#clip)") // needed for zoom clipping!								
+								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
 
 			// Draw line
 			let linepath =  vis.append("path")
@@ -362,15 +392,29 @@ export class Plot extends AnimObject{
 	}
 	
 	MoveLine({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
-		d3.timeout(() => {		
+		
+		d3.timeout(() => {
+
+			// Update AnimObject
+			this.Update({delay:0, duration:duration, params:plotParams})
+
+			// Update plot parameters
+			this._UpdatePlotParams(plotParams)
+
+		}, delay=delay)
+		
+		d3.timeout(() => {
+
+			// Update axes based on updated AnimObject
+			this._UpdateAxes(0, duration)
 			/*
 			Would be cool to merge this with DrawLine()!  As in DrawHistogram().
 			Not sure how axis label update works here but it just does...
 			*/
 
 			// Update axes		
-			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0, duration)
+			//this._UpdatePlotParams(plotParams)
+			//this._UpdateAxes(0, duration)
 
 			// Update all lines
 			if (!Array.isArray(plotObjParams)){
@@ -382,12 +426,11 @@ export class Plot extends AnimObject{
 				let that = this
 				this.ao.select("#"+el.id).selectAll("path")
 					.transition()
-					.delay(0)
 					.duration(duration)
 					.ease(ease)
 					.attrTween("d", PathTween(that.lineFunction(that[el.id].data) ,4))
 			  })
-		}, delay)		
+		}, delay+5)
 	}
 
 	_YAxisLabel(){
@@ -441,17 +484,17 @@ export class Plot extends AnimObject{
 		}
 
 		selection.selectAll("text")
-			.data([labelText], d => d)			
+			.data([labelText], d => d)
 			.join(
 				enter => enter.append("text")
 							  .style("opacity",0)
-							  .text(d => d)							  
-							.call(enter => enter.transition(t3)
+							  .text(d => d)
+								.call(enter => enter.transition(t3)
 												.style("opacity",1)
 							),
 				update => update
 							.call(update => update.transition(t3)
-												  .style("opacity",1)							
+												  .style("opacity",1)
 							),
 				exit => exit.call(exit => exit.transition(t2)
 											  .style("opacity",0)
@@ -461,38 +504,36 @@ export class Plot extends AnimObject{
 	}		
 
 	_UpdateAxes(delay, duration, type="update"){
-		//const t = d3.transition()
-		//			.delay(delay)			
-		//			.duration(duration)
+		//let yAxis = this.yAxis
 
 		if (type=="update"){
 			
-			this.xAxis.scale(this.xScale)
-			this.yAxis.scale(this.yScale)
+			this.xAxis.scale(this.attrVar.xScale)
+			this.yAxis.scale(this.attrVar.yScale)
 
 		} else if(type=="zoom"){
 						
-			this.xAxis.scale(this.zoomedXScale)
-			this.yAxis.scale(this.zoomedYScale)
+			this.xAxis.scale(this.attrVar.zoomedXScale)
+			this.yAxis.scale(this.attrVar.zoomedYScale)
 		}
 
 		// Update y axis
 		this.yAxisGroup
-				 .transition()
-				 .delay(delay)
-				 .duration(duration)
-				 .call(this.yAxis
-				 	.tickSize(this.yTickSize)				
-				 	.ticks(this.yTickNo)
-				  )
-		this.yAxisGroup		
+			.transition()
+			.delay(delay)
+			.duration(duration)
+			.call(this.yAxis
+				.tickSize(this.yTickSize)
+				.ticks(this.yTickNo)
+			)
+		this.yAxisGroup
 			.selectAll("text")
 			.style("font-size", this.yTickLabelSize)
 			.style("fill",this.yTickLabelFill)
 		this.yAxisGroup
 			.selectAll("line")
 			.style("stroke", this.yTickStroke)
-			.style("stroke-width", this.yTickStrokeWidth)												
+			.style("stroke-width", this.yTickStrokeWidth)
 		this.yAxisGroup
 			.selectAll("path")
 			.attr("stroke" , this.axisStroke)
@@ -503,49 +544,45 @@ export class Plot extends AnimObject{
 				 .transition()
 				 .delay(delay)
 				 .duration(duration)
-				 .call(this.xAxis	
-				 	.tickSize(this.xTickSize)				
+				 .call(this.xAxis
+				 	.tickSize(this.xTickSize)
 				 	.ticks(this.xTickNo)
 				  )
 
-		this.xAxisGroup		
+		this.xAxisGroup
 			.selectAll("text")
 			.style("font-size", this.xTickLabelSize)
 			.style("fill",this.xTickLabelFill)
 		this.xAxisGroup
 			.selectAll("line")
 			.style("stroke", this.xTickStroke)
-			.style("stroke-width", this.xTickStrokeWidth)												
+			.style("stroke-width", this.xTickStrokeWidth)
 		this.xAxisGroup
 			.selectAll("path")
 			.attr("stroke" , this.axisStroke)
 			.style("stroke-width", this.axisStrokeWidth)
 		
+		const transition = d3.transition()
+								.delay(delay)
+								.duration(duration)
+
 		// Update yLabel
-		this._AxisLabelUpdate("y", t)
+		this._AxisLabelUpdate("y", transition)
 
 		// Update xLabel
-		this._AxisLabelUpdate("x", t)		
+		this._AxisLabelUpdate("x", transition)
 		
 		// Update line function bound to the axes
-		// This is problematic if scales change and this change is not reflected
-		// in xScale and yScale!
-		this._DefineLineData(this.xScale, this.yScale)
+		// This is problematic if axis scales change and this change
+		// is not reflected in xScale and yScale!
+		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
-		//d3.timeout(() => {
-		//	AddMathJax(d3.select('#'+this.parentId))			
-		//},delay+duration+50)
 		AddMathJax(d3.select('#'+this.parentId))
 	}
 
 	_UpdatePlotParams(params){
 		/* Updates plot axis paramters */
-		
-		//this.attrVar.xRange 		    = params.xRange  		 || this.attrVar.xRange
-		//this.attrVar.yRange 		    = params.yRange  		 || this.attrVar.yRange		
-		//this.xDomain 			= params.xDomain 		 || this.xDomain
-		//this.yDomain 			= params.yDomain 		 || this.yDomain
 	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30
 		this.xLabel 			= params.xLabel 	 	 || this.xLabel 	 	  || ""
 		this.xLabelColor 		= params.xLabelColor 	 || this.xLabelColor 	  || "#D7E4DB" 
