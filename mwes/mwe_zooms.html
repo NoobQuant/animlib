@@ -184,13 +184,13 @@
       ,"zoomEase"   : d3.easeCubic
     }
     plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
-//
-    //timing = timing + 7000
-    //let zoomparams_b = {
-    //  "yDomain"  : [-10,10],
-    //  "xDomain"  : [-10,20]
-    //}    
-    //plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
+
+    timing = timing + 7000
+    let zoomparams_b = {
+      "yDomain"  : [-10,10],
+      "xDomain"  : [-10,20]
+    }    
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
     //*/
 
     // This needs to be added in conjunction with the import above!

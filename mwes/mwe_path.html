@@ -40,9 +40,10 @@
     let pathparams1 = 
     {
        id:          "path1"
-      ,pathData:    "M1056.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
+      ,data:        "M1056.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
       ,color:       NQColors.light_purple
-      ,strokeWidth: 5   
+      ,strokeWidth: 5
+      ,pathSurfaceType: "canvas"
     }
 
     // This will be a box
@@ -50,10 +51,11 @@
     {
       id          : "path2"
      ,pos          : [100,100]
-     ,pathData    : [[460,100],[840,100],[840,330],[460,330]]
+     ,data    : [[460,100],[840,100],[840,330],[460,330]]
      ,color       : NQColors.yellow
      ,strokeWidth : 5
      ,curve       : d3.curveLinearClosed
+     ,pathSurfaceType: "canvas"
     }
 
     // This will be a curved path
@@ -61,10 +63,11 @@
     {
       id          : "path3"
      ,pos         : [1200,600]
-     ,pathData    : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
+     ,data        : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
      ,color       : NQColors.orange
      ,strokeWidth : 5
      ,curve       : d3.curveBasis
+     ,pathSurfaceType: "canvas"
     }
 
     // Path where starting placement is determined by pos
@@ -72,7 +75,7 @@
     {
        pos: [1200,700]
       ,id:          "path4"
-      ,pathData:    "M 0,0"
+      ,data:    "M 0,0"
                   + "c -10,0 -40,-15 -60,40"
                   + "c -30,20 -32,51 -10,81" 
                   + "c -14,10 -10,83 45,65"
@@ -89,25 +92,28 @@
       ,color:       NQColors.light_purple
       ,strokeWidth: 5
       ,fill: NQColors.yellow
-      ,moveInScale: 1/20 
+      ,moveInScale: 1/20
+      ,pathSurfaceType: "canvas"
     }    
 
     let arrowparams1 = 
     {
        id           : "arrow1"
       ,pos          : [100,100]
-      ,pathData     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
+      ,data     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
       ,color        : NQColors.light_purple
       ,strokeWidth  : 5
+      ,pathSurfaceType: "canvas"
     }
 
     // Data for long orange arrow from imported .json file
     let arrowparams2 = 
     {
       id          : "arrow2"
-     ,pathData    : lineDataObject['y']
+     ,data    : lineDataObject['y']
      ,color       : NQColors.orange
      ,strokeWidth : 5
+     ,pathSurfaceType: "canvas"
     }    
 
     let path1 = new Path(pathparams1, canvas)

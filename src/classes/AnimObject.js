@@ -1,23 +1,48 @@
 export class AnimObject{
+	/*
+	AnimObject is a general class for animatable objects. Object of class AnimObject has
+	an attribute <ao> that points to a <g> element appended to parent object. All DOM
+	elements belonging to AnimObject are under this group. Attribute <aoParent> points to
+	another object of class AnimObject or class Canvas.
+	--> TO BE CHEKED: IS IT INDEED A POINTER OR A COPY OF THE OBJECT! IF A COPY; CHANGES TO
+		PARENT NOT VISIBLE IN STORED PARENT OBJECT WITHIN ANIMOBJECT!
 
+	AnimObject object also has attributes <attrFix> and <attrVar> which store attributes/
+	parameters assumes to be fixed and varying, respectively:
+
+	- attrFix
+	 - id (string): ID of <g> element corresponding to this.ao
+	 - hasInnerSpace (boolean): Whether AnimObject is assumed to have notion of inner space.
+
+	- attrVar (varying attributes)
+	 - pos (float array): $[x, y]$ position relative to parent which is assumed to have inner space.
+	 - opacity (float): Opacity of this.ao <g> element.
+	 - scale (float): Scale (i.e. size) of this.ao <g> element.
+	 - data (varying object): object storing data for AnimObject. E.g. for child Path contains data for path line.
+
+	Other attributes
+	 - lineFunction
+
+	*/
 	constructor(params, aoParent){
 
-		// Fixed attributes		
-		this.attrFix 		= {}
-		this.attrFix.id     = params.id
-		this.attrFix.aoParent = aoParent
+		// Fixed attributes
+		this.attrFix 			= {}
+		this.attrFix.id 		= params.id
+		this.aoParent 	= aoParent
 
 		// Varying attributes
 		this.attrVar = {}
 		this._UpdateParams(params)
 
-		// Init AnimObject
-		this.ao = d3.select('#'+ this.attrFix.aoParent.attrFix.id)
+		// Initialize AnimObject on parent. Parent is assumed to have a notion of inner space, but AnimObject
+		// will be put onto parent space only later as how the object appears is position-dependent.
+		this.ao = d3.select('#'+ this.aoParent.attrFix.id)
 			.append("g")
 			.attr("id", this.attrFix.id)
 			.style("opacity", 0)
 
-		// Define inner space if it exists
+		// Define inner space for AnimObject shouldit have one
 		if (this.attrFix.hasInnerSpace === true){
 			
 			this._InitInnerSpace()
@@ -33,10 +58,10 @@ export class AnimObject{
 			.append("rect")
 			.attr("class","rect")
 			.attr("transform",
-				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-					"," + this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
-			.attr("width", this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
-			.attr("height", this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
+					"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 		d3.select("#"+this.attrFix.id)
 			.append("g")
 			.attr("id", this.attrFix.id + "_baseAreaGroup")
@@ -44,10 +69,10 @@ export class AnimObject{
 			.attr("id", this.attrFix.id + "_baseArea")
 			.attr("class","rect")
 			.attr("transform",
-				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-					"," + this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
-			.attr("width", this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
-			.attr("height", this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
+					"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 			.style("fill", "none")
 
 			// If inners pace exists, define zoom also
@@ -67,34 +92,34 @@ export class AnimObject{
 			if (this.attrDraw.type === "show"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-							"," + this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
+							"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
 			} else if (this.attrDraw.type === "movein"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrDraw.entPoint[0]) + "," +
-						this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrDraw.entPoint[1]) + ")")
+						"translate(" + this.aoParent.attrVar.xScale(this.attrDraw.entPoint[0]) + "," +
+						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrDraw.entPoint[1]) + ")")
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)	
 					.attr("transform",
-						"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
 					.ease(this.attrDraw.moveInEase)
 			} else if (this.attrDraw.type === "scalein"){
 				d3.select("#"+ this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-							this.attrFix.aoParent.attrVar.yScale(this.attrVar.pos[1]) +
+						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+							this.aoParent.attrVar.yScale(this.attrVar.pos[1]) +
 								") scale("+ this.attrDraw.moveInScale +")")
 					.transition()
 					.duration(duration)
 					.attr("transform",
-						"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
+						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
 							") scale("+ this.attrVar.scale +")")
 					.style("opacity",this.attrVar.opacity)
 					.ease(this.attrDraw.moveInEase)
@@ -125,8 +150,8 @@ export class AnimObject{
 			.transition()
 			.duration(duration)
 			.attr("transform",
-				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+					this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
 						") scale("+ this.attrVar.scale +")")
 			.ease(ease)
 		},delay)
@@ -234,6 +259,9 @@ export class AnimObject{
 		} else {
 			this.attrVar.yScale = undefined
 		}
+
+		// Define line function after inner space is known
+		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
 	}
 
 	_UpdateParams(params){
@@ -287,8 +315,8 @@ export class AnimObject{
 
 			// Re-define base area and clip
 			let mydata = [{
-				"width":this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]),
-				"height":this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
+				"width":this.aoParent.attrVar.xScale(this.attrVar.xRange[1]),
+				"height":this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
 				"fill":"none",
 				"id":this.attrFix.id + "_baseArea"
 			}]
@@ -345,6 +373,9 @@ export class AnimObject{
 			this.xAxis.scale(this.attrVar.zoomedXScale)
 			this.yAxis.scale(this.attrVar.zoomedYScale)
 		}
+
+		// Update line function after changes in inner space
+		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
 	}
 
 	_DefineZoom(){
@@ -408,4 +439,13 @@ export class AnimObject{
 
 		// Zoom all histograms - NOT DONE!
 	}
+
+	_DefineLineData(xScale, yScale){
+	// Line function for current AnimObject.
+		let lineFunction = d3.line()
+							 .x(function(d) {return xScale(d[0])})
+							 .y(function(d) {return yScale(d[1])})
+		this.lineFunction = lineFunction
+	}	
+
 }

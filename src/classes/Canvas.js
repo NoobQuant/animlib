@@ -47,8 +47,15 @@ export class Canvas{
         this.attrVar.yDomain = [0, height]
         this.attrVar.pos = [0, 0]
 
-        // Make sure canvas is on top
-        //this.svg.raise()
+        this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
 
     }
+
+	_DefineLineData(xScale, yScale){
+        // Line function for current AnimObject.
+            let lineFunction = d3.line()
+                .x(function(d) {return xScale(d[0])})
+                .y(function(d) {return yScale(d[1])})
+            this.lineFunction = lineFunction
+        }	    
 }

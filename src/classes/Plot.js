@@ -21,7 +21,7 @@ export class Plot extends AnimObject{
 		// init x-axis decorations
 		let xAxisGroup = this.ao.append("g")
 			.attr("transform", "translate("+ 0 + "," +
-				this.attrFix.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
+				this.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
 			.call(xAxis
 				.tickSize(this.xTickSize)
 				.ticks(this.xTickNo)
@@ -277,7 +277,6 @@ export class Plot extends AnimObject{
 				.duration(duration)
 				.style("opacity", 1)
 		}, delay+25)
-
 	}
 
 	MoveScatter({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
@@ -577,7 +576,7 @@ export class Plot extends AnimObject{
 		
 		// Update line function bound to the axes
 		// This is problematic if axis scales change and this change
-		// is not reflected in xScale and yScale!
+		// is not reflected in xScale and yScale! Should be taken care of now..?
 		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
@@ -636,67 +635,4 @@ export class Plot extends AnimObject{
 		this[id].drawEase   	  = params.drawEase   	 || this[id].drawEase 	    || d3.easeLinear	
 	}
 	
-
-	_DefineLineData(xScale, yScale){
-		let lineFunction = d3.line()
-							 .x(function(d) {return xScale(d[0])})
-							 .y(function(d) {return yScale(d[1])})
-		this.lineFunction = lineFunction
-	}	
-	/*
-	_DefineZoom(){
-		
-		this.zoom = d3.xyzoom(this)
-					 .extent([[this.xScale.range()[0], this.yScale.range()[0]], [this.xScale.range()[1], this.yScale.range()[1]]])
-					 .scaleExtent([],[]) // scale extent [0, inf] for both
-					 .on('zoom', this._ZoomUpdate.bind(this))
-
-		// When zoom ends, update scales
-		this.zoom.on("end", d => {
-			this.xScale = this.zoomedXScale
-			this.yScale = this.zoomedYScale
-			this.xDomain = this.xScale.domain()
-			this.yDomain = this.yScale.domain()
-
-			// Update baseArea such that new zoomed position is zoomIdentity
-			this.ao.select("#baseArea")._groups[0][0].__zoom.kx = 1
-			this.ao.select("#baseArea")._groups[0][0].__zoom.ky = 1		
-			this.ao.select("#baseArea")._groups[0][0].__zoom.x = 0
-			this.ao.select("#baseArea")._groups[0][0].__zoom.y = 0		
-		})
-
-		d3.select("#"+this.id).select("#baseArea")
-		  .call(this.zoom)
-	}
-
-	_ZoomUpdate(){
-	
-		this._UpdateAxes(0, 0, "zoom")
-
-		// Update plot object - now only scatter! NEEDS GENERALIZATION!
-		let that = this
-
-		// Zoom all scatter circles
-		this.ao
-			.selectAll("circle")
-			.attr("transform", function(d) {	
-				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
-		})
-
-		// Zoom all lines (only in class plotLine)
-		let zoomedLineFunction = d3.line()
-							 .x(function(d) {return that.zoomedXScale(d[0])})
-							 .y(function(d) {return that.zoomedYScale(d[1])})
-		let gg = this.ao.selectAll(".plotLine")._groups[0]		
-		gg.forEach((el) => {
-			that.group.select("#"+el.id)
-			.selectAll("path")
-			.attr("d", zoomedLineFunction(that[el.id].data))
-		})							 
-
-		// Zoom all histograms
-
-	}	
-	*/
-
 }

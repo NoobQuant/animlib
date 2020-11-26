@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
+  <!-- Load data from json-->
+  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>  
+
+  <!-- Math symbols - REQUIRED! PUT AS LAST IMPORT!-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>  
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Ro
+    */
+
+    import {Canvas} from '../src/classes/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {AddMathJax} from '../src/functions/AddMathJax.js'
+    import {Path} from '../src/classes/Path.js'    
+    import {Plot} from '../src/classes/Plot.js'
+
+    if (document.URL.includes('plot_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    let canvas = new Canvas({})
+
+    /**************************************************
+    Line plot params
+    **************************************************/
+    let params4 = {
+       "pos"                : [0,0]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,10]
+      ,"xDomain"            : [0,10]
+      ,"id"                 : "plot1"
+      ,"yLabel"             : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize"         : 30
+      ,"xLabel"             : "dd"
+    }
+    
+    /**************************************************
+    Line data parameters
+    **************************************************/
+    ///*    
+    let lineDataParams1 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+
+    let lineDataParams2 = 
+    {
+      "id"          : "linedata1"
+     ,"data"        : lineDataObject["y2"]
+     ,"color"       : NQColors.orange
+     ,"strokeWidth" : 5
+    }
+    
+    let lineDataParams1_copy = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1_copy"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+
+    let lineDataParams3 = {
+        "id"           : "linedata3"
+        ,"data"        : [[1000, 400], [1100, 500], [1200, 450], [1300, 420]]
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.steelblue
+        ,"drawEase"    : d3.easeCubic
+    }
+
+
+
+    let plot1 = new Plot(params4, canvas)
+    let path3 = new Path(lineDataParams3, canvas)
+
+    let path1 = new Path(lineDataParams1_copy, plot1)
+
+    //*/
+    /**************************************************
+    Animations
+    **************************************************/
+    timing = timing + 1000
+    plot1.Draw({delay:timing, duration:500})
+
+    // I am still under Plot object    
+    timing = timing + 1000
+    plot1.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams1})
+    timing = timing + 1000
+    plot1.MoveLine({delay:timing, duration:1000, plotObjParams:lineDataParams2})
+    timing = timing + 1500
+    plot1.HideObject({delay:timing, duration:0,id:"linedata1"})
+    //plot1.Remove({delay:timing+100, duration:0})
+
+    // I am my own AnimoObject with plot1 as my parent!
+    timing = timing + 1000
+    path1.Draw({delay:timing, duration:500})
+    //timing = timing + 1000
+    //path1.MoveLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
+
+    //timing = timing + 1500
+    // I am my own line on canvas
+    //path3.Draw({delay:timing, duration:1000})
+
+
+  </script> 
+
+</body>
+</html>
