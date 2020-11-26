@@ -128,7 +128,7 @@
       ,"yLabelSize"         : 30
       ,"xLabel"             : "dd"
     }
-    //let plot2 = new Plot(params2, canvas)
+    let plot2 = new Plot(params2, canvas)
 
     /*********************************
     Animate - Zoom out line chart and continue drawing the line
@@ -137,58 +137,60 @@
     *********************************/
     svg1.Draw({delay:0, duration:0})
     
-    ///*
+    /*
     // Plot axes to svg1, plot line to axes  
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
     plot1.DrawLine({delay:timing+300, duration:500, plotObjParams:lineDataParams1})
 
-    // Zoom out svg1 and continue x axis
-    timing = timing + 10000
+    // Zoom out svg1
+    timing = timing + 2000
     svg1.Update({delay:timing, duration:2000, params:{scale:0.5}})
-    let params1_a = {'xDomain': [0, 9], 'xRange': [0, 1400]}
+    
+    // Continue plot domain to 17 but do not alter line otherwise
+    let params1_a = {'xDomain': [0, 17], 'xRange': [0, 1400]}
     plot1.MoveLine({delay:timing, duration:2000, plotObjParams:lineDataParams1, plotParams:params1_a})
     
-    // Continue line with another line object
+    // Continue line with another line object up to 17
     timing = timing + 2200
     plot1.DrawLine({delay:timing, duration:1500, plotObjParams:lineDataParams2})
 
-    timing = timing + 15000
-    let params1_b = {'xDomain':[0, 12], 'xRange':[0, 2600]}
+    // Continue plot object x-range up to svg1 end; i.e. 1930 minus plot position
+    timing = timing + 2000
+    let params1_b = {'xRange':[0, 1930-150]}
     plot1.MoveLine({delay:timing, duration:1000, plotObjParams:[lineDataParams1,lineDataParams2], plotParams:params1_b})
 
-    //timing = timing + 2000
-    
-    //svg1.Hide({delay:timing, duration:300})
+    timing = timing + 2000
+    svg1.Hide({delay:timing, duration:300})
     // Need to destroy svg/plot1, as clip area is used there and will mess up
     // clip areawith same id in next plot
-    //svg1.Remove({delay:timing+300})   
+    svg1.Remove({delay:timing+300})   
     //*/
 
     /*********************************
     Animate - Zoom in chart with scatter and lines
     *********************************/
-    /*
+    ///*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})
     plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
     plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
-    timing = timing + 2000
+    timing = timing + 3000
     let zoomparams_a = {
        "yDomain"    : [2,8]
       ,"xDomain"    : [0,7]
       ,"zoomEase"   : d3.easeCubic
     }
     plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
-
-    timing = timing + 7000
-    let zoomparams_b = {
-      "yDomain"  : [-10,10],
-      "xDomain"  : [-10,20]
-    }    
-    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
+//
+    //timing = timing + 7000
+    //let zoomparams_b = {
+    //  "yDomain"  : [-10,10],
+    //  "xDomain"  : [-10,20]
+    //}    
+    //plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
     //*/
 
     // This needs to be added in conjunction with the import above!

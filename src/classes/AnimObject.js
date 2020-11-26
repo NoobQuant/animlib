@@ -19,31 +19,40 @@ export class AnimObject{
 
 		// Define inner space if it exists
 		if (this.attrFix.hasInnerSpace === true){
+			
 			this._InitInnerSpace()
+
+			// Append plot base area, equal to xRange and yRange.
+			// Zooming behavior will use this area as base.
+			// Append same size clip area. All object on plot
+			// will be clipped relative to this area.
+			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+			d3.select("#"+this.attrFix.id)
+			.append("group:clipPath")
+			.attr("id","clip")
+			.append("rect")
+			.attr("class","rect")
+			.attr("transform",
+				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
+					"," + this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+			.attr("width", this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+			.attr("height", this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+		d3.select("#"+this.attrFix.id)
+			.append("g")
+			.attr("id","baseAreaGroup")
+			.append("rect")
+			.attr("id","baseArea")
+			.attr("class","rect")
+			.attr("transform",
+				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
+					"," + this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+			.attr("width", this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+			.attr("height", this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+			.style("fill", "none")
+
+			// If inners pace exists, define zoom also
+			this._DefineZoom()
 		}
-
-		// Append plot base area, equal to xRange and yRange.
-		// Zooming behavior will use this area as base.
-		// Append same size clip area. All object on plot
-		// will be clipped relative to this area.
-		// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-		//d3.select("#"+this.attrFix.id)
-		//  .append("group:clipPath")
-		//  .attr("id","clip")
-		//  .append("rect")
-		//  .attr("class","rect")
-		//  .attr("width", this.attrVar.xRange[1])
-		//  .attr("height", this.attrVar.yRange[1])
-		//d3.select("#"+this.attrFix.id)
-		//  .append("g")
-		//  .attr("id","baseAreaGroup")
-		//  .append("rect")
-		//  .attr("id","baseArea")
-		//  .attr("class","rect")
-		//  .attr("width", this.attrVar.xRange[1] )
-		//  .attr("height", this.attrVar.yRange[1] )
-		//  .style("fill", "none")
-
 	}
 
 	Draw({delay, duration, params={}}={}){
@@ -108,8 +117,8 @@ export class AnimObject{
 
 			// Update inner space if it exists
 			if (this.attrFix.hasInnerSpace === true){
-				this._UpdateInnerSpace(0, 0)
-			}			
+				this._UpdateInnerSpace(0, "update")
+			}
 
 			// Update position and scale
 			d3.select("#"+this.attrFix.id)
@@ -145,9 +154,9 @@ export class AnimObject{
 		d3.timeout(() => {
 
 			// These now rely on the assumption that scales are updated!
-			let xDomain 		= zoomParams.xDomain || this.xScale.domain()
-			let yDomain 		= zoomParams.yDomain || this.yScale.domain().reverse()
-			let zoomEase		= zoomParams.zoomEase || d3.easeLinear
+			let xDomain  = zoomParams.xDomain  || this.xScale.domain()
+			let yDomain  = zoomParams.yDomain  || this.yScale.domain().reverse()
+			let zoomEase = zoomParams.zoomEase || d3.easeLinear
 
 			let zoom = this.zoom
 
@@ -172,19 +181,19 @@ export class AnimObject{
 			let pixelSpaceYEndOld    = this.attrVar.yScale(dataSpaceYStartNew)
 			let pixelSpaceYStartOld  = this.attrVar.yScale(dataSpaceYEndNew)
 			let tx = (pixelSpaceXEndOld * pixelSpaceXStartNew  -  pixelSpaceXEndNew * pixelSpaceXStartOld) / (pixelSpaceXEndOld - pixelSpaceXStartOld)
-			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)			
+			let ty = (pixelSpaceYEndOld * pixelSpaceYStartNew  -  pixelSpaceYEndNew * pixelSpaceYStartOld) / (pixelSpaceYEndOld - pixelSpaceYStartOld)
 			let kx =  pixelSpaceXEndNew / pixelSpaceXEndOld -  tx / pixelSpaceXEndOld
 			let ky =  pixelSpaceYEndNew / pixelSpaceYEndOld -  ty / pixelSpaceYEndOld
 			
 			let zoomTransform = d3.xyzoomIdentity
-								  .translate(tx, ty)
-								  .scale(kx,ky)
+				.translate(tx, ty)
+				.scale(kx,ky)
 		
 			this.ao.select("#baseArea")
-			  .transition()
-			  .duration(duration)
-			  .ease(zoomEase)
-			  .call(zoom.transform, zoomTransform)
+				.transition()
+				.duration(duration)
+				.ease(zoomEase)
+				.call(zoom.transform, zoomTransform)
 
 		},delay)
 
@@ -260,142 +269,144 @@ export class AnimObject{
 		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrVar.moveInEase  || d3.easeBack
 	}
 
-	_UpdateInnerSpace(delay, duration, type="update"){
-		// Similar to _UpdateAxes
+	_UpdateInnerSpace(duration, type){
 
-		d3.timeout(() => {
+		const t = d3.transition()
+			.duration(duration)
 
-			const t = d3.transition()
-						.duration(duration)
+		if (type=="update"){
 
-			if (type=="update"){
+			this.attrVar.xScale = this.attrVar.xScale
+				.copy()
+				.range(this.attrVar.xRange)
+				.domain(this.attrVar.xDomain)
+			this.attrVar.yScale = this.attrVar.yScale
+				.copy()
+				.range(this.attrVar.yRange.slice().reverse())
+				.domain(this.attrVar.yDomain)
 
-				this.attrVar.xScale = this.attrVar.xScale
-								.copy()
-								.range(this.attrVar.xRange)
-								.domain(this.attrVar.xDomain)
-				this.attrVar.yScale = this.attrVar.yScale
-								.copy()
-								.range(this.attrVar.yRange.slice().reverse())
-								//.range(this.attrVar.yRange)
-								.domain(this.attrVar.yDomain)
+			// Re-define base area and clip
+			let mydata = [{
+				"width":this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]),
+				"height":this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
+				"fill":"none",
+				"id":"baseArea"
+			}]
 
-				// Re-define base area and clip
-				let mydata = [
-								{"width":this.attrVar.xRange[1],
-								"height":this.attrVar.yRange[1],
-								"fill":"none",
-								"id":"baseArea"}
-							]
+			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+			this.ao.select("#baseAreaGroup")
+				.selectAll(".rect")
+				.data(mydata, function(d) { return d })
+				.join(
+					enter => enter.append("rect")
+						.attr("class","rect")
+						.attr("id", d => d.id)
+						.attr("fill", d => d.fill)
+					.call(enter => enter.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					update => update
+						.attr("fill", d => d.fill)
+					.call(update => update.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					exit => exit
+					.call(exit => exit.transition(t)
+						.remove()
+						)
+				)
+				this.ao.select("#clip")
+				.selectAll(".rect")
+				.data(mydata, function(d) { return d })
+				.join(
+					enter => enter.append("rect")
+						.attr("class","rect")
+					.call(enter => enter.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					update => update
+					.call(update => update.transition(t)
+						.attr("width", d => d.width)
+						.attr("height", d => d.height)),
+					exit => exit
+					.call(exit => exit.transition(t)
+						.remove()
+						)
+				)
 
-				// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-				this.ao.select("#baseAreaGroup")
-					.selectAll(".rect")
-					.data(mydata, function(d) { return d })
-					.join(
-						enter => enter.append("rect")
-							.attr("class","rect")
-							.attr("id", d => d.id)
-							.attr("fill", d => d.fill)
-						.call(enter => enter.transition(t)
-							.attr("width", d => d.width)
-							.attr("height", d => d.height)),
-						update => update
-							.attr("fill", d => d.fill)
-						.call(update => update.transition(t)
-							.attr("width", d => d.width)
-							.attr("height", d => d.height)),
-						exit => exit
-						.call(exit => exit.transition(t)
-							.remove()
-							)				
-					)
-					this.ao.select("#clip")
-					.selectAll(".rect")
-					.data(mydata, function(d) { return d })
-					.join(
-						enter => enter.append("rect")
-							.attr("class","rect")
-						.call(enter => enter.transition(t)
-							.attr("width", d => d.width)
-							.attr("height", d => d.height)),
-						update => update
-						.call(update => update.transition(t)
-							.attr("width", d => d.width)
-							.attr("height", d => d.height)),
-						exit => exit
-						.call(exit => exit.transition(t)
-							.remove()
-							)				
-					)				
+		// If inners space is updated, re-define zoom also
+		this._DefineZoom()
+		
+		} else if(type=="zoom"){
 
-				// If axes are updated, re-define zoom area and behavior also
-				//this._DefineZoom()
+			this.attrVar.zoomedXScale = d3.event.transform.rescaleX(this.attrVar.xScale)
+			this.attrVar.zoomedYScale = d3.event.transform.rescaleY(this.attrVar.yScale)
 
-			} else if(type=="zoom"){
-
-				this.attrVar.zoomedXScale = d3.event.transform.rescaleX(this.attrVar.xScale)
-				this.attrVar.zoomedYScale = d3.event.transform.rescaleY(this.attrVar.yScale)
-							
-				this.xAxis.scale(this.attrVar.zoomedXScale)
-				this.yAxis.scale(this.attrVar.zoomedYScale)
-			}
-		}, delay)
-	
+			this.xAxis.scale(this.attrVar.zoomedXScale)
+			this.yAxis.scale(this.attrVar.zoomedYScale)
+		}
 	}
 
 	_DefineZoom(){
-		
+
 		this.zoom = d3.xyzoom(this)
-					 .extent([[this.attrVar.xScale.range()[0], this.attrVar.yScale.range()[0]], [this.attrVar.xScale.range()[1], this.attrVar.yScale.range()[1]]])
-					 .scaleExtent([],[]) // scale extent [0, inf] for both
-					 .on('zoom', this._ZoomUpdate.bind(this))
+			.extent([
+				[this.attrVar.xScale.range()[0], this.attrVar.yScale.range()[0]],
+				[this.attrVar.xScale.range()[1], this.attrVar.yScale.range()[1]]]
+			)
+			.scaleExtent([],[]) // scale extent [0, inf] for both
+			.on('zoom', this._ZoomUpdate.bind(this))
 
 		// When zoom ends, update scales
 		this.zoom.on("end", d => {
-			this.attrVar.xScale = this.zoomedXScale
-			this.attrVar.yScale = this.zoomedYScale
+			this.attrVar.xScale = this.attrVar.zoomedXScale
+			this.attrVar.yScale = this.attrVar.zoomedYScale
 			this.attrVar.xDomain = this.attrVar.xScale.domain()
 			this.attrVar.yDomain = this.attrVar.yScale.domain()
 
 			// Update baseArea such that new zoomed position is zoomIdentity
 			this.ao.select("#baseArea")._groups[0][0].__zoom.kx = 1
-			this.ao.select("#baseArea")._groups[0][0].__zoom.ky = 1		
+			this.ao.select("#baseArea")._groups[0][0].__zoom.ky = 1
 			this.ao.select("#baseArea")._groups[0][0].__zoom.x = 0
-			this.ao.select("#baseArea")._groups[0][0].__zoom.y = 0		
+			this.ao.select("#baseArea")._groups[0][0].__zoom.y = 0
 		})
 
-		d3.select("#"+this.id).select("#baseArea")
-		  .call(this.zoom)
+		d3.select("#"+this.attrFix.id).select("#baseArea")
+			.call(this.zoom)
 	}
 
 	_ZoomUpdate(){
 	
-		this._UpdateAxes(0, 0, "zoom")
+		// Update inner space if it exists. Given that we are zooming it should always exist!
+		if (this.attrFix.hasInnerSpace === true){
+			this._UpdateInnerSpace(0, "zoom")
+		}
 
-		// Update plot object - now only scatter! NEEDS GENERALIZATION!
 		let that = this
+
+		// Update plot objects; can no handle
+		// - scatter
+		// - line
 
 		// Zoom all scatter circles
 		this.ao
 			.selectAll("circle")
-			.attr("transform", function(d) {	
-				return " translate(" + (that.zoomedXScale(d.x)) +","+ (that.zoomedYScale(d.y)) +")"				
+			.attr("transform", function(d) {
+				return " translate(" + (that.attrVar.zoomedXScale(d.x)) +","+ (that.attrVar.zoomedYScale(d.y)) +")"
 		})
 
-		// Zoom all lines (only in class plotLine)
+		// Zoom all lines (only in class plotLine) - NEEDS GENERALIZATION!
 		let zoomedLineFunction = d3.line()
-							 .x(function(d) {return that.zoomedXScale(d[0])})
-							 .y(function(d) {return that.zoomedYScale(d[1])})
-		let gg = this.ao.selectAll(".plotLine")._groups[0]		
+			.x(function(d) {return that.attrVar.zoomedXScale(d[0])})
+			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})
+		let gg = this.ao.selectAll(".plotLine")._groups[0]
 		gg.forEach((el) => {
-			that.group.select("#"+el.id)
+			that.ao.select("#"+el.id)
 			.selectAll("path")
 			.attr("d", zoomedLineFunction(that[el.id].data))
-		})							 
+		})
 
-		// Zoom all histograms
-
+		// Zoom all histograms - NOT DONE!
 	}
 
 }
