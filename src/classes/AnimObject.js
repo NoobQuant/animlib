@@ -29,7 +29,7 @@ export class AnimObject{
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
 			d3.select("#"+this.attrFix.id)
 			.append("group:clipPath")
-			.attr("id","clip")
+			.attr("id", this.attrFix.id + "_clip")
 			.append("rect")
 			.attr("class","rect")
 			.attr("transform",
@@ -39,9 +39,9 @@ export class AnimObject{
 			.attr("height", this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 		d3.select("#"+this.attrFix.id)
 			.append("g")
-			.attr("id","baseAreaGroup")
+			.attr("id", this.attrFix.id + "_baseAreaGroup")
 			.append("rect")
-			.attr("id","baseArea")
+			.attr("id", this.attrFix.id + "_baseArea")
 			.attr("class","rect")
 			.attr("transform",
 				"translate(" + this.attrFix.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
@@ -189,7 +189,7 @@ export class AnimObject{
 				.translate(tx, ty)
 				.scale(kx,ky)
 		
-			this.ao.select("#baseArea")
+			this.ao.select("#"+ this.attrFix.id + "_baseArea")
 				.transition()
 				.duration(duration)
 				.ease(zoomEase)
@@ -290,11 +290,11 @@ export class AnimObject{
 				"width":this.attrFix.aoParent.attrVar.xScale(this.attrVar.xRange[1]),
 				"height":this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.yScale(this.attrFix.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
 				"fill":"none",
-				"id":"baseArea"
+				"id":this.attrFix.id + "_baseArea"
 			}]
 
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-			this.ao.select("#baseAreaGroup")
+			this.ao.select("#" + this.attrFix.id + "_baseAreaGroup")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
@@ -315,7 +315,7 @@ export class AnimObject{
 						.remove()
 						)
 				)
-				this.ao.select("#clip")
+				this.ao.select("#" + this.attrFix.id + "_clip")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
@@ -365,13 +365,13 @@ export class AnimObject{
 			this.attrVar.yDomain = this.attrVar.yScale.domain()
 
 			// Update baseArea such that new zoomed position is zoomIdentity
-			this.ao.select("#baseArea")._groups[0][0].__zoom.kx = 1
-			this.ao.select("#baseArea")._groups[0][0].__zoom.ky = 1
-			this.ao.select("#baseArea")._groups[0][0].__zoom.x = 0
-			this.ao.select("#baseArea")._groups[0][0].__zoom.y = 0
+			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.kx = 1
+			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.ky = 1
+			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.x = 0
+			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.y = 0
 		})
 
-		d3.select("#"+this.attrFix.id).select("#baseArea")
+		d3.select("#"+this.attrFix.id).select("#" + this.attrFix.id + "_baseArea")
 			.call(this.zoom)
 	}
 
@@ -408,5 +408,4 @@ export class AnimObject{
 
 		// Zoom all histograms - NOT DONE!
 	}
-
 }

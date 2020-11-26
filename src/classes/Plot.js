@@ -182,7 +182,8 @@ export class Plot extends AnimObject{
 
 			// Define group for bars
 			let bar = this.ao.select("#"+plotObjParams.id)
-								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
+								// needed for zoom clipping; ID changes when plot object is its own AnimObject
+								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
 								.selectAll(".bar")
 								.data(histogram)
 								
@@ -254,7 +255,8 @@ export class Plot extends AnimObject{
 			// Plot object group
 			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
-								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
+								// needed for zoom clipping; ID changes when plot object is its own AnimObject
+								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
 								.style("opacity", 0)
 
 			// Draw scatter
@@ -353,7 +355,8 @@ export class Plot extends AnimObject{
 			let vis = this.ao.append("g")
 								.attr("id", plotObjParams.id)
 								.attr("class","plotLine")
-								.attr("clip-path", "url(#clip)") // needed for zoom clipping!
+								// needed for zoom clipping; ID changes when plot object is its own AnimObject
+								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
 
 			// Draw line
 			let linepath =  vis.append("path")
