@@ -22,7 +22,7 @@
     */
     
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Path} from '../src/classes/Path.js'
     import {Arrow} from '../src/classes/Arrow.js'    
@@ -35,7 +35,7 @@
     var timing = 0
     
     // Canvas
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
     let pathparams1 = 
     {
@@ -49,7 +49,7 @@
     let pathparams2 = 
     {
       id          : "path2"
-     ,pos          : [[100,100]]      
+     ,pos          : [100,100]
      ,pathData    : [[460,100],[840,100],[840,330],[460,330]]
      ,color       : NQColors.yellow
      ,strokeWidth : 5
@@ -60,9 +60,9 @@
     let pathparams3 = 
     {
       id          : "path3"
-     ,pos         : [[1200,600]]      
+     ,pos         : [1200,600]
      ,pathData    : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
-     ,color       : NQColors.yellow0
+     ,color       : NQColors.orange
      ,strokeWidth : 5
      ,curve       : d3.curveBasis
     }
@@ -70,7 +70,7 @@
     // Path where starting placement is determined by pos
     let pathparams4 = 
     {
-       pos: [[1200,700], [200,600]]
+       pos: [1200,700]
       ,id:          "path4"
       ,pathData:    "M 0,0"
                   + "c -10,0 -40,-15 -60,40"
@@ -95,7 +95,7 @@
     let arrowparams1 = 
     {
        id           : "arrow1"
-      ,pos          : [[100,100]]
+      ,pos          : [100,100]
       ,pathData     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
       ,color        : NQColors.light_purple
       ,strokeWidth  : 5
@@ -107,15 +107,15 @@
       id          : "arrow2"
      ,pathData    : lineDataObject['y']
      ,color       : NQColors.orange
-     ,strokeWidth : 5    
+     ,strokeWidth : 5
     }    
 
-    let path1 = new Path(pathparams1)
-    let path2 = new Path(pathparams2)
-    let path3 = new Path(pathparams3)
-    let path4 = new Path(pathparams4)    
-    let arrow1 = new Arrow(arrowparams1)
-    let arrow2 = new Arrow(arrowparams2)    
+    let path1 = new Path(pathparams1, canvas)
+    let path2 = new Path(pathparams2, canvas)
+    let path3 = new Path(pathparams3, canvas)
+    let path4 = new Path(pathparams4, canvas)
+    let arrow1 = new Arrow(arrowparams1, canvas)
+    let arrow2 = new Arrow(arrowparams2, canvas)
 
     timing = timing + 300
     path1.Draw({delay:timing, duration:2000})
@@ -128,7 +128,7 @@
     path3.Draw({delay:timing, duration:1000})
  
     timing = timing + 3000
-    path4.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:2}})
+    path4.Update({delay:timing, duration:1500, params:{pos:[200,600], scale:2}})
 
     path2.Hide({delay:timing, duration:3000})
 

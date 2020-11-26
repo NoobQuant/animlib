@@ -1,8 +1,8 @@
 import {Path} from './Path.js'
 export class Arrow extends Path {
-    constructor(params) {
+    constructor(params, aoParent) {
 
-		super(params)
+		super(params, aoParent)
 		var arrow = this.ao
 					  .append("svg:path")
 					  .attr("d", d3.symbol().type(d3.symbolTriangle))

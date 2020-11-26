@@ -1,7 +1,7 @@
 import {AnimObject} from './AnimObject.js'
 export class Table extends AnimObject{
-    constructor(params){
-        super(params)
+    constructor(params, aoParent){
+        super(params, aoParent)
         this.path            = params.path
         this.width           = params.width || 700        
         this.tdFontSize      = params.tdFontSize || 26

@@ -12,7 +12,7 @@
   <script type="module">
 
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Table} from '../src/classes/Table.js'
 
@@ -24,7 +24,7 @@
     let timing = 0
     
     // Canvas
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
     /*********************************************
      * Define nodes data for 1st force
@@ -37,7 +37,7 @@
       ,width: 1500
       ,parentId: "bgsvg"
     }
-    let dt = new Table(params)
+    let dt = new Table(params, canvas)
 
     /*********************************************
      * Animate

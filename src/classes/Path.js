@@ -9,8 +9,8 @@ export class Path extends AnimObject{
 	are to be understood relative to that position. 
 	*/
 
-	constructor(params){
-		super(params)
+	constructor(params, aoParent){
+		super(params, aoParent)
 		this.pathData      = params.pathData
         this.color         = params.color || "steelblue"
 		this.strokeWidth   = params.strokeWidth || 1
@@ -36,11 +36,11 @@ export class Path extends AnimObject{
 		if (type == 'drawpath'){
 
 			// Show container group immediately
-			d3.select('#'+ this.id).style("opacity",1)
+			d3.select('#'+ this.attrFix.id).style("opacity",1)
 
 			// Draw path
 			this.path
-				    .attr("transform", "translate(" + this.pos[0][0] + "," + this.pos[0][1] + ")")
+				    .attr("transform", "translate(" + this.attrVar.pos[0] + "," + this.attrVar.pos[1] + ")")
 					.style('opacity',1)
 					.attr("stroke-dasharray", this.totalLength + " " + this.totalLength)
 					.attr("stroke-dashoffset", this.totalLength)
