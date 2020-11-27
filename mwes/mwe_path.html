@@ -41,7 +41,7 @@
     {
        id:          "path1"
       ,data:        "M1056.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
-      ,color:       NQColors.light_purple
+      ,strokeColor:       NQColors.light_purple
       ,strokeWidth: 5
       ,pathSurfaceType: "canvas"
     }
@@ -52,7 +52,7 @@
       id          : "path2"
      ,pos          : [100,100]
      ,data    : [[460,100],[840,100],[840,330],[460,330]]
-     ,color       : NQColors.yellow
+     ,strokeColor       : NQColors.yellow
      ,strokeWidth : 5
      ,curve       : d3.curveLinearClosed
      ,pathSurfaceType: "canvas"
@@ -64,7 +64,7 @@
       id          : "path3"
      ,pos         : [1200,600]
      ,data        : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
-     ,color       : NQColors.orange
+     ,strokeColor       : NQColors.orange
      ,strokeWidth : 5
      ,curve       : d3.curveBasis
      ,pathSurfaceType: "canvas"
@@ -89,7 +89,7 @@
                   + "c 17,-16 -2,-48 -60,-34"
                   + "c -5,-30 -70,-25 -60,-20" 
                   + "c -20,-19 -70,-20 -90,9"
-      ,color:       NQColors.light_purple
+      ,strokeColor:       NQColors.light_purple
       ,strokeWidth: 5
       ,fill: NQColors.yellow
       ,moveInScale: 1/20
@@ -101,7 +101,7 @@
        id           : "arrow1"
       ,pos          : [100,100]
       ,data     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
-      ,color        : NQColors.light_purple
+      ,strokeColor        : NQColors.light_purple
       ,strokeWidth  : 5
       ,pathSurfaceType: "canvas"
     }
@@ -111,7 +111,7 @@
     {
       id          : "arrow2"
      ,data    : lineDataObject['y']
-     ,color       : NQColors.orange
+     ,strokeColor       : NQColors.orange
      ,strokeWidth : 5
      ,pathSurfaceType: "canvas"
     }    
@@ -125,7 +125,7 @@
 
     timing = timing + 300
     path1.Draw({delay:timing, duration:2000})
-    arrow1.Draw({delay:timing, duration:2000, type:"default"})
+    arrow1.Draw({delay:timing, duration:2000, type:"show"})
     arrow2.Draw({delay:timing, duration:2000})
     path4.Draw({delay:timing, duration:1500, type:'scalein'})
 

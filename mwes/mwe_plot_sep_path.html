@@ -84,6 +84,14 @@
         ,"drawEase"    : d3.easeCubic
     }
 
+    let lineDataParams2_copy = 
+    {
+      "id"          : "linedata1_copy"
+     ,"data"        : lineDataObject["y2"]
+     ,"color"       : NQColors.orange
+     ,"strokeWidth" : 5
+    }
+
     let lineDataParams3 = {
         "id"           : "linedata3"
         ,"data"        : [[1000, 400], [1100, 500], [1200, 450], [1300, 420]]
@@ -92,12 +100,9 @@
         ,"drawEase"    : d3.easeCubic
     }
 
-
-
     let plot1 = new Plot(params4, canvas)
-    let path3 = new Path(lineDataParams3, canvas)
-
     let path1 = new Path(lineDataParams1_copy, plot1)
+    let path3 = new Path(lineDataParams3, canvas)
 
     //*/
     /**************************************************
@@ -106,24 +111,27 @@
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:500})
 
-    // I am still under Plot object    
+    // I am still under Plot object
     timing = timing + 1000
     plot1.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams1})
     timing = timing + 1000
     plot1.MoveLine({delay:timing, duration:1000, plotObjParams:lineDataParams2})
-    timing = timing + 1500
-    plot1.HideObject({delay:timing, duration:0,id:"linedata1"})
-    //plot1.Remove({delay:timing+100, duration:0})
+    timing = timing + 3000
+    plot1.HideObject({delay:timing, duration:300,id:"linedata1"})
 
-    // I am my own AnimoObject with plot1 as my parent!
+    // I am my own AnimoObject with plot1 as my parent! That is, the domain I live
+    // in is that of plot1.
     timing = timing + 1000
     path1.Draw({delay:timing, duration:500})
-    //timing = timing + 1000
-    //path1.MoveLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
+    timing = timing + 1000
+    path1.Update({delay:timing, duration:1000, params:lineDataParams2_copy})
+    timing = timing + 15000
+    plot1.Hide({delay:timing, duration:300})
 
-    //timing = timing + 1500
-    // I am my own line on canvas
-    //path3.Draw({delay:timing, duration:1000})
+    // I am my own line on canvas. The domain I live in is therefore pixel domain
+    // of Canvas.
+    timing = timing + 1000
+    path3.Draw({delay:timing, duration:1000})
 
 
   </script> 

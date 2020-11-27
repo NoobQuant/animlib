@@ -4,11 +4,11 @@ export class Arrow extends Path {
 
 		super(params, aoParent)
 		var arrow = this.ao
-					  .append("svg:path")
-					  .attr("d", d3.symbol().type(d3.symbolTriangle))
-					  .style('stroke', this.color)
-					  .style('fill', this.color)
-					  .style("opacity",0)
+			.append("svg:path")
+			.attr("d", d3.symbol().type(d3.symbolTriangle))
+			.style('stroke', this.attrVar.strokeColor)
+			.style('fill', this.attrVar.strokeColor)
+			.style("opacity",0)
 		this.arrow = arrow
 	}
 	

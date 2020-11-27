@@ -58,8 +58,8 @@ export class AnimObject{
 			.append("rect")
 			.attr("class","rect")
 			.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-					"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
 			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 		d3.select("#"+this.attrFix.id)
@@ -69,8 +69,8 @@ export class AnimObject{
 			.attr("id", this.attrFix.id + "_baseArea")
 			.attr("class","rect")
 			.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-					"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")					
 			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
 			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 			.style("fill", "none")
@@ -92,8 +92,8 @@ export class AnimObject{
 			if (this.attrDraw.type === "show"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) +
-							"," + this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
@@ -107,7 +107,7 @@ export class AnimObject{
 					.style("opacity",this.attrVar.opacity)	
 					.attr("transform",
 						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) + ")")
+						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")						
 					.ease(this.attrDraw.moveInEase)
 			} else if (this.attrDraw.type === "scalein"){
 				d3.select("#"+ this.attrFix.id)
@@ -119,7 +119,7 @@ export class AnimObject{
 					.duration(duration)
 					.attr("transform",
 						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
+						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
 							") scale("+ this.attrVar.scale +")")
 					.style("opacity",this.attrVar.opacity)
 					.ease(this.attrDraw.moveInEase)
@@ -151,7 +151,8 @@ export class AnimObject{
 			.duration(duration)
 			.attr("transform",
 				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
+					//this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
+					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
 						") scale("+ this.attrVar.scale +")")
 			.ease(ease)
 		},delay)
@@ -269,6 +270,8 @@ export class AnimObject{
 		this.attrVar.scale	 = params.scale   || this.attrVar.scale   || 1
 		this.attrVar.opacity = params.opacity || this.attrVar.opacity || 1
 		this.attrVar.data    = params.data	  || this.attrVar.data	  || undefined
+		this.attrVar.strokeColor = params.strokeColor || this.attrVar.strokeColor || "steelblue"
+		this.attrVar.strokeWidth = params.strokeWidth || this.attrVar.strokeWidth || 1
 
 		// Attributes related to inner space
 		this.attrVar.xRange = params.xRange || this.attrVar.xRange || undefined

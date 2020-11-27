@@ -1,25 +1,19 @@
 import {AnimObject} from './AnimObject.js'
+import {PathTween} from '../functions/PathTween.js'
 export class Path extends AnimObject{
 
 	constructor(params, aoParent){
 		super(params, aoParent)
-		// There need moving to AnimObject
-        this.color         = params.color || "steelblue"
-		this.strokeWidth   = params.strokeWidth || 1
-		this.fill		   = params.fill || "none"
 
 		// These are Path spesific
-		this.curve		   = params.curve || d3.curveLinear
+		this.curve		     = params.curve || d3.curveLinear
 		this.pathSurfaceType = params.pathSurfaceType ||"parent"
+		this.fill		   	 = params.fill || "none"
 
 		let path
 		if (this.pathSurfaceType === "parent"){
 			path = this.ao.append("path")
-				.attr("class", "line")
-				.style('stroke', this.color)
 				.style("opacity", 0)
-				.style("fill", this.fill)
-				.style('stroke-width', this.strokeWidth)
 				.attr("d", this.aoParent.lineFunction(this.attrVar.data))
 		} else if (this.pathSurfaceType === "canvas") {
 			// This is an alternative solution leveraging _LineData method. It has
@@ -33,13 +27,16 @@ export class Path extends AnimObject{
 			let that = this
 			path = this.ao.append("path")
 				.data([this.attrVar.data])
-				.attr("class", "line")
-				.style('stroke', this.color)
 				.style("opacity", 0)
-				.style("fill", this.fill)
-				.style('stroke-width', this.strokeWidth)
 				.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
 		}
+
+		// Common path attributes
+		path.style("fill", this.fill)
+			.style('stroke-width', this.attrVar.strokeWidth)
+			.style("stroke", this.attrVar.strokeColor)
+			.attr("class", "plotLine")
+			.attr("clip-path", "url(#" + this.aoParent.attrFix.id + "_clip" + ")")
 
 		this.path 		 = path
 		this.totalLength = path.node().getTotalLength()
@@ -54,7 +51,9 @@ export class Path extends AnimObject{
 
 			// Draw path
 			this.path
-				.attr("transform", "translate(" + this.attrVar.pos[0] + "," + this.attrVar.pos[1] + ")")
+				.attr("transform",
+				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 				.style('opacity',1)
 				.attr("stroke-dasharray", this.totalLength + " " + this.totalLength)
 				.attr("stroke-dashoffset", this.totalLength)
@@ -79,5 +78,39 @@ export class Path extends AnimObject{
 		} else if (typeof(d) == "string"){
 			return d
 		}
-	}	
+	}
+
+	Update({delay, duration, params={}, ease = d3.easeCubic}={}){
+
+		d3.timeout(() => {
+
+			// Update AnimObject
+			super.Update({delay:0, duration:duration, params:params})
+
+
+		}, delay=delay)
+		
+		d3.timeout(() => {
+
+		/*
+		Would be cool to merge this with Draw As in DrawHistogram().
+		Not sure how axis label update works here but it just does...
+		*/
+
+		// Update Path AnimObject
+		//this._UpdateLineParams(el)
+		let that = this
+		this.ao.selectAll("path")
+			.transition()
+			.duration(duration)
+			.ease(ease)
+			.attrTween("d", PathTween(that.aoParent.lineFunction(that.attrVar.data), 4))
+
+		}, delay+25)
+
+
+
+
+	}
+
 }
