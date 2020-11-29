@@ -29,29 +29,33 @@ export class Arrow extends Path {
 
 	Draw({delay,duration, type="drawpath"}={}){
 
-		if(type === "drawpath"){
-			super.Draw({delay:delay,duration:duration,type:type})
-			this.arrow.style("opacity",1)
-			this.arrow.transition()
-					.delay(delay)
-					.duration(duration)
-					.ease(d3.easeLinear)
-					.attrTween("transform", this._TranslateAlong(this.path.node()))
-		} else {
+		d3.timeout(() => {
 
-			// This is slightly inconvenient; it first transfers the arrow
-			// to its end position
-			this.arrow.transition()
-					  .delay(0)
-					  .duration(0)
-					  .attrTween("transform", this._TranslateAlong(this.path.node()))
-			
-            super.Draw({delay:delay,duration:duration,type:type})
-			this.arrow.transition()
-					  .delay(delay)
-					  .duration(duration)
-					  .style("opacity",1)
-		}
+			if(type === "drawpath"){
+				super.Draw({delay:0,duration:duration,type:type})
+				d3.timeout(() => {
+					this.arrow.style("opacity",1)
+					this.arrow.transition()
+						.duration(duration)
+						.ease(d3.easeLinear)
+						.attrTween("transform", this._TranslateAlong(this.path.node()))
+				}, delay=0)
+			} else {
+
+				super.Draw({delay:0, duration:duration, type:type})
+				
+				d3.timeout(() => {
+					// This is slightly inconvenient; it first transfers the arrow
+					// to its end position
+					this.arrow.transition()
+						.duration(0)
+						.attrTween("transform", this._TranslateAlong(this.path.node()))
+					
+					this.arrow.transition()
+						.duration(duration)
+						.style("opacity",1)
+				}, delay=0)
+			}
+		}, delay=delay)
 	}
-
 }

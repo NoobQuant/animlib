@@ -64,20 +64,20 @@ export class Path extends AnimObject{
 					.style("opacity", 0)
 					.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
 			}
-
+			this.totalLength = this.path.node().getTotalLength()
 			// Draw path
 			if (type == 'drawpath'){
 
 				// Show container group immediately
 				d3.select('#'+ this.attrFix.id).style("opacity",1)
-				let totalLength = this.path.node().getTotalLength()
+				
 				this.path
 					.attr("transform",
 					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
 						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 					.style('opacity',1)
-					.attr("stroke-dasharray", totalLength + " " + totalLength)
-					.attr("stroke-dashoffset", totalLength)
+					.attr("stroke-dasharray", this.totalLength + " " + this.totalLength)
+					.attr("stroke-dashoffset", this.totalLength)
 					.transition()
 					.duration(duration)
 					.ease(d3.easeLinear)
