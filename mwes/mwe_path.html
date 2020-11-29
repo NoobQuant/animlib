@@ -49,32 +49,31 @@
     // This will be a box
     let pathparams2 = 
     {
-      id          : "path2"
-     ,pos          : [100,100]
-     ,data    : [[460,100],[840,100],[840,330],[460,330]]
-     ,strokeColor       : NQColors.yellow
-     ,strokeWidth : 5
-     ,curve       : d3.curveLinearClosed
-     ,pathSurfaceType: "canvas"
+      id              : "path2"
+     ,data            : [[460,100],[840,100],[840,330],[460,330]]
+     ,strokeColor     : NQColors.yellow
+     ,strokeWidth     : 5
+     ,curve           : d3.curveLinearClosed
+     ,pathSurfaceType : "canvas"
     }
 
     // This will be a curved path
     let pathparams3 = 
     {
-      id          : "path3"
-     ,pos         : [1200,600]
-     ,data        : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
-     ,strokeColor       : NQColors.orange
-     ,strokeWidth : 5
-     ,curve       : d3.curveBasis
-     ,pathSurfaceType: "canvas"
+      id              : "path3"
+     ,pos             : [1200,600]
+     ,data            : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
+     ,strokeColor     : NQColors.orange
+     ,strokeWidth     : 5
+     ,curve           : d3.curveBasis
+     ,pathSurfaceType : "canvas"
     }
 
     // Path where starting placement is determined by pos
     let pathparams4 = 
     {
        pos: [1200,700]
-      ,id:          "path4"
+      ,id: "path4"
       ,data:    "M 0,0"
                   + "c -10,0 -40,-15 -60,40"
                   + "c -30,20 -32,51 -10,81" 
@@ -89,7 +88,7 @@
                   + "c 17,-16 -2,-48 -60,-34"
                   + "c -5,-30 -70,-25 -60,-20" 
                   + "c -20,-19 -70,-20 -90,9"
-      ,strokeColor:       NQColors.light_purple
+      ,strokeColor: NQColors.light_purple
       ,strokeWidth: 5
       ,fill: NQColors.yellow
       ,moveInScale: 1/20
@@ -100,8 +99,8 @@
     {
        id           : "arrow1"
       ,pos          : [100,100]
-      ,data     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
-      ,strokeColor        : NQColors.light_purple
+      ,data         : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
+      ,strokeColor  : NQColors.light_purple
       ,strokeWidth  : 5
       ,pathSurfaceType: "canvas"
     }
@@ -109,11 +108,10 @@
     // Data for long orange arrow from imported .json file
     let arrowparams2 = 
     {
-      id          : "arrow2"
-     ,data    : lineDataObject['y']
-     ,strokeColor       : NQColors.orange
-     ,strokeWidth : 5
-     ,pathSurfaceType: "canvas"
+      id              : "arrow2"
+     ,data            : lineDataObject['y']
+     ,strokeColor     : NQColors.orange
+     ,strokeWidth     : 5
     }    
 
     let path1 = new Path(pathparams1, canvas)
@@ -125,12 +123,12 @@
 
     timing = timing + 300
     path1.Draw({delay:timing, duration:2000})
-    arrow1.Draw({delay:timing, duration:2000, type:"show"})
+    arrow1.Draw({delay:timing, duration:2000, params:{"type":"show"}}) // bug ig type:drawpath!
     arrow2.Draw({delay:timing, duration:2000})
-    path4.Draw({delay:timing, duration:1500, type:'scalein'})
+    path4.Draw({delay:timing, duration:1500, params:{"type":"scalein"}})
 
     timing = timing + 3000
-    path2.Draw({delay:timing, duration:3000, type:'default'})
+    path2.Draw({delay:timing, duration:3000, params:{"type":"show"}})
     path3.Draw({delay:timing, duration:1000})
  
     timing = timing + 3000

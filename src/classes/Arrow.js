@@ -27,22 +27,28 @@ export class Arrow extends Path {
 		};
 	};
 
-	Draw({delay,duration, type="drawpath"}={}){
-
+	Draw({delay,duration, params={}}={}){
+		let type = params.type || "drawpath"
+		let ease = params.ease || d3.easeLinear
 		d3.timeout(() => {
 
 			if(type === "drawpath"){
-				super.Draw({delay:0,duration:duration,type:type})
+
+				// Draw shaft of arrow (path object)
+				super.Draw({delay:0, duration:duration, params:params})
+				
 				d3.timeout(() => {
-					this.arrow.style("opacity",1)
+					this.arrow
+						.style("opacity",1)
+					
 					this.arrow.transition()
 						.duration(duration)
-						.ease(d3.easeLinear)
+						.ease(ease)
 						.attrTween("transform", this._TranslateAlong(this.path.node()))
 				}, delay=0)
 			} else {
 
-				super.Draw({delay:0, duration:duration, type:type})
+				super.Draw({delay:0, duration:duration, params:params})
 				
 				d3.timeout(() => {
 					// This is slightly inconvenient; it first transfers the arrow
@@ -53,6 +59,7 @@ export class Arrow extends Path {
 					
 					this.arrow.transition()
 						.duration(duration)
+						.ease(ease)
 						.style("opacity",1)
 				}, delay=0)
 			}

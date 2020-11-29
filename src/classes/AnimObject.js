@@ -53,21 +53,21 @@ export class AnimObject{
 			// be clipped relative to this area.
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
 			d3.select("#"+this.attrFix.id)
-			.append("group:clipPath")
-			.attr("id", this.attrFix.id + "_clip")
-			.append("rect")
-			.attr("class","rect")
-			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
-			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
-		d3.select("#"+this.attrFix.id)
-			.append("g")
-			.attr("id", this.attrFix.id + "_baseAreaGroup")
-			.append("rect")
-			.attr("id", this.attrFix.id + "_baseArea")
-			.attr("class","rect")
-			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
-			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
-			.style("fill", "none")
+				.append("group:clipPath")
+				.attr("id", this.attrFix.id + "_clip")
+				.append("rect")
+				.attr("class","rect")
+				.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+				.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+			d3.select("#"+this.attrFix.id)
+				.append("g")
+				.attr("id", this.attrFix.id + "_baseAreaGroup")
+				.append("rect")
+				.attr("id", this.attrFix.id + "_baseArea")
+				.attr("class","rect")
+				.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+				.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+				.style("fill", "none")
 
 			// If inners pace exists, define zoom also
 			this._DefineZoom()
@@ -129,7 +129,7 @@ export class AnimObject{
 			- inner space
 		*/
 		d3.timeout(() => {
-			let ease = params.ease || d3.easePoly
+			let ease = params.ease || d3.easeLinear
 
 			// Update varying AnimObject parameters
 			this._UpdateParams(params)
@@ -287,10 +287,11 @@ export class AnimObject{
 	}
 
 	_UpdateDrawParams(params){
-		this.attrDraw.type		  = params.type 		|| this.attrVar.type 	 	|| "show"
-		this.attrDraw.entPoint    = params.entPoint 	|| this.attrVar.entPoint 	|| [0,0]
-		this.attrDraw.moveInScale = params.moveInScale  || this.attrVar.moveInScale || 1/5
-		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrVar.moveInEase  || d3.easeBack
+		this.attrDraw.type		  = params.type 		|| this.attrDraw.type 	 		|| "show"
+		this.attrDraw.entPoint    = params.entPoint 	|| this.attrDraw.entPoint 		|| [0,0]
+		this.attrDraw.moveInScale = params.moveInScale  || this.attrDraw.moveInScale 	|| 1/5
+		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrDraw.moveInEase  	|| d3.easeBack
+		this.attrDraw.drawEase    = params.drawEase 	|| this.attrDraw.drawEase  		|| d3.easeCubic
 	}
 
 	_UpdateInnerSpace(duration, type){

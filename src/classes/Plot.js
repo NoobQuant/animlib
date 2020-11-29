@@ -95,11 +95,12 @@ export class Plot extends AnimObject{
 		},delay)
 	}
 
-	UpdateAxes({delay, duration, plotParams = {}, type="update"}={}){
+	UpdateAxes({delay, duration, params = {}, type="update"}={}){
+		let ease = params.ease || d3.easeCubic
 		// Updates axes but leaves content unchanged
 		d3.timeout(() => {
-			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0, duration, type)
+			this._UpdatePlotParams(params)
+			this._UpdateAxes(0, duration, type, ease)
 		},delay)
 	}
 	
@@ -489,7 +490,7 @@ export class Plot extends AnimObject{
 			)
 	}		
 
-	_UpdateAxes(delay, duration, type="update"){
+	_UpdateAxes(delay, duration, type="update", ease=delay.easeCubic){
 		//let yAxis = this.yAxis
 
 		if (type=="update"){
@@ -508,6 +509,7 @@ export class Plot extends AnimObject{
 			.transition()
 			.delay(delay)
 			.duration(duration)
+			.ease(ease)
 			.call(this.yAxis
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
@@ -530,6 +532,7 @@ export class Plot extends AnimObject{
 				 .transition()
 				 .delay(delay)
 				 .duration(duration)
+				 .ease(ease)
 				 .call(this.xAxis
 				 	.tickSize(this.xTickSize)
 				 	.ticks(this.xTickNo)

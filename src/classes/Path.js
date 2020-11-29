@@ -41,7 +41,9 @@ export class Path extends AnimObject{
 		this.path 		 = path
 	}
 
-	Draw({delay, duration, type = 'drawpath'}={}){
+	Draw({delay, duration, params={}}={}){
+		let type = params.type || "drawpath"
+		let ease = params.ease || d3.easeLinear
 
 		d3.timeout(() => {
 
@@ -66,12 +68,13 @@ export class Path extends AnimObject{
 			}
 			this.totalLength = this.path.node().getTotalLength()
 			// Draw path
-			if (type == 'drawpath'){
+			if (type == "drawpath"){
 
 				// Show container group immediately
 				d3.select('#'+ this.attrFix.id).style("opacity",1)
 				
 				this.path
+					// Needed as AnimObject translate won't kick in with drawpath
 					.attr("transform",
 					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
 						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
@@ -80,13 +83,13 @@ export class Path extends AnimObject{
 					.attr("stroke-dashoffset", this.totalLength)
 					.transition()
 					.duration(duration)
-					.ease(d3.easeLinear)
+					.ease(ease)
 					.attr("stroke-dashoffset", 0)
 			} else {
 			// If not specific draw for this class, use parent draws
 			// Make sure path is visible first!
 				this.path.style('opacity',1)
-				super.Draw({delay:0, duration:duration, type:type})
+				super.Draw({delay:0, duration:duration, params:params})
 
 			}
 		}, delay=delay)
@@ -101,8 +104,8 @@ export class Path extends AnimObject{
 		}
 	}
 
-	Update({delay, duration, params={}, ease = d3.easeCubic}={}){
-
+	Update({delay, duration, params={}}={}){
+		let ease = params.ease || d3.easeCubic
 		d3.timeout(() => {
 
 			// Update AnimObject
