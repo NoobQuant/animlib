@@ -95,11 +95,11 @@ export class Plot extends AnimObject{
 		},delay)
 	}
 
-	UpdateAxes({delay, duration, plotParams = {}}={}){
+	UpdateAxes({delay, duration, plotParams = {}, type="update"}={}){
 		// Updates axes but leaves content unchanged
-		d3.timeout(() => {			
+		d3.timeout(() => {
 			this._UpdatePlotParams(plotParams)
-			this._UpdateAxes(0, duration)
+			this._UpdateAxes(0, duration, type)
 		},delay)
 	}
 	
@@ -111,7 +111,7 @@ export class Plot extends AnimObject{
 			this.Update({delay:0, duration:duration, params:plotParams})
 
 			// Update plot parameters
-			this._UpdatePlotParams(plotParams)
+			//this._UpdatePlotParams(plotParams)
 
 		}, delay=delay)
 
@@ -121,11 +121,11 @@ export class Plot extends AnimObject{
 		d3.timeout(() => {
 
 			// Update axes based on updated AnimObject
-			this._UpdateAxes(0, duration)
+			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
 			
 			// From here on out updating bars
 
-			this[plotObjParams.id] = {}	
+			this[plotObjParams.id] = {}
 			this._UpdateHistParams(plotObjParams)
 			
 			// Local (convenience) variables
@@ -236,15 +236,12 @@ export class Plot extends AnimObject{
 			// Update AnimObject 
 			this.Update({delay:0, duration:duration, params:plotParams})
 
-			// Update plot parameters
-			this._UpdatePlotParams(plotParams)
-
 		}, delay)
 
 		d3.timeout(() => {
 
 			// Update axes based on updated AnimObject
-			this._UpdateAxes(0, duration)
+			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
 
 			// Create object to store plot object parameters
 			this[plotObjParams.id] = {}
@@ -290,15 +287,12 @@ export class Plot extends AnimObject{
 			// Update AnimObject
 			this.Update({delay:0, duration:duration, params:plotParams})
 
-			// Update plot parameters
-			this._UpdatePlotParams(plotParams)
-
 		}, delay)
 
 		d3.timeout(() => {
 
 			// Update axes based on updated AnimObject
-			this._UpdateAxes(0, duration)
+			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
 
 			// Update all scatters
 			if (!Array.isArray(plotObjParams)){
@@ -328,21 +322,18 @@ export class Plot extends AnimObject{
 
 	
 	DrawLine({delay, duration, plotObjParams, plotParams={}}={}){
-
+		/* TO BE RETIRED */
 		d3.timeout(() => {
 
 			// Update AnimObject
 			this.Update({delay:0, duration:duration, params:plotParams})
-
-			// Update plot parameters
-			this._UpdatePlotParams(plotParams)
 
 		}, delay)
 
 		d3.timeout(() => {
 			
 			// Update axes
-			this._UpdateAxes(0, duration)
+			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
 
 			// Create object to store plot object parameters
 			this[plotObjParams.id] = {}
@@ -394,29 +385,22 @@ export class Plot extends AnimObject{
 	}
 	
 	MoveLine({delay, duration, plotObjParams, plotParams={}, ease = d3.easeCubic} = {}){
-		
+		/* TO BE RETIRED */
 		d3.timeout(() => {
 
 			// Update AnimObject
 			this.Update({delay:0, duration:duration, params:plotParams})
-
-			// Update plot parameters
-			this._UpdatePlotParams(plotParams)
 
 		}, delay=delay)
 		
 		d3.timeout(() => {
 
 			// Update axes based on updated AnimObject
-			this._UpdateAxes(0, duration)
+			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
 			/*
-			Would be cool to merge this with DrawLine()!  As in DrawHistogram().
+			Would be cool to merge this with DrawLine()! As in DrawHistogram().
 			Not sure how axis label update works here but it just does...
 			*/
-
-			// Update axes		
-			//this._UpdatePlotParams(plotParams)
-			//this._UpdateAxes(0, duration)
 
 			// Update all lines
 			if (!Array.isArray(plotObjParams)){
@@ -437,34 +421,34 @@ export class Plot extends AnimObject{
 
 	_YAxisLabel(){
 		this.yLabelFo = this.ao.append('foreignObject')
-					        .attr('width',1000) // ad hoc
-						    .attr('height',100) // ad hoc
-						    .attr("transform",
-						    "translate(" + (this.attrVar.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
-						    .style('opacity',1)
+			.attr('width',1000) // ad hoc
+			.attr('height',100) // ad hoc
+			.attr("transform",
+			"translate(" + (this.attrVar.xRange[0] - this.yLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] / 2 + this.yLabelCorrector[1]) + ") rotate(-90)")
+			.style('opacity',1)
 
 		this.yLabelDiv = this.yLabelFo.append('xhtml:div')
-		   							  .style("color", this.yLabelColor)										
-									  .style("font-size", this.yLabelSize + "px")
-		
+			.style("color", this.yLabelColor)
+			.style("font-size", this.yLabelSize + "px")
+
 		// Update call with immediate transition
 		this._AxisLabelUpdate("y",d3.transition().duration(0))
 	}
 
 	_XAxisLabel(){
 		this.xLabelFo = this.ao.append('foreignObject')
-					        .attr('width',1000) // ad hoc
-						    .attr('height',100) // ad hoc
-						    .attr("transform",
-						   		"translate(" + (this.attrVar.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] + this.xLabelCorrector[1] ) + ")")
-							.style('opacity',1)
+			.attr('width',1000) // ad hoc
+			.attr('height',100) // ad hoc
+			.attr("transform",
+				"translate(" + (this.attrVar.xRange[1]/2 + this.xLabelCorrector[0]) + " ," + (this.attrVar.yRange[1] + this.xLabelCorrector[1] ) + ")")
+			.style('opacity',1)
 
-		this.xLabelDiv = this.xLabelFo.append('xhtml:div')			
-		   			 .style("color", this.xLabelColor)										
+		this.xLabelDiv = this.xLabelFo.append('xhtml:div')
+		   			 .style("color", this.xLabelColor)
 		   			 .style("font-size", this.xLabelSize + "px")
 						
 		// Update call with immediate transition
-		this._AxisLabelUpdate("x",d3.transition().duration(0))						
+		this._AxisLabelUpdate("x",d3.transition().duration(0))
 	}	
 
 	_AxisLabelUpdate(label, t){

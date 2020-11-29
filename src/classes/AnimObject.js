@@ -47,19 +47,16 @@ export class AnimObject{
 			
 			this._InitInnerSpace()
 
-			// Append plot base area, equal to xRange and yRange.
-			// Zooming behavior will use this area as base.
-			// Append same size clip area. All object on plot
-			// will be clipped relative to this area.
+			// Append zoom base and clipping areas to current AnimObject. Dimensions are equal to
+			// xRange and yRange and position is same as for AnimObject group. Zooming behavior
+			// will use this area as base and objects appended on current AnimObject on plot will
+			// be clipped relative to this area.
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
 			d3.select("#"+this.attrFix.id)
 			.append("group:clipPath")
 			.attr("id", this.attrFix.id + "_clip")
 			.append("rect")
 			.attr("class","rect")
-			.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
 			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 		d3.select("#"+this.attrFix.id)
@@ -68,9 +65,6 @@ export class AnimObject{
 			.append("rect")
 			.attr("id", this.attrFix.id + "_baseArea")
 			.attr("class","rect")
-			.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")					
 			.attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
 			.attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 			.style("fill", "none")
@@ -151,7 +145,6 @@ export class AnimObject{
 			.duration(duration)
 			.attr("transform",
 				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					//this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.pos[1]) +
 					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
 						") scale("+ this.attrVar.scale +")")
 			.ease(ease)

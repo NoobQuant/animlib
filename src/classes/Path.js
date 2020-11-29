@@ -10,26 +10,26 @@ export class Path extends AnimObject{
 		this.pathSurfaceType = params.pathSurfaceType ||"parent"
 		this.fill		   	 = params.fill || "none"
 
-		let path
-		if (this.pathSurfaceType === "parent"){
-			path = this.ao.append("path")
-				.style("opacity", 0)
-				.attr("d", this.aoParent.lineFunction(this.attrVar.data))
-		} else if (this.pathSurfaceType === "canvas") {
-			// This is an alternative solution leveraging _LineData method. It has
-			// possibility to draw intepolated curves and curves from SVG path definition.
-			// It essentially assumes that the parent on which path is drawn has full
-			// pixel dimension size 1930 x 1090 and 1-to-1 data domain with this.
-			// This does not go straightforwardly with inner space definitions of more
-			// complicated prant objects, such paths should only be drawn on canvas.
-			// Here we check whether this is the case; if-clause could be made to leverage
-			// type of parent and to get rid of the extra variable pathSurfaceType
-			let that = this
-			path = this.ao.append("path")
-				.data([this.attrVar.data])
-				.style("opacity", 0)
-				.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
-		}
+		let path = this.ao.append("path")
+		//if (this.pathSurfaceType === "parent"){
+		//	path = this.ao.append("path")
+		//		.style("opacity", 0)
+		//		.attr("d", this.aoParent.lineFunction(this.attrVar.data))
+		//} else if (this.pathSurfaceType === "canvas") {
+		//	// This is an alternative solution leveraging _LineData method. It has
+		//	// possibility to draw intepolated curves and curves from SVG path definition.
+		//	// It essentially assumes that the parent on which path is drawn has full
+		//	// pixel dimension size 1930 x 1090 and 1-to-1 data domain with this.
+		//	// This does not go straightforwardly with inner space definitions of more
+		//	// complicated prant objects, such paths should only be drawn on canvas.
+		//	// Here we check whether this is the case; if-clause could be made to leverage
+		//	// type of parent and to get rid of the extra variable pathSurfaceType
+		//	let that = this
+		//	path = this.ao.append("path")
+		//		.data([this.attrVar.data])
+		//		.style("opacity", 0)
+		//		.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
+		//}
 
 		// Common path attributes
 		path.style("fill", this.fill)
@@ -39,36 +39,57 @@ export class Path extends AnimObject{
 			.attr("clip-path", "url(#" + this.aoParent.attrFix.id + "_clip" + ")")
 
 		this.path 		 = path
-		this.totalLength = path.node().getTotalLength()
 	}
 
 	Draw({delay, duration, type = 'drawpath'}={}){
 
-		if (type == 'drawpath'){
+		d3.timeout(() => {
 
-			// Show container group immediately
-			d3.select('#'+ this.attrFix.id).style("opacity",1)
+			// Transform path data in this.attrVar.data into pixel space positions
+			// based on current inner space scales in parent AnimObject
+			if (this.pathSurfaceType === "parent"){
+				this.path.style("opacity", 0)
+					.attr("d", this.aoParent.lineFunction(this.attrVar.data))
+			} else if (this.pathSurfaceType === "canvas") {
+				// This is an alternative solution leveraging _LineData method. It has
+				// possibility to draw intepolated curves and curves from SVG path definition.
+				// It essentially assumes that the parent on which path is drawn has full
+				// pixel dimension size 1930 x 1090 and 1-to-1 data domain with this.
+				// This does not go straightforwardly with inner space definitions of more
+				// complicated prant objects, such paths should only be drawn on canvas.
+				// Here we check whether this is the case; if-clause could be made to leverage
+				// type of parent and to get rid of the extra variable pathSurfaceType
+				let that = this
+				this.path.data([this.attrVar.data])
+					.style("opacity", 0)
+					.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
+			}
 
 			// Draw path
-			this.path
-				.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
-				.style('opacity',1)
-				.attr("stroke-dasharray", this.totalLength + " " + this.totalLength)
-				.attr("stroke-dashoffset", this.totalLength)
-				.transition()
-				.delay(delay)
-				.duration(duration)
-				.ease(d3.easeLinear)
-				.attr("stroke-dashoffset", 0)
-		} else {
-		// If not specific draw for this class, use parent draws
-		// Make sure path is visible first!
-			this.path.style('opacity',1)
-			super.Draw({delay:delay, duration:duration, type:type})
+			if (type == 'drawpath'){
 
-		}
+				// Show container group immediately
+				d3.select('#'+ this.attrFix.id).style("opacity",1)
+				let totalLength = this.path.node().getTotalLength()
+				this.path
+					.attr("transform",
+					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
+					.style('opacity',1)
+					.attr("stroke-dasharray", totalLength + " " + totalLength)
+					.attr("stroke-dashoffset", totalLength)
+					.transition()
+					.duration(duration)
+					.ease(d3.easeLinear)
+					.attr("stroke-dashoffset", 0)
+			} else {
+			// If not specific draw for this class, use parent draws
+			// Make sure path is visible first!
+				this.path.style('opacity',1)
+				super.Draw({delay:0, duration:duration, type:type})
+
+			}
+		}, delay=delay)
 	}
 
 	_LineData(d,curve){
@@ -98,7 +119,6 @@ export class Path extends AnimObject{
 		*/
 
 		// Update Path AnimObject
-		//this._UpdateLineParams(el)
 		let that = this
 		this.ao.selectAll("path")
 			.transition()
