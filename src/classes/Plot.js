@@ -490,7 +490,7 @@ export class Plot extends AnimObject{
 			)
 	}		
 
-	_UpdateAxes(delay, duration, type="update", ease=delay.easeCubic){
+	_UpdateAxes(delay, duration, type="update", ease=delay.easeLinear){
 		//let yAxis = this.yAxis
 
 		if (type=="update"){
@@ -514,6 +514,7 @@ export class Plot extends AnimObject{
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
 			)
+
 		this.yAxisGroup
 			.selectAll("text")
 			.style("font-size", this.yTickLabelSize)
@@ -529,14 +530,14 @@ export class Plot extends AnimObject{
 
 		// Update x axis
 		this.xAxisGroup
-				 .transition()
-				 .delay(delay)
-				 .duration(duration)
-				 .ease(ease)
-				 .call(this.xAxis
-				 	.tickSize(this.xTickSize)
-				 	.ticks(this.xTickNo)
-				  )
+			.transition()
+			.delay(delay)
+			.duration(duration)
+			.ease(ease)
+			.call(this.xAxis
+				.tickSize(this.xTickSize)
+				.ticks(this.xTickNo)
+			)
 
 		this.xAxisGroup
 			.selectAll("text")
@@ -552,8 +553,8 @@ export class Plot extends AnimObject{
 			.style("stroke-width", this.axisStrokeWidth)
 		
 		const transition = d3.transition()
-								.delay(delay)
-								.duration(duration)
+			.delay(delay)
+			.duration(duration)
 
 		// Update yLabel
 		this._AxisLabelUpdate("y", transition)

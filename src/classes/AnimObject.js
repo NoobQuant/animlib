@@ -136,7 +136,7 @@ export class AnimObject{
 
 			// Update inner space if it exists
 			if (this.attrFix.hasInnerSpace === true){
-				this._UpdateInnerSpace(0, "update")
+				this._UpdateInnerSpace(duration, "update")
 			}
 
 			// Update position and scale
@@ -317,50 +317,64 @@ export class AnimObject{
 				"fill":"none",
 				"id":this.attrFix.id + "_baseArea"
 			}]
-
+			
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
 			this.ao.select("#" + this.attrFix.id + "_baseAreaGroup")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
-					enter => enter.append("rect")
+					enter => enter
+						.append("rect")
 						.attr("class","rect")
 						.attr("id", d => d.id)
 						.attr("fill", d => d.fill)
-					.call(enter => enter.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
+						.call(
+							enter => enter
+								.transition(t)
+								.attr("width", d => d.width)
+								.attr("height", d => d.height)
+						),
 					update => update
 						.attr("fill", d => d.fill)
-					.call(update => update.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					exit => exit
-					.call(exit => exit.transition(t)
-						.remove()
+						.call(
+							update => update
+								.transition(t)
+								.attr("width", d => d.width)
+								.attr("height", d => d.height)
+						),
+					exit => exit.call(
+							exit => exit
+							.transition(t)
+							.remove()
 						)
 				)
-				this.ao.select("#" + this.attrFix.id + "_clip")
+			this.ao.select("#" + this.attrFix.id + "_clip")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
-					enter => enter.append("rect")
+					enter => enter
+						.append("rect")
 						.attr("class","rect")
-					.call(enter => enter.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					update => update
-					.call(update => update.transition(t)
-						.attr("width", d => d.width)
-						.attr("height", d => d.height)),
-					exit => exit
-					.call(exit => exit.transition(t)
+						.call(
+							enter => enter
+								.transition(t)
+								.attr("width", d => d.width)
+								.attr("height", d => d.height)
+						),
+					update => update.call(
+						update => update
+							.transition(t)
+							.attr("width", d => d.width)
+							.attr("height", d => d.height)
+						),
+					exit => exit.call(exit => exit
+						.transition(t)
 						.remove()
 						)
 				)
 
-		// If inners space is updated, re-define zoom also
-		this._DefineZoom()
+			// If inners space is updated, re-define zoom also
+			this._DefineZoom()
 		
 		} else if(type=="zoom"){
 
@@ -372,7 +386,7 @@ export class AnimObject{
 		}
 
 		// Update line function after changes in inner space
-		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
+		this._DefineLineData()
 	}
 
 	_DefineZoom(){
@@ -437,11 +451,12 @@ export class AnimObject{
 		// Zoom all histograms - NOT DONE!
 	}
 
-	_DefineLineData(xScale, yScale){
-	// Line function for current AnimObject.
+	_DefineLineData(){
+		// Line function for current AnimObject.
+		let that = this
 		let lineFunction = d3.line()
-							 .x(function(d) {return xScale(d[0])})
-							 .y(function(d) {return yScale(d[1])})
+							 .x(function(d) {return that.attrVar.xScale(d[0])})
+							 .y(function(d) {return that.attrVar.yScale(d[1])})
 		this.lineFunction = lineFunction
 	}	
 

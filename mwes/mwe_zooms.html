@@ -37,6 +37,7 @@
     }
 
     let timing = 0
+    let plot1_xpos = 150
 
     /*********************************
     Auxiliaries
@@ -71,11 +72,11 @@
     
     // line plot
     let params1 = {
-       "pos"                : [0, 200]
+       "pos"                : [plot1_xpos, 200]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,700]
       ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,9]
+      ,"xDomain"            : [0,17]
       ,"id"                 : "plot1"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -89,13 +90,13 @@
         ,"strokeColor" : NQColors.orange
         ,"ease"        : d3.easeCubic
     }
-    let lineDataParams1_copy = {
-         "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata1_copy"         
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.yellow
-        ,"drawEase"    : d3.easeCubic
-    }    
+    //let lineDataParams1_copy = {
+    //     "data"        : lineDataObject["y1"]
+    //    ,"id"          : "linedata1_copy"
+    //    ,"strokeWidth" : 3
+    //    ,"strokeColor" : NQColors.yellow
+    //    ,"drawEase"    : d3.easeCubic
+    //}    
     let lineDataParams2 = {
          "data"        : lineDataObject["y3"]
         ,"id"          : "linedata2"
@@ -129,97 +130,56 @@
       ,"xLabel"             : "dd"
     }
 
-
     let canvas = new Canvas({})
     let svg1 = new Svg(svg1params, canvas)
-    let plot1 = new Plot(params1, svg1)    
+    let plot1 = new Plot(params1, svg1)
     let line1 = new Path(lineDataParams1, plot1)
     let line2 = new Path(lineDataParams2, plot1)
-    //let plot2 = new Plot(params2, canvas)
+    let plot2 = new Plot(params2, canvas)
 
     /*********************************
     Animate - Zoom out line chart and continue drawing the line
     Notice that line is drawn on  svg1 that originally extends
     over background svg.
     *********************************/
-    svg1.Draw({delay:0, duration:0})
-    
-    // OLD FIRST BLOCK
-    /*
-    // Plot axes to svg1, plot line to axes  
-    timing = timing + 1000
-    plot1.Draw({delay:timing, duration:300})
-    plot1.DrawLine({delay:timing+300, duration:500, plotObjParams:lineDataParams1})
-
-    // Zoom out svg1
-    //timing = timing + 2000
-    //svg1.Update({delay:timing, duration:2000, params:{scale:0.5}})
-    
-    // Continue plot domain to 17 but do not alter line otherwise
-    let params1_a = {'xDomain': [0, 17], 'xRange': [0, 1400]}
-    plot1.MoveLine({delay:timing, duration:2000, plotObjParams:lineDataParams1, plotParams:params1_a})
-    
-    // Continue line with another line object up to 17
-    timing = timing + 2200
-    plot1.DrawLine({delay:timing, duration:1500, plotObjParams:lineDataParams2})
-
-    // Continue plot object x-range up to svg1 end; i.e. 1930 minus plot position
-    timing = timing + 2000
-    let params1_b = {'xRange':[0, 1930-150]}
-    plot1.MoveLine({delay:timing, duration:1000, plotObjParams:[lineDataParams1,lineDataParams2], plotParams:params1_b})
-
-    timing = timing + 2000
-    svg1.Hide({delay:timing, duration:300})
-    // Need to destroy svg/plot1, as clip area is used there and will mess up
-    // clip areawith same id in next plot
-    svg1.Remove({delay:timing+300})
-    //*/
-
-    // NEW FIRST BLOCK
     ///*
+    svg1.Draw({delay:0, duration:0})
     // Plot axes to svg1, draw line to plot
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
     line1.Draw({delay:timing+300, duration:500})
 
     // Zoom out svg1
-    //timing = timing + 2000
-    //svg1.Update({delay:timing, duration:2000, params:{scale:0.5, ease:d3.easeCubic}})
+    timing = timing + 2000
+    svg1.Update({delay:timing, duration:2000, params:{scale:0.5, ease:d3.easeCubic}})
 
     // Continue plot domain to 17 but do not alter line otherwise
     timing = timing + 2000
-    //let params1_a = {'xDomain':[0, 17], 'xRange':[0, 1200]}
-    //let params1_a = {'xDomain':[0, 10], 'xRange':[0, 1200]}
-    let params1_a = {'xRange':[0, 1200]}
-    plot1.Update({delay:timing, duration:20000, params:params1_a})
-    plot1.UpdateAxes({delay:timing+25, duration:20000, plotParams:params1_a})
-    line1.Update({delay:timing+25, duration:20000, params:lineDataParams1})
+    let params1_a = {'xDomain':[0, 17], 'xRange':[0, 1400]}
+    plot1.Update({delay:timing, duration:2000, params:params1_a})
+    plot1.UpdateAxes({delay:timing+25, duration:2000, plotParams:params1_a})
+    line1.Update({delay:timing+25, duration:2000, params:lineDataParams1})
 
-    //// Continue line with another line object up to 17
-    //timing = timing + 2200
-    //line2.Draw({delay:timing, duration:1500})
-//
-    //// Continue plot object x-range up to svg1 end; i.e. 1930 minus plot position
-    //timing = timing + 200000
-    ////let params1_b = {'xRange':[0, 1930-0]}
-    //let params1_b = {'xRange':[0, 1000]}
-    //plot1.Update({delay:timing, duration:1000, params:params1_b})
-    //plot1.UpdateAxes({delay:timing+25, duration:3000, plotParams:params1_b})
-    //let ggg = {
-    //     "data"        : [[1, 2], [11, 4], [19, 3]]
-    //    ,"id"          : "linedata1"
-    //    ,"strokeWidth" : 3
-    //    ,"strokeColor" : NQColors.orange
-    //    ,"ease"        : d3.easeCubic
-    //}    
-    //line1.Update({delay:timing+25, duration:3000, params:ggg})
-    //line2.Update({delay:timing+25, duration:3000, params:lineDataParams2})
+    // Continue line with another line object up to 17
+    timing = timing + 2200
+    line2.Draw({delay:timing, duration:1500})
+
+    // Continue plot object x-range up to svg1 end; i.e. 1930 minus plot position
+    timing = timing + 2000
+    let params1_b = {'xRange':[0, 1930-plot1_xpos]}
+    plot1.Update({delay:timing, duration:1000, params:params1_b})
+    plot1.UpdateAxes({delay:timing, duration:1000, åarams:params1_b})
+    line1.Update({delay:timing+25, duration:1000, params:lineDataParams1})
+    line2.Update({delay:timing+25, duration:1000, params:lineDataParams2})
+
+    timing = timing + 2000
+    svg1.Hide({delay:timing, duration:1000})
     //*/
 
     /*********************************
     Animate - Zoom in chart with scatter and lines
     *********************************/
-    /*
+    ///*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})

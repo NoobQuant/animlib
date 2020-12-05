@@ -85,6 +85,13 @@ export class Path extends AnimObject{
 					.duration(duration)
 					.ease(ease)
 					.attr("stroke-dashoffset", 0)
+					.on('end', function () {
+						d3.select(this)
+							.attr("stroke-dasharray", null)
+							.attr("stroke-dashoffset", null)
+					})
+			
+
 			} else {
 			// If not specific draw for this class, use parent draws
 			// Make sure path is visible first!
@@ -106,6 +113,7 @@ export class Path extends AnimObject{
 
 	Update({delay, duration, params={}}={}){
 		let ease = params.ease || d3.easeCubic
+		
 		d3.timeout(() => {
 
 			// Update AnimObject
@@ -116,21 +124,22 @@ export class Path extends AnimObject{
 		
 		d3.timeout(() => {
 
-		/*
-		Would be cool to merge this with Draw As in DrawHistogram().
-		Not sure how axis label update works here but it just does...
-		*/
-
+		// Would be cool to merge this with Draw As in DrawHistogram().
+		// Not sure how axis label update works here but it just does...
+		
 		// Update Path AnimObject
 		let that = this
+		///*
 		this.ao.selectAll("path")
 			.transition()
 			.duration(duration)
 			.ease(ease)
-			.attrTween("d", PathTween(that.aoParent.lineFunction(that.attrVar.data), 4))
-
+			.attrTween("d", PathTween(
+				that.aoParent.lineFunction(that.attrVar.data), 4)
+			)
+		//*/
 		}, delay+25)
-
+		
 
 
 
