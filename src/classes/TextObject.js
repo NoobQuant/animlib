@@ -18,7 +18,7 @@ export class TextObject extends AnimObject{
 			.style("position", "relative")
 
 		fo.append('xhtml:div')
-		   .attr('id',this.id + "_xhtml")
+		   .attr('id',this.attrFix.id + "_xhtml")
 		   .style("position", "absolute")
 		   .style("top", 0)
 		   .style("left", 0)
@@ -53,12 +53,12 @@ export class TextObject extends AnimObject{
 			let extraDelayShare = params.extraDelayShare ||  0.2
 
 			// Change ID of text to be hidden
-			d3.select("#"+this.id + "_xhtml")
-			  .attr("id",this.id + "_xhtml" + "_old")	
+			d3.select("#"+this.attrFix.id + "_xhtml")
+			  .attr("id",this.attrFix.id + "_xhtml" + "_old")	
 			
 			// New xhtml text to fo with same ID as the old
 			this.fo.append('xhtml:div')
-			.attr('id',this.id + "_xhtml")
+			.attr('id',this.attrFix.id + "_xhtml")
 			.style("position", "absolute")
 			.style("top", 0)
 			.style("left", 0)
@@ -73,13 +73,13 @@ export class TextObject extends AnimObject{
 			.html(this.text)
 
 			// Fade out old and fade in new
-			d3.select("#"+this.id + "_xhtml" + "_old")
+			d3.select("#"+this.attrFix.id + "_xhtml" + "_old")
 			.transition()
 			.delay(0)
 			.duration(duration)
 			.style("opacity",0)
 			.remove()
-			d3.select("#"+this.id + "_xhtml")
+			d3.select("#"+this.attrFix.id + "_xhtml")
 			.transition()
 			.delay(extraDelayShare*duration)
 			.duration(duration)
