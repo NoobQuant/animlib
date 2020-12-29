@@ -59,8 +59,6 @@
     Define objects 
     *********************************/
     // Backgorund svg
-
-    
     let svg1params = {
          "id"          : "svg1"
         ,"pos"         : [0, 0]
@@ -70,7 +68,7 @@
         ,"strokeWidth" : 0
     }
     
-    // line plot
+    // plots
     let params1 = {
        "pos"                : [plot1_xpos, 200]
       ,"xRange"             : [0,1400]
@@ -82,42 +80,6 @@
       ,"yLabelSize"         : 30
       ,"xLabel"             : "dd"
     }
-
-    let lineDataParams1 = {
-         "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata1"         
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.orange
-        ,"ease"        : d3.easeCubic
-    }
-    //let lineDataParams1_copy = {
-    //     "data"        : lineDataObject["y1"]
-    //    ,"id"          : "linedata1_copy"
-    //    ,"strokeWidth" : 3
-    //    ,"strokeColor" : NQColors.yellow
-    //    ,"drawEase"    : d3.easeCubic
-    //}    
-    let lineDataParams2 = {
-         "data"        : lineDataObject["y3"]
-        ,"id"          : "linedata2"
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
-    }
-
-    // Scatter + line plot
-    let paramsScatter1 = {
-       "data"        : CreateScatterData({'x':[-9,19], 'y':[-8,8]})
-      ,"id"          : "scatter1"
-      ,"strokeWidth" : 4
-    }
-    let lineDataParams3 = {
-         "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata3"
-        ,"strokeWidth" : 3
-        ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
-    }    
     let params2 = {
        "pos"                : [100,100]
       ,"xRange"             : [0,1400]
@@ -130,19 +92,60 @@
       ,"xLabel"             : "dd"
     }
 
+    // Line object parameters
+    let lineDataParams1 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata1"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"ease"        : d3.easeCubic
+    }
+    let lineDataParams2 = {
+         "data"        : lineDataObject["y3"]
+        ,"id"          : "linedata2"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+    let lineDataParams3 = {
+         "data"        : lineDataObject["y3"]
+        ,"id"          : "linedata3"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }    
+    let lineDataParams4 = {
+         "data"        : lineDataObject["y1"]
+        ,"id"          : "linedata4"
+        ,"strokeWidth" : 3
+        ,"strokeColor" : NQColors.orange
+        ,"drawEase"    : d3.easeCubic
+    }
+
+    // Scatter parameters
+    let paramsScatter1 = {
+       "data"        : CreateScatterData({'x':[-9,19], 'y':[-8,8]})
+      ,"id"          : "scatter1"
+      ,"strokeWidth" : 4
+    }
+
+    // Initiate objects
     let canvas = new Canvas({})
     let svg1 = new Svg(svg1params, canvas)
     let plot1 = new Plot(params1, svg1)
     let line1 = new Path(lineDataParams1, plot1)
     let line2 = new Path(lineDataParams2, plot1)
+
     let plot2 = new Plot(params2, canvas)
+    let line3 = new Path(lineDataParams3, plot2)
+    let line4 = new Path(lineDataParams4, plot2)
 
     /*********************************
     Animate - Zoom out line chart and continue drawing the line
     Notice that line is drawn on  svg1 that originally extends
     over background svg.
     *********************************/
-    ///*
+    /*
     svg1.Draw({delay:0, duration:0})
     // Plot axes to svg1, draw line to plot
     timing = timing + 1000
@@ -183,8 +186,12 @@
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
     plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})
-    plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
-    plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
+    
+    line3.Draw({delay:timing, duration:500})
+    line4.Draw({delay:timing+300, duration:1000})
+    
+    //plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
+    //plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
     timing = timing + 3000
     let zoomparams_a = {
@@ -194,12 +201,12 @@
     }
     plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
 
-    timing = timing + 7000
-    let zoomparams_b = {
-      "yDomain"  : [-10,10],
-      "xDomain"  : [-10,20]
-    }    
-    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
+    //timing = timing + 7000
+    //let zoomparams_b = {
+    //  "yDomain"  : [-10,10],
+    //  "xDomain"  : [-10,20]
+    //}    
+    //plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
     //*/
 
     // This needs to be added in conjunction with the import above!

@@ -82,39 +82,55 @@ export class AnimObject{
 			this.attrDraw = {}
 			this._UpdateDrawParams(params)
 
+			// Set positions
+			let xPos = this.attrVar.pos[0]
+			let yPos = this.attrVar.pos[1]
+			let xEntPos
+			let yEntPos
+			if (this.attrDraw.type === "movein"){
+				xEntPos = this.attrDraw.entPoint[0]
+				yEntPos = this.attrDraw.entPoint[1]
+			}
+
 			// Draw AnimObject
-			if (this.attrDraw.type === "show"){
+			if ("disable_translation_pos" in params & params["disable_translation_pos"]===true){
+			// Check if we should skip translation positioning and just display the object. This is for
+			// objects that have their position already determined via data preparation.
+				d3.select("#"+this.attrFix.id)
+				.transition()
+				.duration(duration)
+				.style("opacity",this.attrVar.opacity)
+			} else if (this.attrDraw.type === "show"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
+							"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
+								(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) + ")")
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
 			} else if (this.attrDraw.type === "movein"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrDraw.entPoint[0]) + "," +
-						this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrDraw.entPoint[1]) + ")")
+						"translate(" + this.aoParent.attrVar.xScale(xEntPos) + "," +
+							this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(yPos) - yEntPos) + ")")
 					.transition()
 					.duration(duration)
-					.style("opacity",this.attrVar.opacity)	
+					.style("opacity",this.attrVar.opacity)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")						
+						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
+							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) + ")")
 					.ease(this.attrDraw.moveInEase)
 			} else if (this.attrDraw.type === "scalein"){
 				d3.select("#"+ this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-							this.aoParent.attrVar.yScale(this.attrVar.pos[1]) +
-								") scale("+ this.attrDraw.moveInScale +")")
+						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
+							this.aoParent.attrVar.yScale(yPos) +") scale("+ this.attrDraw.moveInScale +")")
 					.transition()
 					.duration(duration)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
-							") scale("+ this.attrVar.scale +")")
+						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
+							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) +
+								") scale("+ this.attrVar.scale +")")
 					.style("opacity",this.attrVar.opacity)
 					.ease(this.attrDraw.moveInEase)
 			}
@@ -437,11 +453,11 @@ export class AnimObject{
 				return " translate(" + (that.attrVar.zoomedXScale(d.x)) +","+ (that.attrVar.zoomedYScale(d.y)) +")"
 		})
 
-		// Zoom all lines (only in class plotLine) - NEEDS GENERALIZATION!
+		// Zoom all lines (only in class lineAnimObject) - NEEDS GENERALIZATION!
 		let zoomedLineFunction = d3.line()
 			.x(function(d) {return that.attrVar.zoomedXScale(d[0])})
 			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})
-		let gg = this.ao.selectAll(".plotLine")._groups[0]
+		let gg = this.ao.selectAll(".lineAnimObject")._groups[0]
 		gg.forEach((el) => {
 			that.ao.select("#"+el.id)
 			.selectAll("path")
@@ -455,8 +471,8 @@ export class AnimObject{
 		// Line function for current AnimObject.
 		let that = this
 		let lineFunction = d3.line()
-							 .x(function(d) {return that.attrVar.xScale(d[0])})
-							 .y(function(d) {return that.attrVar.yScale(d[1])})
+			.x(function(d) {return that.attrVar.xScale(d[0])})
+			.y(function(d) {return that.attrVar.yScale(d[1])})
 		this.lineFunction = lineFunction
 	}	
 

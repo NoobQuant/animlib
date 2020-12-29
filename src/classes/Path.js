@@ -35,10 +35,11 @@ export class Path extends AnimObject{
 		path.style("fill", this.fill)
 			.style('stroke-width', this.attrVar.strokeWidth)
 			.style("stroke", this.attrVar.strokeColor)
-			.attr("class", "plotLine")
+			.attr("class", "lineAnimObject")
 			.attr("clip-path", "url(#" + this.aoParent.attrFix.id + "_clip" + ")")
+			.attr("data", this.attrVar.data)
 
-		this.path 		 = path
+		this.path = path
 	}
 
 	Draw({delay, duration, params={}}={}){
@@ -75,9 +76,9 @@ export class Path extends AnimObject{
 				
 				this.path
 					// Needed as AnimObject translate won't kick in with drawpath
-					.attr("transform",
-					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
+					//.attr("transform",
+					//"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+					//	(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) + ")")
 					.style('opacity',1)
 					.attr("stroke-dasharray", this.totalLength + " " + this.totalLength)
 					.attr("stroke-dashoffset", this.totalLength)
@@ -94,8 +95,14 @@ export class Path extends AnimObject{
 
 			} else {
 			// If not specific draw for this class, use parent draws
-			// Make sure path is visible first!
+
+				// First make sure path is visible withing the group
 				this.path.style('opacity',1)
+				
+				// Also pass extra draw parameter to circumvent position translating,
+				// as path object is already positioned
+				params["disable_translation_pos"] = true
+				
 				super.Draw({delay:0, duration:duration, params:params})
 
 			}
