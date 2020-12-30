@@ -20,6 +20,7 @@ export class Canvas{
 
         this.attrVar = {}
         this.attrFix = {}
+        this.aoChildren = []
 
         // Rectangle for canvas for filling
         this.svg.append("rect")

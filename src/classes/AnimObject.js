@@ -1,48 +1,56 @@
 export class AnimObject{
 	/*
 	AnimObject is a general class for animatable objects. Object of class AnimObject has
-	an attribute <ao> that points to a <g> element appended to parent object. All DOM
-	elements belonging to AnimObject are under this group. Attribute <aoParent> points to
-	another object of class AnimObject or class Canvas.
+	a property <aoG> that points to <g> element associated with AnimObject. This <g> element
+	stores all SVG element belonging to AnimObject. It attaches to parent AnimObject selection,
+	so that in DOM the AnimObject <g> node (element in HTML) is childNode of parent AnimObject node.
+	
+	Property <aoParent> points to another object of class AnimObject or class Canvas, which is considered
+	as parent of current AnimObject. Further property <aoChildren> gives all childrent AnimObjects of current
+	AnimObject.
 	--> TO BE CHEKED: IS IT INDEED A POINTER OR A COPY OF THE OBJECT! IF A COPY; CHANGES TO
 		PARENT NOT VISIBLE IN STORED PARENT OBJECT WITHIN ANIMOBJECT!
 
-	AnimObject object also has attributes <attrFix> and <attrVar> which store attributes/
+	AnimObject object also has properties <attrFix> and <attrVar> which store attributes/
 	parameters assumes to be fixed and varying, respectively:
-
 	- attrFix
-	 - id (string): ID of <g> element corresponding to this.ao
+	 - id (string): ID of <g> element corresponding to this.aoG
 	 - hasInnerSpace (boolean): Whether AnimObject is assumed to have notion of inner space.
-
 	- attrVar (varying attributes)
 	 - pos (float array): $[x, y]$ position relative to parent which is assumed to have inner space.
-	 - opacity (float): Opacity of this.ao <g> element.
-	 - scale (float): Scale (i.e. size) of this.ao <g> element.
+	 - opacity (float): Opacity of this.aoG <g> element.
+	 - scale (float): Scale (i.e. size) of this.aoG <g> element.
 	 - data (varying object): object storing data for AnimObject. E.g. for child Path contains data for path line.
 
-	Other attributes
-	 - lineFunction
-
+	Other properites
+	 - lineFunction: TBF
 	*/
 	constructor(params, aoParent){
 
 		// Fixed attributes
-		this.attrFix 			= {}
-		this.attrFix.id 		= params.id
-		this.aoParent 	= aoParent
+		this.attrFix 	= {}
+		this.attrFix.id = params.id
 
 		// Varying attributes
 		this.attrVar = {}
 		this._UpdateParams(params)
 
-		// Initialize AnimObject on parent. Parent is assumed to have a notion of inner space, but AnimObject
-		// will be put onto parent space only later as how the object appears is position-dependent.
-		this.ao = d3.select('#'+ this.aoParent.attrFix.id)
+		// Group for AnimObject svg elements.
+		this.aoG = d3.select('#'+ aoParent.attrFix.id)
 			.append("g")
 			.attr("id", this.attrFix.id)
 			.style("opacity", 0)
 
-		// Define inner space for AnimObject shouldit have one
+		// Store parent AnimObject at JS object level.
+		this.aoParent 	= aoParent
+
+		// Append current AnimObject as property of parent AnimObject.
+		aoParent.aoChildren.push(this)
+		
+		// Prepare property for future children
+		this.aoChildren = []
+
+		// Define inner space for AnimObject should it have one
 		if (this.attrFix.hasInnerSpace === true){
 			
 			this._InitInnerSpace()
@@ -224,7 +232,7 @@ export class AnimObject{
 				.translate(tx, ty)
 				.scale(kx,ky)
 		
-			this.ao.select("#"+ this.attrFix.id + "_baseArea")
+			this.aoG.select("#"+ this.attrFix.id + "_baseArea")
 				.transition()
 				.duration(duration)
 				.ease(zoomEase)
@@ -335,7 +343,7 @@ export class AnimObject{
 			}]
 			
 			// https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-			this.ao.select("#" + this.attrFix.id + "_baseAreaGroup")
+			this.aoG.select("#" + this.attrFix.id + "_baseAreaGroup")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
@@ -364,7 +372,7 @@ export class AnimObject{
 							.remove()
 						)
 				)
-			this.ao.select("#" + this.attrFix.id + "_clip")
+			this.aoG.select("#" + this.attrFix.id + "_clip")
 				.selectAll(".rect")
 				.data(mydata, function(d) { return d })
 				.join(
@@ -423,10 +431,10 @@ export class AnimObject{
 			this.attrVar.yDomain = this.attrVar.yScale.domain()
 
 			// Update baseArea such that new zoomed position is zoomIdentity
-			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.kx = 1
-			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.ky = 1
-			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.x = 0
-			this.ao.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.y = 0
+			this.aoG.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.kx = 1
+			this.aoG.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.ky = 1
+			this.aoG.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.x = 0
+			this.aoG.select("#" + this.attrFix.id + "_baseArea")._groups[0][0].__zoom.y = 0
 		})
 
 		d3.select("#"+this.attrFix.id).select("#" + this.attrFix.id + "_baseArea")
@@ -439,32 +447,28 @@ export class AnimObject{
 		if (this.attrFix.hasInnerSpace === true){
 			this._UpdateInnerSpace(0, "zoom")
 		}
-
 		let that = this
 
-		// Update plot objects; can no handle
-		// - scatter
-		// - line
+		let zoomedLineFunction = d3.line()
+			.x(function(d) {return that.attrVar.zoomedXScale(d[0])})
+			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})		
+
+		// Zooming behavior over all children AnimObjects of current AnimObject
+		this.aoChildren.forEach((el) => {
+
+			if (el.constructor.name === "Path"){
+				el.aoG.selectAll("path").attr("d", zoomedLineFunction(el.attrVar.data))
+			}
+			// Needs rest of types here
+		})
 
 		// Zoom all scatter circles
-		this.ao
+		// THIS IS OLD CODE OPERATING SOLELY ON PLOT CLASS, TO BE CHANGED SO THAT INCLUDED IN ABOVE
+		this.aoG
 			.selectAll("circle")
 			.attr("transform", function(d) {
 				return " translate(" + (that.attrVar.zoomedXScale(d.x)) +","+ (that.attrVar.zoomedYScale(d.y)) +")"
 		})
-
-		// Zoom all lines (only in class lineAnimObject) - NEEDS GENERALIZATION!
-		let zoomedLineFunction = d3.line()
-			.x(function(d) {return that.attrVar.zoomedXScale(d[0])})
-			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})
-		let gg = this.ao.selectAll(".lineAnimObject")._groups[0]
-		gg.forEach((el) => {
-			that.ao.select("#"+el.id)
-			.selectAll("path")
-			.attr("d", zoomedLineFunction(that[el.id].data))
-		})
-
-		// Zoom all histograms - NOT DONE!
 	}
 
 	_DefineLineData(){

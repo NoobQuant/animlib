@@ -13,7 +13,7 @@ export class Table extends AnimObject{
         
         let that = this
         
-        var tableholder = this.ao.append("foreignObject")					
+        var tableholder = this.aoG.append("foreignObject")					
                                .attr("width", this.width + 100)
                                .attr("height", 500)
                                .append("xhtml:body")

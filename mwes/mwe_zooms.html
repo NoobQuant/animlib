@@ -145,7 +145,7 @@
     Notice that line is drawn on  svg1 that originally extends
     over background svg.
     *********************************/
-    /*
+    ///*
     svg1.Draw({delay:0, duration:0})
     // Plot axes to svg1, draw line to plot
     timing = timing + 1000
@@ -201,12 +201,12 @@
     }
     plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
 
-    //timing = timing + 7000
-    //let zoomparams_b = {
-    //  "yDomain"  : [-10,10],
-    //  "xDomain"  : [-10,20]
-    //}    
-    //plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
+    timing = timing + 7000
+    let zoomparams_b = {
+      "yDomain"  : [-10,10],
+      "xDomain"  : [-10,20]
+    }    
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
     //*/
 
     // This needs to be added in conjunction with the import above!

@@ -4,7 +4,7 @@ export class Circle extends Shape{
 
 		super(params, aoParent)
 		this.r     = params.r || 10
-		let circle = this.ao.append("circle")
+		let circle = this.aoG.append("circle")
 			.attr("class", "animShape")
 			.attr("r", this.r)
 			.style("fill", this.color)
@@ -14,7 +14,7 @@ export class Circle extends Shape{
 
 	Scale({delay, duration, newr}={}){
 	// Scaling applying to circle radius element
-		this.ao
+		this.aoG
 			.selectAll("circle")
 			.transition()
 			.delay(delay)

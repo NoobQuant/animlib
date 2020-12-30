@@ -19,7 +19,7 @@ export class Plot extends AnimObject{
 		let yAxis = d3.axisLeft().scale(this.attrVar.yScale)
 
 		// init x-axis decorations
-		let xAxisGroup = this.ao.append("g")
+		let xAxisGroup = this.aoG.append("g")
 			.attr("transform", "translate("+ 0 + "," +
 				this.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
 			.call(xAxis
@@ -44,7 +44,7 @@ export class Plot extends AnimObject{
 		this._XAxisLabel()
 
 		// init y-axis decorations
-		let yAxisGroup = this.ao.append("g")
+		let yAxisGroup = this.aoG.append("g")
 			.call(yAxis
 				.tickFormat(this.yTickFormat)
 				.tickSize(this.yTickSize)
@@ -177,12 +177,12 @@ export class Plot extends AnimObject{
 
 			// Group for data binding if drawn for first time
 			if (d3.select("#"+plotObjParams.id).empty()){
-				this.ao.append("g")
+				this.aoG.append("g")
 						  .attr("id", plotObjParams.id)
 			}
 
 			// Define group for bars
-			let bar = this.ao.select("#"+plotObjParams.id)
+			let bar = this.aoG.select("#"+plotObjParams.id)
 								// needed for zoom clipping; ID changes when plot object is its own AnimObject
 								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
 								.selectAll(".bar")
@@ -251,14 +251,14 @@ export class Plot extends AnimObject{
 			let that = this
 
 			// Plot object group
-			let vis = this.ao.append("g")
+			let vis = this.aoG.append("g")
 								.attr("id", plotObjParams.id)
 								// needed for zoom clipping; ID changes when plot object is its own AnimObject
 								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
 								.style("opacity", 0)
 
 			// Draw scatter
-			this.ao.select("#"+plotObjParams.id).selectAll("circle")
+			this.aoG.select("#"+plotObjParams.id).selectAll("circle")
 				.data(this[plotObjParams.id].data)
 				.enter()
 				.append("circle")
@@ -303,7 +303,7 @@ export class Plot extends AnimObject{
 
 				this._UpdateScatterParams(el)
 				let that = this
-				this.ao.select("#"+el.id).selectAll("circle")
+				this.aoG.select("#"+el.id).selectAll("circle")
 				.data(this[el.id].data)
 				.transition()
 				.delay(0)
@@ -322,7 +322,7 @@ export class Plot extends AnimObject{
 	}
 
 	_YAxisLabel(){
-		this.yLabelFo = this.ao.append('foreignObject')
+		this.yLabelFo = this.aoG.append('foreignObject')
 			.attr('width',1000) // ad hoc
 			.attr('height',100) // ad hoc
 			.attr("transform",
@@ -338,7 +338,7 @@ export class Plot extends AnimObject{
 	}
 
 	_XAxisLabel(){
-		this.xLabelFo = this.ao.append('foreignObject')
+		this.xLabelFo = this.aoG.append('foreignObject')
 			.attr('width',1000) // ad hoc
 			.attr('height',100) // ad hoc
 			.attr("transform",

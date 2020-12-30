@@ -10,7 +10,7 @@ export class Shape extends AnimObject{
 
 	ChangeColor({color, delay, duration}={}){
 
-		this.ao
+		this.aoG
 		  .selectAll(".animShape")
 		  .transition()
 		  .duration(duration)

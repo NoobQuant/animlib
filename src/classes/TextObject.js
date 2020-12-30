@@ -12,7 +12,7 @@ export class TextObject extends AnimObject{
 		this.textAlign       = params.textAlign || "left"
 
 		// Foreign object to hold html text
-		let fo = this.ao.append('foreignObject')
+		let fo = this.aoG.append('foreignObject')
 			.attr('width',this.textAreaWidth)
 			.attr('height',this.textAreaHeight)
 			.style("position", "relative")

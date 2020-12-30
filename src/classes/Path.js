@@ -10,9 +10,9 @@ export class Path extends AnimObject{
 		this.pathSurfaceType = params.pathSurfaceType ||"parent"
 		this.fill		   	 = params.fill || "none"
 
-		let path = this.ao.append("path")
+		let path = this.aoG.append("path")
 		//if (this.pathSurfaceType === "parent"){
-		//	path = this.ao.append("path")
+		//	path = this.aoG.append("path")
 		//		.style("opacity", 0)
 		//		.attr("d", this.aoParent.lineFunction(this.attrVar.data))
 		//} else if (this.pathSurfaceType === "canvas") {
@@ -25,7 +25,7 @@ export class Path extends AnimObject{
 		//	// Here we check whether this is the case; if-clause could be made to leverage
 		//	// type of parent and to get rid of the extra variable pathSurfaceType
 		//	let that = this
-		//	path = this.ao.append("path")
+		//	path = this.aoG.append("path")
 		//		.data([this.attrVar.data])
 		//		.style("opacity", 0)
 		//		.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
@@ -137,7 +137,7 @@ export class Path extends AnimObject{
 		// Update Path AnimObject
 		let that = this
 		///*
-		this.ao.selectAll("path")
+		this.aoG.selectAll("path")
 			.transition()
 			.duration(duration)
 			.ease(ease)
