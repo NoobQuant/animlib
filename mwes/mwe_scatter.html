@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Ro
+    */
+
+    import {Canvas} from '../src/classes/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'
+    import {Svg} from '../src/classes/Svg.js'
+    import {Scatter} from '../src/classes/Scatter.js'
+
+    if (document.URL.includes('plot_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    let canvas = new Canvas({})
+
+    /**************************************************
+    Svg
+    **************************************************/
+    let svgparams = {
+       "pos"                : [200,100]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,20]
+      ,"xDomain"            : [-1100,1100]
+      ,"id"                 : "svg1"
+    }
+    let svg = new Svg(svgparams, canvas)
+
+    /**************************************************
+    Scatter
+    **************************************************/
+    function getRandomIntInclusive(dd) {
+      let min = Math.ceil(dd[0])
+      let max = Math.floor(dd[1])
+      return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+    }
+    function CreateScatterData(d,color,r){
+        let scatterData = []
+        for (let i=1;i<=10;i++) {
+          scatterData.push({"x": getRandomIntInclusive(d.x),  "y": getRandomIntInclusive(d.y), "color": color, "r": r})
+        }
+        return scatterData
+    }
+    
+    let paramsScatter1 = {
+       "id"          : "myscatter1"
+      ,"data"        : CreateScatterData({'x':[-1000,1000], 'y':[1,19]}, NQColors.orange, 5)
+      ,"strokeWidth" : 4
+    }
+    let scatter1 = new Scatter(paramsScatter1, svg)
+
+    /**************************************************
+    Animations
+    **************************************************/
+    timing = timing + 500
+    svg.Draw({delay:timing, duration:0})
+    scatter1.Draw({delay:timing, duration:500})
+
+  </script> 
+
+</body>
+</html>
