@@ -1,5 +1,4 @@
 import {AnimObject} from './AnimObject.js'
-//import {AddMathJax} from '../functions/AddMathJax.js'
 export class Scatter extends AnimObject{
 
 
@@ -47,7 +46,7 @@ export class Scatter extends AnimObject{
 		}, delay=delay)
 		
 		d3.timeout(() => {
-        // Update Path specific
+            // Update Scatter specific
             let xScale = this.aoParent.attrVar.xScale
             let yScale = this.aoParent.attrVar.yScale
             this.scatter.selectAll("circle")

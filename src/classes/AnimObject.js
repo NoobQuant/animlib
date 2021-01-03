@@ -292,12 +292,17 @@ export class AnimObject{
 	}
 
 	_UpdateParams(params){
-		this.attrVar.pos 	 = params.pos 	  || this.attrVar.pos     || [0,0]
-		this.attrVar.scale	 = params.scale   || this.attrVar.scale   || 1
-		this.attrVar.opacity = params.opacity || this.attrVar.opacity || 1
-		this.attrVar.data    = params.data	  || this.attrVar.data	  || undefined
-		this.attrVar.strokeColor = params.strokeColor || this.attrVar.strokeColor || "white"
-		this.attrVar.strokeWidth = params.strokeWidth || this.attrVar.strokeWidth || 1
+		this.attrVar.pos 			= params.pos			|| this.attrVar.pos			|| [0,0]
+		this.attrVar.scale	 	 	= params.scale   	  	|| this.attrVar.scale   	|| 1
+		this.attrVar.opacity 	 	= params.opacity 	  	|| this.attrVar.opacity 	|| 1
+		this.attrVar.data    	 	= params.data	  	  	|| this.attrVar.data	  	|| undefined
+		this.attrVar.strokeColor 	= params.strokeColor 	|| this.attrVar.strokeColor || "white"
+		this.attrVar.strokeWidth 	= params.strokeWidth 	|| this.attrVar.strokeWidth || 1
+		this.attrVar.fill 	 	 	= params.fill 	  	  	|| this.attrVar.fill 		|| "#666da3"
+
+		// Maybe move these someplace else?
+		this.attrVar.barBins 	 	= params.barBins 	  	|| this.attrVar.barBins 	|| 10
+		this.attrVar.barDataType 	= params.barDataType 	|| this.attrVar.barDataType || "histogram"
 
 		// Attributes related to inner space
 		this.attrVar.xRange = params.xRange || this.attrVar.xRange || undefined

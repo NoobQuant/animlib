@@ -138,9 +138,9 @@ export class Plot extends AnimObject{
 				return HEIGHT - that.attrVar.yScale(d.y)
 			}
 			function width(d) {
-				if(['normal','precalculated'].includes(that[plotObjParams.id].datatype)){
+				if(['histogram','histogram_precalc'].includes(that[plotObjParams.id].barDataType)){
 					return that.attrVar.xScale(d.x1) - that.attrVar.xScale(d.x0)
-				} else if(that[plotObjParams.id].datatype==="bar"){
+				} else if(that[plotObjParams.id].barDataType==="bar"){
 					return that.attrVar.xScale.bandwidth()
 				}
 			}			
@@ -150,8 +150,8 @@ export class Plot extends AnimObject{
 			//	- x1  : bar end position on x-axis
 			//	- cum : cumualtive bar y values			
 			let histogram
-			if (this[plotObjParams.id].datatype == 'normal'){
-				histogram = d3.histogram().domain(this.attrVar.xScale.domain()).thresholds(this[plotObjParams.id].histBins)(this[plotObjParams.id].data)
+			if (this[plotObjParams.id].barDataType == 'histogram'){
+				histogram = d3.histogram().domain(this.attrVar.xScale.domain()).thresholds(this[plotObjParams.id].barBins)(this[plotObjParams.id].data)
 				
 				//Calculative cdf
 				// https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
@@ -164,7 +164,7 @@ export class Plot extends AnimObject{
 					last = histogram[i]['cum']
 				}
 
-			} else if (this[plotObjParams.id].datatype == 'precalculated' || this[plotObjParams.id].datatype == 'bar'){
+			} else if (this[plotObjParams.id].barDataType == 'histogram_precalc' || this[plotObjParams.id].barDataType == 'bar'){
 				histogram = this[plotObjParams.id].data
 				
 				//Calculative cdf
@@ -418,8 +418,8 @@ export class Plot extends AnimObject{
 	_UpdateHistParams(params){
 		let id = params.id
 		this[id].data   	  = params.data
-		this[id].histBins  	  = params.histBins 	 || this[id].histBins       || 10
+		this[id].barBins  	  = params.barBins 	 || this[id].barBins       || 10
 		this[id].fill	  	  = params.fill			 || this[id].fill 	      || "#666da3"
-		this[id].datatype  	  = params.datatype		 || this[id].datatype       || "normal"				
+		this[id].barDataType  	  = params.barDataType		 || this[id].barDataType       || "histogram"				
 	}
 }

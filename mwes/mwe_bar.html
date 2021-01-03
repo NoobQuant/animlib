@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Ro
+    */
+
+    import {Canvas} from '../src/classes/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'
+    import {Svg} from '../src/classes/Svg.js'
+    import {Bar} from '../src/classes/Bar.js'
+
+    if (document.URL.includes('plot_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    let canvas = new Canvas({})
+
+    /**************************************************
+    Svg with linear inner space
+    **************************************************/
+    let svgparams = {
+       "pos"                : [200, 250]
+      ,"xRange"             : [0, 1400]
+      ,"yRange"             : [0, 650]
+      ,"xDomain"            : [0, 200]
+      ,"yDomain"            : [0,0.10]
+      ,"id"                 : "svg1"
+    }
+    let svg = new Svg(svgparams, canvas)
+
+    /**************************************************
+    Histogram data
+    **************************************************/
+
+    let histDataParams1_a = {
+        "data"        : [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
+       ,"id"          : "bar1"
+       ,'barDataType' : 'histogram_precalc'
+    }
+    let histDataParams1_b = {
+        "data"        : [34,55,23,43,12,32,29]
+       ,"id"          : "hisdata1"
+       ,"barDataType" : 'histogram'
+       ,"fill"        : "#fac0a2"
+       ,"barBins"     : [0,25,50,75,100,125,150,175,200]
+      }
+    let bar1 = new Bar(histDataParams1_a, svg)
+
+    /**************************************************
+    Animations
+    **************************************************/
+    timing = timing + 500
+    svg.Draw({delay:timing, duration:0})
+    bar1.Draw({delay:timing+500, duration:1000})
+
+    timing = timing + 1500
+    bar1.Update({delay:timing+500, duration:1000, params:histDataParams1_b})
+
+  </script> 
+
+</body>
+</html>
