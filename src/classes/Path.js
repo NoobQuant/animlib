@@ -120,36 +120,22 @@ export class Path extends AnimObject{
 
 	Update({delay, duration, params={}}={}){
 		let ease = params.ease || d3.easeCubic
-		
+
 		d3.timeout(() => {
-
-			// Update AnimObject
+			// Update common AnimObject
 			super.Update({delay:0, duration:duration, params:params})
-
-
 		}, delay=delay)
 		
 		d3.timeout(() => {
-
-		// Would be cool to merge this with Draw As in DrawHistogram().
-		// Not sure how axis label update works here but it just does...
-		
-		// Update Path AnimObject
-		let that = this
-		///*
-		this.aoG.selectAll("path")
-			.transition()
-			.duration(duration)
-			.ease(ease)
-			.attrTween("d", PathTween(
-				that.aoParent.lineFunction(that.attrVar.data), 4)
-			)
-		//*/
+		// Update Path specific
+			let that = this
+			this.aoG.selectAll("path")
+				.transition()
+				.duration(duration)
+				.ease(ease)
+				.attrTween("d", PathTween(
+					that.aoParent.lineFunction(that.attrVar.data), 4)
+				)
 		}, delay+25)
-		
-
-
-
 	}
-
 }

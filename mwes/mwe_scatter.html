@@ -64,7 +64,7 @@
     
     let paramsScatter1 = {
        "id"          : "myscatter1"
-      ,"data"        : CreateScatterData({'x':[-1000,1000], 'y':[1,19]}, NQColors.orange, 5)
+      ,"data"        : CreateScatterData({'x':[-1000,1000],'y':[1,19]}, NQColors.orange, 5)
       ,"strokeWidth" : 4
     }
     let scatter1 = new Scatter(paramsScatter1, svg)
@@ -75,6 +75,11 @@
     timing = timing + 500
     svg.Draw({delay:timing, duration:0})
     scatter1.Draw({delay:timing, duration:500})
+
+    timing = timing + 1000
+    paramsScatter1["data"] = CreateScatterData({'x':[-1000,1000],'y':[1,19]}, NQColors.purple, 10)
+    scatter1.Update({delay:timing, duration:1500, params:paramsScatter1})
+
 
   </script> 
 

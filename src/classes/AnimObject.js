@@ -163,15 +163,24 @@ export class AnimObject{
 				this._UpdateInnerSpace(duration, "update")
 			}
 
-			// Update position and scale
-			d3.select("#"+this.attrFix.id)
-			.transition()
-			.duration(duration)
-			.attr("transform",
-				"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-					(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
-						") scale("+ this.attrVar.scale +")")
-			.ease(ease)
+			if ("disable_translation_pos" in params & params["disable_translation_pos"]===true){
+				// Update other than position
+				d3.select("#"+this.attrFix.id)
+				.transition()
+				.duration(duration)
+				.attr("transform", "scale("+ this.attrVar.scale +")")
+				.ease(ease)
+			} else {
+				// Update position and scale
+				d3.select("#"+this.attrFix.id)
+				.transition()
+				.duration(duration)
+				.attr("transform",
+					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
+						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
+							") scale("+ this.attrVar.scale +")")
+				.ease(ease)
+			}
 		},delay)
 	}
 
@@ -287,7 +296,7 @@ export class AnimObject{
 		this.attrVar.scale	 = params.scale   || this.attrVar.scale   || 1
 		this.attrVar.opacity = params.opacity || this.attrVar.opacity || 1
 		this.attrVar.data    = params.data	  || this.attrVar.data	  || undefined
-		this.attrVar.strokeColor = params.strokeColor || this.attrVar.strokeColor || "steelblue"
+		this.attrVar.strokeColor = params.strokeColor || this.attrVar.strokeColor || "white"
 		this.attrVar.strokeWidth = params.strokeWidth || this.attrVar.strokeWidth || 1
 
 		// Attributes related to inner space

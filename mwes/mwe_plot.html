@@ -32,6 +32,7 @@
     import {AddMathJax} from '../src/functions/AddMathJax.js'
     import {Plot} from '../src/classes/Plot.js'
     import {Path} from '../src/classes/Path.js'
+    import {Scatter} from '../src/classes/Scatter.js'
 
     if (document.URL.includes('plot_hh')){
       window.currentTime = 0
@@ -67,13 +68,13 @@
       ,"xRange"      : [0,1400]
       ,"yRange"      : [0,650]
       ,"xDomain"     : [0,200]
-      ,"yDomain"     : [0, 0.10] 
+      ,"yDomain"     : [0, 0.10]
       ,"id"          : "plot2"
       ,"xTickNo"     : 5
       ,"yLabel"      : "$\\alpha + \\text{Time}$"
       ,"xLabel"      : "x label"
       ,"yTickFormat" : d3.format('.2f')
-      ,"xAxisType"   : "scaleLinear"  
+      ,"xAxisType"   : "scaleLinear"
     };
     let plot2 = new Plot(params2, canvas)
     //*/
@@ -128,12 +129,12 @@
         for (let i=1;i<=10;i++) {
           scatterData.push({"x": getRandomIntInclusive(d.x),  "y": getRandomIntInclusive(d.y), "color": color, "r": r})
         }
-        return scatterData  
+        return scatterData
     }
     
     let paramsScatter1_a = {
        "id"          : "myscatter1"
-      ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)      
+      ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)
       ,"strokeWidth" : 4
     }
     let paramsScatter1_b = {
@@ -147,10 +148,13 @@
     }
     let paramsScatter3 = {
        "id"          : "myscatter3"
-      ,"data"        : CreateScatterData({'x':[5, 12], 'y':[5, 15]}, NQColors.orange, 5)      
+      ,"data"        : CreateScatterData({'x':[1, 9], 'y':[5, 8]}, NQColors.orange, 5)
       ,"strokeWidth" : 4
     }
-    //*/    
+    let scatter1 = new Scatter(paramsScatter1_a, plot)
+    let scatter2 = new Scatter(paramsScatter2, plot)
+    let scatter3 = new Scatter(paramsScatter3, plot4)
+    //*/
     /**************************************************
     Histogram data parameters
     **************************************************/
@@ -166,7 +170,7 @@
     }
     let histDataParams1_b = {
         "data"      : histData1_b
-       ,"id"        : "hisdata1"        
+       ,"id"        : "hisdata1"
        ,"datatype"  : 'normal'
        ,"fill"      : "#fac0a2"
        ,"histBins"  : [0,25,50,75,100,125,150,175,200]
@@ -200,7 +204,7 @@
     /**************************************************
     Line objects
     **************************************************/
-    ///*    
+    ///*
     let lineDataParams1 = {
          "data"        : lineDataObject["y1"]
         ,"id"          : "line1"
@@ -236,19 +240,18 @@
     plot.Draw({delay:timing, duration:500, params:{"type":"movein"}})
 
     timing = timing + 800
-    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter1_a})
+    scatter1.Draw({delay:timing, duration:500})
 
     timing = timing + 1000
     let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
-    plot.MoveScatter({delay:timing, duration:1000, plotObjParams:paramsScatter1_b, plotParams:newAxisParams})
+    plot.Update({delay:timing, duration:1000, params:newAxisParams})
+    plot.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams})
+    scatter1.Update({delay:timing+25, duration:1000, params:paramsScatter1_b})
 
     timing = timing + 1200
-    plot.DrawScatter({delay:timing, duration:500, plotObjParams:paramsScatter2})
+    scatter2.Draw({delay:timing, duration:500})
 
     timing = timing + 700
-    plot2.HideObject({delay:timing, duration:500, id:"myscatter"})
-    plot2.HideObject({delay:timing+300, duration:500, id:"myscatter2"})    
-    timing = timing + 1000
     plot.Hide({delay:timing, duration :300})
     //*/
 
@@ -309,7 +312,7 @@
     
     timing = timing + 2000
     let newParams4_b = {'xDomain': [0, 25]}
-    plot4.DrawScatter({delay:timing, duration:1000, plotObjParams:paramsScatter3, plotParams:newParams4_b})
+    scatter3.Draw({delay:timing, duration:1000})
     line1.Update({delay:timing+25, duration:1000, params:lineDataParams1})
     line2.Update({delay:timing+25, duration:1000, params:lineDataParams2})
     line3.Update({delay:timing+25, duration:1000, params:lineDataParams3})
@@ -323,10 +326,6 @@
     timing = timing + 1000
     plot4.Hide({delay:timing, duration :500})
     //*/
-
-
-
-
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(d3.select('#'+canvas.id))

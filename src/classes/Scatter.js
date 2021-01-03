@@ -18,7 +18,7 @@ export class Scatter extends AnimObject{
             .append("circle")
             .attr("r", function(d) {return d.r})
             .style("fill", function(d) {return d.color})
-            .style("stroke", this.attrVar.stroke)
+            .style("stroke", this.attrVar.strokeColor)
             .style("stroke-width", this.attrVar.strokeWidth)
             .attr("transform", function(d) {
                 return " translate(" + (xScale(d.x)) +","+ (yScale(d.y)) +")"
@@ -35,6 +35,34 @@ export class Scatter extends AnimObject{
             super.Draw({delay:0, duration:duration, params:params})
 
 		}, delay=delay)
+    }
+    
+	Update({delay, duration, params={}}={}){
+		let ease = params.ease || d3.easeCubic
+
+		d3.timeout(() => {
+            // Update common AnimObject
+            params["disable_translation_pos"] = true
+			super.Update({delay:0, duration:duration, params:params})
+		}, delay=delay)
+		
+		d3.timeout(() => {
+        // Update Path specific
+            let xScale = this.aoParent.attrVar.xScale
+            let yScale = this.aoParent.attrVar.yScale
+            this.scatter.selectAll("circle")
+                .data(this.attrVar.data)
+                .transition()
+                .duration(duration)
+                .ease(ease)
+                .attr("r", function(d) {return d.r})
+                .style("fill", function(d) {return d.color})
+                .style("stroke", this.attrVar.strokeColor)
+                .style("stroke-width", this.attrVar.strokeWidth)
+                .attr("transform", function(d) {
+                    return "translate(" + (xScale(d.x)) + "," + (yScale(d.y)) +")"
+                })
+		}, delay+25)
 	}
 
 }
