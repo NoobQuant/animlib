@@ -10,6 +10,10 @@ export class Scatter extends AnimObject{
 
         let xScale = this.aoParent.attrVar.xScale
         let yScale = this.aoParent.attrVar.yScale
+
+        // Clip area; can we move this to AnimObject?
+        this.scatter.attr("clip-path", "url(#" + this.aoParent.attrFix.id + "_clip" + ")")
+        
         // Initiate scatter
         this.scatter.selectAll("circle")
             .data(this.attrVar.data)
@@ -19,6 +23,7 @@ export class Scatter extends AnimObject{
             .style("fill", function(d) {return d.color})
             .style("stroke", this.attrVar.strokeColor)
             .style("stroke-width", this.attrVar.strokeWidth)
+
             .attr("transform", function(d) {
                 return " translate(" + (xScale(d.x)) +","+ (yScale(d.y)) +")"
             })

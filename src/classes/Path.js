@@ -11,31 +11,13 @@ export class Path extends AnimObject{
 		this.fill		   	 = params.fill || "none"
 
 		let path = this.aoG.append("path")
-		//if (this.pathSurfaceType === "parent"){
-		//	path = this.aoG.append("path")
-		//		.style("opacity", 0)
-		//		.attr("d", this.aoParent.lineFunction(this.attrVar.data))
-		//} else if (this.pathSurfaceType === "canvas") {
-		//	// This is an alternative solution leveraging _LineData method. It has
-		//	// possibility to draw intepolated curves and curves from SVG path definition.
-		//	// It essentially assumes that the parent on which path is drawn has full
-		//	// pixel dimension size 1930 x 1090 and 1-to-1 data domain with this.
-		//	// This does not go straightforwardly with inner space definitions of more
-		//	// complicated prant objects, such paths should only be drawn on canvas.
-		//	// Here we check whether this is the case; if-clause could be made to leverage
-		//	// type of parent and to get rid of the extra variable pathSurfaceType
-		//	let that = this
-		//	path = this.aoG.append("path")
-		//		.data([this.attrVar.data])
-		//		.style("opacity", 0)
-		//		.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
-		//}
 
 		// Common path attributes
 		path.style("fill", this.fill)
 			.style('stroke-width', this.attrVar.strokeWidth)
 			.style("stroke", this.attrVar.strokeColor)
 			.attr("class", "lineAnimObject")
+			// Clip area; can we move this to AnimObject?
 			.attr("clip-path", "url(#" + this.aoParent.attrFix.id + "_clip" + ")")
 			.attr("data", this.attrVar.data)
 

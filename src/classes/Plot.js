@@ -78,23 +78,6 @@ export class Plot extends AnimObject{
 		
 	}
 
-	HideObject({delay, duration, id}={}){
-		/* Hide object attached to plot group*/
-		d3.timeout(() => {
-			d3.select("#"+id)
-				.transition()
-				.duration(duration)
-				.style("opacity", "0")
-		},delay)
-	}	
-
-	RemoveObject({delay, id}={}){
-		/* Remove object attached to plot group*/
-		d3.timeout(() => {
-			d3.select("#"+id).remove()
-		},delay)
-	}
-
 	UpdateAxes({delay, duration, params = {}, type="update"}={}){
 		let ease = params.ease || d3.easeCubic
 		// Updates axes but leaves content unchanged
@@ -104,131 +87,6 @@ export class Plot extends AnimObject{
 		},delay)
 	}
 	
-	DrawHistogram({delay, duration, plotObjParams, plotParams={}}={}){
-
-		d3.timeout(() => {
-
-			// Update AnimObject 
-			this.Update({delay:0, duration:duration, params:plotParams})
-
-			// Update plot parameters
-			//this._UpdatePlotParams(plotParams)
-
-		}, delay=delay)
-
-		// For some reason cannot get this to work without separating updating
-		// and drwaing into two separate timeouts with this latter being delayed
-		// by an amount epsilonm here 5
-		d3.timeout(() => {
-
-			// Update axes based on updated AnimObject
-			this.UpdateAxes({delay:0, duration:duration, params:plotParams})
-			
-			// From here on out updating bars
-
-			this[plotObjParams.id] = {}
-			this._UpdateHistParams(plotObjParams)
-			
-			// Local (convenience) variables
-			let that 	= this
-			let HEIGHT 	= this.attrVar.yRange[1] - this.attrVar.yRange[0]
-
-			// Auxiliary function
-			function height(d) {
-				return HEIGHT - that.attrVar.yScale(d.y)
-			}
-			function width(d) {
-				if(['histogram','histogram_precalc'].includes(that[plotObjParams.id].barDataType)){
-					return that.attrVar.xScale(d.x1) - that.attrVar.xScale(d.x0)
-				} else if(that[plotObjParams.id].barDataType==="bar"){
-					return that.attrVar.xScale.bandwidth()
-				}
-			}			
-			// create array histogram with elements representing each bin. Each element is an object with
-			//	- y   : bar value
-			//	- x0  : bar start position on x-axis
-			//	- x1  : bar end position on x-axis
-			//	- cum : cumualtive bar y values			
-			let histogram
-			if (this[plotObjParams.id].barDataType == 'histogram'){
-				histogram = d3.histogram().domain(this.attrVar.xScale.domain()).thresholds(this[plotObjParams.id].barBins)(this[plotObjParams.id].data)
-				
-				//Calculative cdf
-				// https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
-				let noOfObservations = this[plotObjParams.id].data.length
-				let last = 0
-				for(let i=0; i < histogram.length; i++){
-					// Current bin y value: number of observations in the bin divided by total number of observations 
-					histogram[i]['y'] = histogram[i].length/noOfObservations
-					histogram[i]['cum'] = last + histogram[i]['y']
-					last = histogram[i]['cum']
-				}
-
-			} else if (this[plotObjParams.id].barDataType == 'histogram_precalc' || this[plotObjParams.id].barDataType == 'bar'){
-				histogram = this[plotObjParams.id].data
-				
-				//Calculative cdf
-				let last = 0
-				for(let i=0; i < histogram.length; i++){
-					histogram[i]['cum'] = last + histogram[i].y
-					last = histogram[i]['cum'];
-				}			
-			}
-
-			// Group for data binding if drawn for first time
-			if (d3.select("#"+plotObjParams.id).empty()){
-				this.aoG.append("g")
-						  .attr("id", plotObjParams.id)
-			}
-
-			// Define group for bars
-			let bar = this.aoG.select("#"+plotObjParams.id)
-								// needed for zoom clipping; ID changes when plot object is its own AnimObject
-								.attr("clip-path", "url(#" + this.attrFix.id + "_clip" + ")")
-								.selectAll(".bar")
-								.data(histogram)
-								
-			// Save histogram to this
-			this[plotObjParams.id].histogram = histogram
-
-			// EXIT section
-			bar.exit().remove()
-
-			// UPDATE section
-			bar.transition()
-				.duration(duration)
-				.attr("transform", (d, i) => 'translate( '+ that.attrVar.xScale(d.x0) +','+ that.attrVar.yScale(d.y) +')')
-
-			bar.select("rect")
-				.transition()
-				.duration(duration)
-				.attr('fill',this[plotObjParams.id].fill)	
-				.attr("height", height)
-				
-			// handle new elements ENTER
-			let barEnter = bar
-							.enter()
-							.append("g")
-							.attr("class", "bar")
-							.attr("transform", function(d) { return "translate(" + that.attrVar.xScale(d.x0) + "," + HEIGHT + ")" })
-			
-			barEnter.transition()
-					.duration(duration)
-					.attr("transform", (d, i) => `translate(${that.attrVar.xScale(d.x0)}, ${that.attrVar.yScale(d.y)})`)
-				
-			let rect = barEnter.append("rect") 
-							.attr('fill',this[plotObjParams.id].fill)
-							.attr("width", width)							
-							.attr("height", 0)
-
-			// handle updated elements
-			// not sure why both this and bar.select("rect").transition() are needed
-			rect.transition()
-				.duration(duration)
-				.attr("height",height)
-		}, delay+25)
-	}
-
 	_YAxisLabel(){
 		this.yLabelFo = this.aoG.append('foreignObject')
 			.attr('width',1000) // ad hoc
@@ -408,18 +266,4 @@ export class Plot extends AnimObject{
 		this.axisStrokeWidth	= params.axisStrokeWidth || this.axisStrokeWidth  || 1		
 	}
 
-	_UpdateScatterParams(params){
-		let id = params.id
-		this[id].data   	   = params.data
-		this[id].stroke 	   = params.stroke 		 || this[id].stroke 	   || "#D7E4DB"
-		this[id].strokeWidth   = params.strokeWidth  || this[id].strokeWidth   || 1		
-	}
-
-	_UpdateHistParams(params){
-		let id = params.id
-		this[id].data   	  = params.data
-		this[id].barBins  	  = params.barBins 	 || this[id].barBins       || 10
-		this[id].fill	  	  = params.fill			 || this[id].fill 	      || "#666da3"
-		this[id].barDataType  	  = params.barDataType		 || this[id].barDataType       || "histogram"				
-	}
 }

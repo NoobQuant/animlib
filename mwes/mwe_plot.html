@@ -14,39 +14,41 @@
 
   <!-- Math symbols - REQUIRED! PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
-  </script>  
-
+  </script>
 </head>
-
-<style>
-</style>
 
 <body>
   <script type="module">
-    /* 
-    Ro
+    /*
+    Minimal working examples for class Plot combined with other typical AnimObjects, such as
+    Scatter, Path, Bar.
     */
 
+    // Class imports
     import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {AddMathJax} from '../src/functions/AddMathJax.js'
     import {Plot} from '../src/classes/Plot.js'
     import {Path} from '../src/classes/Path.js'
     import {Scatter} from '../src/classes/Scatter.js'
+    import {Bar} from '../src/classes/Bar.js'
 
+    // For recording
     if (document.URL.includes('plot_hh')){
       window.currentTime = 0
       performance.now = () => currentTime
     }
 
+    // Timing variable and canvas
     let timing = 0
     let canvas = new Canvas({})
 
     /**************************************************
-    Scatter plot params
+    Plot 1: Scatter
     **************************************************/
-    /*
-    let params = {
+    ///*
+    // Plot object
+    let plotParams1 = {
        "pos"                : [200,100]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
@@ -55,74 +57,16 @@
       ,"id"                 : "plot1"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"
+      ,"xLabel"             : "dummy title"
     }
-    let plot = new Plot(params, canvas)
-    //*/
-    /**************************************************
-    Histogram plot parameters
-    **************************************************/
-    ///*
-    let params2 = {
-      "pos"          : [200,250]
-      ,"xRange"      : [0,1400]
-      ,"yRange"      : [0,650]
-      ,"xDomain"     : [0,200]
-      ,"yDomain"     : [0, 0.10]
-      ,"id"          : "plot2"
-      ,"xTickNo"     : 5
-      ,"yLabel"      : "$\\alpha + \\text{Time}$"
-      ,"xLabel"      : "x label"
-      ,"yTickFormat" : d3.format('.2f')
-      ,"xAxisType"   : "scaleLinear"
-    };
-    let plot2 = new Plot(params2, canvas)
-    //*/
-    /**************************************************
-    Bar plot parameters
-    **************************************************/
-    /*
-    let gg = d3.range(20);
+    let plot1 = new Plot(plotParams1, canvas)
 
-    let params3 = {
-      "pos"          : [200,250]
-      ,"xRange"      : [0,1400]
-      ,"yRange"      : [0,650]
-      ,"xDomain"     : ['A', 'B']
-      ,"yDomain"     : [0, 10] 
-      ,"id"          : "plot3"
-      ,"xLabel"      : "x label"
-      ,"yLabel"      : "y label"
-      ,"xScaleType"  : "scaleBand"
-      ,"xTickFormat" : "string"
-    };
-    let plot3 = new Plot(params3, canvas)
-    //*/
-    /**************************************************
-    Line plot params
-    **************************************************/
-    /*
-    let params4 = {
-       "pos"                : [200,100]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,10]
-      ,"id"                 : "plot4"
-      ,"yLabel"             : "$\\alpha + \\text{Time}$"
-      ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"
-    }
-    let plot4 = new Plot(params4, canvas)
-    //*/    
-    /**************************************************
-    Scatter data paramaters
-    **************************************************/
-    /*
-    function getRandomIntInclusive(dd) {
-      let min = Math.ceil(dd[0])
-      let max = Math.floor(dd[1])
-      return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+    // Scatter data
+    function getRandomIntInclusive(myval) {
+      //The maximum is inclusive and the minimum is inclusive
+      let min = Math.ceil(myval[0])
+      let max = Math.floor(myval[1])
+      return Math.floor(Math.random() * (max - min + 1)) + min
     }
     function CreateScatterData(d,color,r){
         let scatterData = []
@@ -131,169 +75,230 @@
         }
         return scatterData
     }
-    
-    let paramsScatter1_a = {
-       "id"          : "myscatter1"
+
+    // Scatter objects
+    let scatterParams1a = {
+       "id"          : "scatter1"
       ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)
       ,"strokeWidth" : 4
     }
-    let paramsScatter1_b = {
-      'id'           :"myscatter1",
+    let scatterParams1b = {
       'data'         : CreateScatterData({'x':[-1100,1100], 'y':[0,10]}, NQColors.dark_purple, 10)
     }
     let paramsScatter2 = {
-       "id"          : "myscatter2"
+       "id"          : "scatter2"
       ,"data"        : CreateScatterData({'x':[500,1100], 'y':[5,9]}, NQColors.brown, 15)
       ,"strokeWidth" : 2
     }
-    let paramsScatter3 = {
-       "id"          : "myscatter3"
-      ,"data"        : CreateScatterData({'x':[1, 9], 'y':[5, 8]}, NQColors.orange, 5)
-      ,"strokeWidth" : 4
-    }
-    let scatter1 = new Scatter(paramsScatter1_a, plot)
-    let scatter2 = new Scatter(paramsScatter2, plot)
-    let scatter3 = new Scatter(paramsScatter3, plot4)
+    let scatter1 = new Scatter(scatterParams1a, plot1)
+    let scatter2 = new Scatter(paramsScatter2, plot1)
     //*/
+
     /**************************************************
-    Histogram data parameters
+    Plot 2: Histogram
     **************************************************/
     ///*
-    let histData1_a = [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
-    let histData1_b = [34,55,23,43,12,32,29] 
+    // Plot object
+    let plotParams2 = {
+      "pos"          : [200,250]
+      ,"xRange"      : [0,1400]
+      ,"yRange"      : [0,650]
+      ,"xDomain"     : [0,200]
+      ,"yDomain"     : [0, 0.10]
+      ,"id"          : "plot2"
+      ,"xTickNo"     : 5
+      ,"yLabel"      : "$\\alpha + \\text{Time}$"
+      ,"xLabel"      : "dummy title"
+      ,"yTickFormat" : d3.format('.2f')
+      ,"xAxisType"   : "scaleLinear"
+    };
+    let plot2 = new Plot(plotParams2, canvas)
+    
+    // Histogram data
+    let histData1a = [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
+    let histData1b = [34,55,23,43,12,32,29]
     let histData2   = [134,110,199,184,112,174,129]
 
-    let histDataParams1_a = {
-        "data"      : histData1_a
-       ,"id"        : "hisdata1"
-       ,'barDataType'  : 'histogram_precalc'
+    // Histogram objects
+    let histParams1a = {
+        "data"        : histData1a
+       ,"id"          : "hist1"
+       ,'barDataType' : 'histogram_precalc'
     }
-    let histDataParams1_b = {
-        "data"      : histData1_b
-       ,"id"        : "hisdata1"
-       ,"barDataType"  : 'histogram'
-       ,"fill"      : "#fac0a2"
-       ,"barBins"  : [0,25,50,75,100,125,150,175,200]
+    let histParams1b = {
+        "data"        : histData1b
+       ,"barDataType" : 'histogram'
+       ,"fill"        : NQColors.light_purple
+       ,"barBins"     : [0,25,50,75,100,125,150,175,200]
       }
     let histDataParams2 = {
-        "data"      : histData2
-       ,"id"        : "hisdata2"
-       ,"barDataType"  : 'histogram'
-       ,"fill"      : NQColors.dark_grey
-       ,"barBins"  : [0,25,50,75,100,125,150,175,200]
+        "data"        : histData2
+       ,"id"          : "hist2"
+       ,"barDataType" : 'histogram'
+       ,"fill"        : NQColors.dark_grey
+       ,"barBins"     : [0,25,50,75,100,125,150,175,200]
       }
-    //*/      
-    /**************************************************
-    Bar data parameters
-    **************************************************/
-    /*
-    let barData1_a = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
-    let barData1_b = [{'x0':'A', "y":4}, {'x0':'B',"y":4}]
-
-    let barDataParams1_a = {
-        "data"       : barData1_a
-        ,"id"        : "barData1"
-        ,"barDataType"  : 'bar'
-    }
-    let barDataParams1_b = {
-        "data"       : barData1_b
-        ,"id"        : "barData1"
-        ,"barDataType"  : 'bar'
-    }
+      let bar1 = new Bar(histParams1a, plot2)
+      let bar2 = new Bar(histDataParams2, plot2)
     //*/
+
     /**************************************************
-    Line objects
+    Plot 3: Bars
     **************************************************/
-    /*
-    let lineDataParams1 = {
+    ///*
+    // Plot object
+    let plotParams3 = {
+      "pos"          : [200,250]
+      ,"xRange"      : [0,1400]
+      ,"yRange"      : [0,650]
+      ,"xDomain"     : ['A', 'B']
+      ,"yDomain"     : [0, 10] 
+      ,"id"          : "plot3"
+      ,"xLabel"      : "dummy title"
+      ,"yLabel"      : "dummy title for y"
+      ,"xScaleType"  : "scaleBand"
+      ,"xTickFormat" : "string"
+    };
+    let plot3 = new Plot(plotParams3, canvas)
+
+    // Bar data
+    let barData1a = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
+    let barData1b = [{'x0':'A', "y":4}, {'x0':'B',"y":4}]
+
+    // Bar objects
+    let barParams1a = {
+        "data"          : barData1a
+        ,"id"           : "bar1"
+        ,"barDataType"  : 'bar'
+    }
+    let barParams1b = {
+        "data"          : barData1b
+        ,"barDataType"  : 'bar'
+    }
+    let bar3 = new Bar(barParams1a, plot3)
+    //*/
+
+    /**************************************************
+    Plot 4: Lines
+    **************************************************/
+    ///*
+    // Plot object
+    let plotParams4 = {
+       "pos"                : [200,100]
+      ,"xRange"             : [0,1400]
+      ,"yRange"             : [0,770]
+      ,"yDomain"            : [0,10]
+      ,"xDomain"            : [0,10]
+      ,"id"                 : "plot4"
+      ,"yLabel"             : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize"         : 30
+      ,"xLabel"             : "dummy title"
+    }
+    let plot4 = new Plot(plotParams4, canvas)
+
+    // Line objects
+    let lineParams1 = {
          "data"        : lineDataObject["y1"]
         ,"id"          : "line1"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }
-    let lineDataParams2 = {
+    let lineParams2 = {
          "data"        : lineDataObject["y2"]
         ,"id"          : "linedata2"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.light_purple
         ,"drawEase"    : d3.easeCubic
     }
-    let lineDataParams3 = {
+    let lineParams3 = {
          "data"        : lineDataObject["y3"]
         ,"id"          : "linedata3"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.steelblue
         ,"drawEase"    : d3.easeCubic
     }
-    let line1 = new Path(lineDataParams1, plot4)
-    let line2 = new Path(lineDataParams2, plot4)
-    let line3 = new Path(lineDataParams3, plot4)
+    let line1 = new Path(lineParams1, plot4)
+    let line2 = new Path(lineParams2, plot4)
+    let line3 = new Path(lineParams3, plot4)
 
+    // One extra scatter object
+    let paramsScatter3 = {
+       "id"          : "scatter3"
+      ,"data"        : CreateScatterData({'x':[1, 9], 'y':[5, 8]}, NQColors.orange, 5)
+      ,"strokeWidth" : 4
+    }
+    let scatter3 = new Scatter(paramsScatter3, plot4)
     //*/
+
     /**************************************************
     Animations
     **************************************************/
-    // Scatter plot
-    /*
+    // Plot 1: Scatter
+    ///*
     timing = timing + 200
-    plot.Draw({delay:timing, duration:500, params:{"type":"movein"}})
+    plot1.Draw({delay:timing, duration:500, params:{"type":"movein"}})
 
     timing = timing + 800
     scatter1.Draw({delay:timing, duration:500})
 
     timing = timing + 1000
     let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
-    plot.Update({delay:timing, duration:1000, params:newAxisParams})
-    plot.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams})
-    scatter1.Update({delay:timing+25, duration:1000, params:paramsScatter1_b})
+    plot1.Update({delay:timing, duration:1000, params:newAxisParams})
+    plot1.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams})
+    scatter1.Update({delay:timing+25, duration:1000, params:scatterParams1b})
 
     timing = timing + 1200
     scatter2.Draw({delay:timing, duration:500})
 
     timing = timing + 700
-    plot.Hide({delay:timing, duration :300})
+    plot1.Hide({delay:timing, duration :300})
     //*/
 
-    // Histogram plot 
+    // Plot 2: Histogram
     ///*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:500})
 
     timing = timing + 1000
-    plot2.DrawHistogram({delay:timing, duration:1000, plotObjParams:histDataParams1_a})
+    bar1.Draw({delay:timing, duration:1000})
 
     timing = timing + 2500
     let newAxisParams2 = {'yDomain':[0, 0.6]}
-    plot2.DrawHistogram({delay:timing, duration:1000, plotObjParams:histDataParams1_b, plotParams:newAxisParams2})
+    plot2.Update({delay:timing, duration:1000, params:newAxisParams2})
+    plot2.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams2})
+    bar1.Update({delay:timing+25, duration:1000, params:histParams1b})
 
     timing = timing + 2000
-    plot2.DrawHistogram({delay:timing, duration:1000, plotObjParams:histDataParams2})
+    bar2.Draw({delay:timing, duration:1000})
 
     timing = timing + 1000
-    plot2.HideObject({delay:timing, duration:500, id:"hisdata1"})
-    plot2.HideObject({delay:timing+300, duration:500, id:"hisdata2"})    
+    bar1.Hide({delay:timing, duration:1000})
+    bar2.Hide({delay:timing, duration:1000})
     timing = timing + 900
     plot2.Hide({delay:timing, duration :500})
     //*/
 
-    // Bar plot
-    /*
+    // Plot 3: Bars
+    ///*
     timing = timing + 1000
     plot3.Draw({delay:timing, duration:500})
     
     timing = timing + 1000
-    plot3.DrawHistogram({delay:timing, duration:1000, plotObjParams:barDataParams1_a})  
+    bar3.Draw({delay:timing, duration:1000})
 
     timing = timing + 1500
-    plot3.DrawHistogram({delay:timing, duration:1000, plotObjParams:barDataParams1_b, plotParams:{'yDomain': [0, 5] }})
-    
+    let newAxisParams3 = {'yDomain':[0, 5]}
+    plot3.Update({delay:timing, duration:1000, params:newAxisParams3})
+    plot3.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams3})
+    bar3.Update({delay:timing+25, duration:1000, params:barParams1b})
+
     timing = timing + 1500
     plot3.Hide({delay:timing, duration :500})
     //*/
 
-    // Line plot
-    /*
+    // Plot 4: Lines
+    ///*
     timing = timing + 1000
     plot4.Draw({delay:timing, duration:500})
     
@@ -304,7 +309,7 @@
     let newParams4 = {'xDomain': [0, 20], 'yDomain': [0, 20]}
     plot4.Update({delay:timing, duration:1000, params:newParams4})
     plot4.UpdateAxes({delay:timing+25, duration:1000, plotParams:newParams4})
-    line1.Update({delay:timing+25, duration:1000, params:lineDataParams1})
+    line1.Update({delay:timing+25, duration:1000, params:lineParams1})
     
     timing = timing + 2000
     line2.Draw({delay:timing, duration:1500})
@@ -313,15 +318,15 @@
     timing = timing + 2000
     let newParams4_b = {'xDomain': [0, 25]}
     scatter3.Draw({delay:timing, duration:1000})
-    line1.Update({delay:timing+25, duration:1000, params:lineDataParams1})
-    line2.Update({delay:timing+25, duration:1000, params:lineDataParams2})
-    line3.Update({delay:timing+25, duration:1000, params:lineDataParams3})
+    line1.Update({delay:timing+25, duration:1000, params:lineParams1})
+    line2.Update({delay:timing+25, duration:1000, params:lineParams2})
+    line3.Update({delay:timing+25, duration:1000, params:lineParams3})
 
     timing = timing + 2000
     line1.Hide({delay:timing, duration:500})
     line2.Hide({delay:timing, duration:500})
     line3.Hide({delay:timing, duration:500})
-    plot4.HideObject({delay:timing, duration:500, id:"myscatter3"})
+    scatter3.Hide({delay:timing, duration:500})
 
     timing = timing + 1000
     plot4.Hide({delay:timing, duration :500})

@@ -14,139 +14,161 @@
 
   <!-- Math symbols PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
-  </script>  
-
+  </script>
 </head>
-
-<style>
-</style>
 
 <body>
   <script type="module">
+    /*
+    Minimal working examples on how to use zooms.
+    */
 
+    // Class imports
     import {Canvas} from '../../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../../src/variables/NQ_colors_and_fonts.js'
     import {Svg} from '../src/classes/Svg.js'
     import {Plot} from '../src/classes/Plot.js'
     import {Path} from '../src/classes/Path.js'
+    import {Scatter} from '../src/classes/Scatter.js'
     import {AddMathJax} from '../../src/functions/AddMathJax.js'
 
+    // For recording
     if (document.URL.includes('template_hh')){
       window.currentTime = 0
       performance.now = () => currentTime
     }
 
+    // Timing variable and canvas
+    let canvas = new Canvas({})
     let timing = 0
-    let plot1_xpos = 150
 
-    /*********************************
-    Auxiliaries
-    *********************************/  
-    function getRandomIntInclusive(dd, seed) {
-      let min = Math.ceil(dd[0])
-      let max = Math.floor(dd[1])
-      return Math.floor(Math.random(seed) * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
+    // Some global variables
+    let plot1_xpos = 150
+    let plot1XRange = 1730
+
+    /**************************************************
+    Auxiliary functions
+    **************************************************/
+    function getRandomIntInclusive(myval, seed) {
+      //The maximum is inclusive and the minimum is inclusive
+      let min = Math.ceil(myval[0])
+      let max = Math.floor(myval[1])
+      return Math.floor(Math.random(seed) * (max - min + 1)) + min
     }
     function CreateScatterData(d){
         let scatterData = []
         for (let i=1;i<=30;i++) {
-          scatterData.push({"x": getRandomIntInclusive(d.x, i),  "y": getRandomIntInclusive(d.y, i), "color": NQColors.orange, "r": 10})
+          scatterData.push({
+            "x": getRandomIntInclusive(d.x, i),
+            "y": getRandomIntInclusive(d.y, i),
+            "color": NQColors.orange,
+            "r": 10
+          })
         }
-        return scatterData  
+        return scatterData
     }
 
-    /*********************************
-    Define objects 
-    *********************************/
-    // Backgorund svg
-    let svg1params = {
+    /**************************************************
+    Scene 1
+    **************************************************/
+    ///*
+    // Svg object
+    let svgParams1 = {
          "id"          : "svg1"
-        ,"pos"         : [0, 0]
-        ,"xRange"      : [0, 1930]
-        ,"yRange"      : [0, 1090]
+        ,"pos"         : [100, 100]
+        ,"xRange"      : [0, plot1XRange]
+        ,"yRange"      : [0, 890]
         ,"strokeColor" : "red"
-        ,"strokeWidth" : 0
+        ,"strokeWidth" : 3
     }
-    
-    // plots
-    let params1 = {
-       "pos"                : [plot1_xpos, 200]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,700]
-      ,"yDomain"            : [0,10]
-      ,"xDomain"            : [0,17]
+    let svg1 = new Svg(svgParams1, canvas)
+
+    // Plot object
+    let plotParams1 = {
+       "pos"                : [plot1_xpos, 100]
+      ,"xRange"             : [0, 1200]
+      ,"yRange"             : [0, 600]
+      ,"yDomain"            : [0, 10]
+      ,"xDomain"            : [0, 17]
       ,"id"                 : "plot1"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"
+      ,"xLabel"             : "Title with eq $L=5$"
     }
-    let params2 = {
-       "pos"                : [100,100]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [-10,10]
-      ,"xDomain"            : [-10,20]
-      ,"id"                 : "plot2"
-      ,"yLabel"             : "$\\alpha + \\text{Time}$"
-      ,"yLabelSize"         : 30
-      ,"xLabel"             : "dd"
-    }
+    let plot1 = new Plot(plotParams1, svg1)
 
-    // Line object parameters
-    let lineDataParams1 = {
+    // Line objects
+    let lineParams1 = {
          "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata1"
+        ,"id"          : "line1"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
         ,"ease"        : d3.easeCubic
     }
-    let lineDataParams2 = {
+    let lineParams2 = {
          "data"        : lineDataObject["y3"]
-        ,"id"          : "linedata2"
+        ,"id"          : "line2"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }
-    let lineDataParams3 = {
+    let line1 = new Path(lineParams1, plot1)
+    let line2 = new Path(lineParams2, plot1)
+    //*/
+    
+    /**************************************************
+    Scene 2
+    **************************************************/
+    ///*
+    // Plot object
+    let plotParams2 = {
+       "pos"        : [150, 100]
+      ,"xRange"     : [0, 1400]
+      ,"yRange"     : [0, 770]
+      ,"yDomain"    : [-10, 10]
+      ,"xDomain"    : [-10, 20]
+      ,"id"         : "plot2"
+      ,"yLabel"     : "$\\alpha + \\text{Time}$"
+      ,"yLabelSize" : 30
+      ,"xLabel"     : "dummy title"
+    }
+    let plot2 = new Plot(plotParams2, canvas)
+
+    // Line objects
+    let lineParams3 = {
          "data"        : lineDataObject["y3"]
-        ,"id"          : "linedata3"
+        ,"id"          : "line3"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }    
-    let lineDataParams4 = {
+    let lineParams4 = {
          "data"        : lineDataObject["y1"]
-        ,"id"          : "linedata4"
+        ,"id"          : "line4"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
         ,"drawEase"    : d3.easeCubic
     }
+    let line3 = new Path(lineParams3, plot2)
+    let line4 = new Path(lineParams4, plot2)
 
-    // Scatter parameters
-    let paramsScatter1 = {
+    // Scatter objects
+    let scatterParams1 = {
        "data"        : CreateScatterData({'x':[-9,19], 'y':[-8,8]})
       ,"id"          : "scatter1"
       ,"strokeWidth" : 4
     }
-
-    // Initiate objects
-    let canvas = new Canvas({})
-    let svg1 = new Svg(svg1params, canvas)
-    let plot1 = new Plot(params1, svg1)
-    let line1 = new Path(lineDataParams1, plot1)
-    let line2 = new Path(lineDataParams2, plot1)
-
-    let plot2 = new Plot(params2, canvas)
-    let line3 = new Path(lineDataParams3, plot2)
-    let line4 = new Path(lineDataParams4, plot2)
+    let scatter1 = new Scatter(scatterParams1, plot2)
+    //*/
 
     /*********************************
-    Animate - Zoom out line chart and continue drawing the line
-    Notice that line is drawn on  svg1 that originally extends
-    over background svg.
+    Animate Scene 1
+    Zoom out line chart and continue drawing the line. Notice that line
+    is drawn on svg1.
     *********************************/
     ///*
     svg1.Draw({delay:0, duration:0})
+
     // Plot axes to svg1, draw line to plot
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
@@ -161,20 +183,21 @@
     let params1_a = {'xDomain':[0, 17], 'xRange':[0, 1400]}
     plot1.Update({delay:timing, duration:2000, params:params1_a})
     plot1.UpdateAxes({delay:timing+25, duration:2000, plotParams:params1_a})
-    line1.Update({delay:timing+25, duration:2000, params:lineDataParams1})
+    line1.Update({delay:timing+25, duration:2000, params:lineParams1})
 
     // Continue line with another line object up to 17
     timing = timing + 2200
     line2.Draw({delay:timing, duration:1500})
 
-    // Continue plot object x-range up to svg1 end; i.e. 1930 minus plot position
+    // Continue plot object x-range up to svg1 end; i.e. plot1XRange minus plot position
     timing = timing + 2000
-    let params1_b = {'xRange':[0, 1930-plot1_xpos]}
+    let params1_b = {'xRange':[0, plot1XRange-plot1_xpos]}
     plot1.Update({delay:timing, duration:1000, params:params1_b})
     plot1.UpdateAxes({delay:timing, duration:1000, åarams:params1_b})
-    line1.Update({delay:timing+25, duration:1000, params:lineDataParams1})
-    line2.Update({delay:timing+25, duration:1000, params:lineDataParams2})
+    line1.Update({delay:timing+25, duration:1000, params:lineParams1})
+    line2.Update({delay:timing+25, duration:1000, params:lineParams2})
 
+    // Hide scene 1
     timing = timing + 2000
     svg1.Hide({delay:timing, duration:1000})
     //*/
@@ -185,34 +208,31 @@
     ///*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
-    plot2.DrawScatter({delay:0, duration:0, plotObjParams:paramsScatter1})
+    scatter1.Draw({delay:timing, duration:0})
     
     line3.Draw({delay:timing, duration:500})
     line4.Draw({delay:timing+300, duration:1000})
-    
-    //plot2.DrawLine({delay:timing, duration:500, plotObjParams:lineDataParams2})
-    //plot2.DrawLine({delay:timing+300, duration:1000, plotObjParams:lineDataParams3})
 
     timing = timing + 3000
-    let zoomparams_a = {
+    let zoomParams1 = {
        "yDomain"    : [2,8]
       ,"xDomain"    : [0,7]
       ,"zoomEase"   : d3.easeCubic
     }
-    plot2.Zoom({delay:timing, duration:6000, zoomParams:zoomparams_a})
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomParams1})
 
-    timing = timing + 7000
-    let zoomparams_b = {
+    timing = timing + 3000
+    let zoomParams2 = {
       "yDomain"  : [-10,10],
       "xDomain"  : [-10,20]
     }    
-    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomparams_b})
+    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomParams2})
     //*/
 
     // This needs to be added in conjunction with the import above!
     AddMathJax(d3.select('#'+canvas.id))
 
-  </script> 
+  </script>
 
 </body>
 </html>

@@ -5,13 +5,12 @@ export class Bar extends AnimObject{
     constructor(params, aoParent){
     
         super(params, aoParent)
-        this._CalculatrHistVar()
     }
 
 	Draw({delay, duration, params={}}={}){
 
 		d3.timeout(() => {
-
+            this._CalculatrHistVar()
             // Common AnimObject draw that displays aoG
             // Pass extra draw parameter to circumvent position translating,
             // as path object is already positioned
@@ -25,13 +24,19 @@ export class Bar extends AnimObject{
     }
 
 	Update({delay, duration, params={}}={}){
-		d3.timeout(() => {
+        
+        d3.timeout(() => {
             // Update common AnimObject
             params["disable_translation_pos"] = true
-			super.Update({delay:0, duration:duration, params:params})
+			super.Update({delay:0, duration:0, params:params})
+        }, delay)
+        
+        d3.timeout(() => {
+
             // Update Bar specific
+            this._CalculatrHistVar()
             this._Draw(duration)
-		}, delay)
+		}, delay+25)
     }
 
     _Draw(duration){
@@ -46,7 +51,7 @@ export class Bar extends AnimObject{
         function BarWidth(d) {
             if(['histogram', 'histogram_precalc'].includes(that.attrVar.barDataType)){
                 return that.aoParent.attrVar.xScale(d.x1) - that.aoParent.attrVar.xScale(d.x0)
-            } else if(that.barDataType==="bar"){
+            } else if(that.attrVar.barDataType==="bar"){
                 return that.aoParent.attrVar.xScale.bandwidth()
             }
         }
@@ -115,7 +120,7 @@ export class Bar extends AnimObject{
         let histVar
         if (this.attrVar.barDataType == 'histogram'){
             histVar = d3.histogram()
-                .domain(this.attrVar.xScale.domain())
+                .domain(this.aoParent.attrVar.xScale.domain())
                 .thresholds(this.attrVar.barBins)(this.attrVar.data)
             //Calculative cdf
             // https://stackoverflow.com/questions/34972419/d3-histogram-with-cumulative-frequency-distribution-line-in-the-same-chart-graph
