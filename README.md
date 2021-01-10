@@ -39,3 +39,6 @@ Have following installed on your computer:
 - Restart localhost connection to be sure.
 - Set paths record.ps1. Run record.ps1 e.g. in PowerShell ISE.
 
+## Documentation
+
+Documentation forthcoming. Run *jsdoc -c jsdoc.json*.

@@ -1,55 +1,62 @@
+/**
+ * Class to create a person object
+ * AnimObject is a general class for animatable objects. In browser document AnimObject is represented
+ * as a <g> element that stores SVG element belonging to AnimObject.
+ * 
+ * --> TO BE CHEKED WITH AOPARENT: IS IT INDEED A POINTER OR A COPY OF THE OBJECT! IF A COPY; CHANGES TO
+ * 	PARENT NOT VISIBLE IN STORED PARENT OBJECT WITHIN ANIMOBJECT!
+ */
+
 export class AnimObject{
-	/*
-	AnimObject is a general class for animatable objects. Object of class AnimObject has
-	a property <aoG> that points to <g> element associated with AnimObject. This <g> element
-	stores all SVG element belonging to AnimObject. It attaches to parent AnimObject selection,
-	so that in DOM the AnimObject <g> node (element in HTML) is childNode of parent AnimObject node.
-	
-	Property <aoParent> points to another object of class AnimObject or class Canvas, which is considered
-	as parent of current AnimObject. Further property <aoChildren> gives all childrent AnimObjects of current
-	AnimObject.
-	--> TO BE CHEKED: IS IT INDEED A POINTER OR A COPY OF THE OBJECT! IF A COPY; CHANGES TO
-		PARENT NOT VISIBLE IN STORED PARENT OBJECT WITHIN ANIMOBJECT!
-
-	AnimObject object also has properties <attrFix> and <attrVar> which store attributes/
-	parameters assumes to be fixed and varying, respectively:
-	- attrFix
-	 - id (string): ID of <g> element corresponding to this.aoG
-	 - hasInnerSpace (boolean): Whether AnimObject is assumed to have notion of inner space.
-	- attrVar (varying attributes)
-	 - pos (float array): $[x, y]$ position relative to parent which is assumed to have inner space.
-	 - opacity (float): Opacity of this.aoG <g> element.
-	 - scale (float): Scale (i.e. size) of this.aoG <g> element.
-	 - data (varying object): object storing data for AnimObject. E.g. for child Path contains data for path line.
-
-	Other properites
-	 - lineFunction: TBF
-	*/
+	/**
+	 * @param {Object} params Parameters for AnimObject.
+	 * @param {Object} aoParent See property aoParent.
+	 */
 	constructor(params, aoParent){
+		
+		/**
+		 * @property {Object} aoParent Object of AnimObject or Canvas, which is considered
+ 		 * 	as parent of current AnimObject.
+		 */
+		this.aoParent = aoParent
+		
+		/**
+		 * @property {array} aoChildren Children AnimObjects of current AnimObject.
+		 */
+		this.aoChildren = []
 
+		/**
+		 * Fixed attributes of AnimObject
+		 * @param {Object} attrFix Fixed attributes.
+		 * @property {string} attrFix.id ID of <g> element corresponding to this.aoG.
+		 * @property {boolean} attrFix.hasInnerSpace Whether AnimObject is assumed to have notion of inner space.
+		 */
 		// Fixed attributes
 		this.attrFix 	= {}
 		this.attrFix.id = params.id
-
-		// Varying attributes
+		
+		/**
+		 * Varying attributes of AnimObject
+		 * @param {Object} attrVar Fixed attributes
+		 * @property {array} attrVar.pos [x, y] position relative to parent which is assumed to have inner space.
+		 * @property {float} attrVar.opacity Opacity of this.aoG <g> element.
+		 * @property {float} attrVar.scale Scale (i.e. size) of this.aoG <g> element.
+		 * @property {Object} attrVar.data Object storing data for AnimObject.
+		 */
 		this.attrVar = {}
 		this._UpdateParams(params)
 
-		// Group for AnimObject svg elements.
-		this.aoG = d3.select('#'+ aoParent.attrFix.id)
+		/**
+		 * @property {Object} aoG Pointer to <g> of AnimObject svg elements.
+		 */
+		this.aoG = d3.select('#'+ this.aoParent.attrFix.id)
 			.append("g")
 			.attr("id", this.attrFix.id)
 			.style("opacity", 0)
 
-		// Store parent AnimObject at JS object level.
-		this.aoParent 	= aoParent
-
 		// Append current AnimObject as property of parent AnimObject.
-		aoParent.aoChildren.push(this)
+		this.aoParent.aoChildren.push(this)
 		
-		// Prepare property for future children
-		this.aoChildren = []
-
 		// Define inner space for AnimObject should it have one
 		if (this.attrFix.hasInnerSpace === true){
 			
@@ -81,9 +88,12 @@ export class AnimObject{
 			this._DefineZoom()
 		}
 	}
-
+	/**
+	 * 
+	 * @property {Function} Draw Draw AnimObject
+	 */
 	Draw({delay, duration, params={}}={}){
-		/* Draw AnimObject*/
+
 		d3.timeout(() => {
 
 			// Update draw attributes
