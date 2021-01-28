@@ -105,6 +105,8 @@ export class Path extends AnimObject{
 
 		d3.timeout(() => {
 			// Update common AnimObject
+			//uper.Update({delay:0, duration:duration, params:params})
+            params["disable_translation_pos"] = true
 			super.Update({delay:0, duration:duration, params:params})
 		}, delay=delay)
 		
