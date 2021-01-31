@@ -37,11 +37,11 @@
     Svg
     **************************************************/
     let svgparams = {
-       "pos"                : [200,100]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,20]
-      ,"xDomain"            : [-1100,1100]
+       "pos"                : [200, 900]
+      ,"xRange"             : [0, 1400]
+      ,"yRange"             : [0, 770]
+      ,"yDomain"            : [0, 20]
+      ,"xDomain"            : [-1100, 1100]
       ,"id"                 : "svg1"
     }
     let svg = new Svg(svgparams, canvas)
@@ -77,9 +77,14 @@
     scatter1.Draw({delay:timing, duration:500})
 
     timing = timing + 1000
-    paramsScatter1["data"] = CreateScatterData({'x':[-1000,1000],'y':[1,19]}, NQColors.purple, 10)
+    paramsScatter1["data"] = CreateScatterData({'x':[-1000, 1000],'y':[1, 19]}, NQColors.purple, 10)
     scatter1.Update({delay:timing, duration:1500, params:paramsScatter1})
 
+    // Scatter group position is so far undefined, that is it resides in top-left corner of the parent
+    // AnimObject inner space. In this example it is domain space [-1100, 20]. Let's move the entire
+    // cloud in domain space by 200 ticks to the right. This means new domain space x-postion of -900
+    timing = timing + 2000
+    scatter1.Update({delay:timing, duration:1500, params:{"pos": [-900, 20], "ease":d3.easeCubic}})
 
   </script> 
 

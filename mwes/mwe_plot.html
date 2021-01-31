@@ -49,11 +49,11 @@
     ///*
     // Plot object
     let plotParams1 = {
-       "pos"                : [200,100]
-      ,"xRange"             : [0,1400]
-      ,"yRange"             : [0,770]
-      ,"yDomain"            : [0,20]
-      ,"xDomain"            : [-1100,1100]
+       "pos"                : [200, 900]
+      ,"xRange"             : [0, 1400]
+      ,"yRange"             : [0, 770]
+      ,"yDomain"            : [0, 20]
+      ,"xDomain"            : [-1100, 1100]
       ,"id"                 : "plot1"
       ,"yLabel"             : "$\\alpha + \\text{Time}$"
       ,"yLabelSize"         : 30
@@ -100,10 +100,10 @@
     ///*
     // Plot object
     let plotParams2 = {
-      "pos"          : [200,250]
-      ,"xRange"      : [0,1400]
-      ,"yRange"      : [0,650]
-      ,"xDomain"     : [0,200]
+      "pos"          : [200, 900]
+      ,"xRange"      : [0, 1400]
+      ,"yRange"      : [0, 650]
+      ,"xDomain"     : [0, 200]
       ,"yDomain"     : [0, 0.10]
       ,"id"          : "plot2"
       ,"xTickNo"     : 5
@@ -148,9 +148,9 @@
     ///*
     // Plot object
     let plotParams3 = {
-      "pos"          : [200,250]
-      ,"xRange"      : [0,1400]
-      ,"yRange"      : [0,650]
+      "pos"          : [200, 900]
+      ,"xRange"      : [0, 1400]
+      ,"yRange"      : [0, 650]
       ,"xDomain"     : ['A', 'B']
       ,"yDomain"     : [0, 10] 
       ,"id"          : "plot3"
@@ -184,7 +184,7 @@
     ///*
     // Plot object
     let plotParams4 = {
-       "pos"                : [200,100]
+       "pos"                : [200, 900]
       ,"xRange"             : [0,1400]
       ,"yRange"             : [0,770]
       ,"yDomain"            : [0,10]
@@ -258,9 +258,9 @@
     // Plot 2: Histogram
     ///*
     timing = timing + 1000
-    plot2.Draw({delay:timing, duration:500})
+    plot2.Draw({delay:timing, duration:1000, params:{"type":"scalein"}})
 
-    timing = timing + 1000
+    timing = timing + 1500
     bar1.Draw({delay:timing, duration:1000})
 
     timing = timing + 2500

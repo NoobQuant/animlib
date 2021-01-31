@@ -8,9 +8,9 @@ export class Svg extends AnimObject{
         this.strokeWidth = params.strokeWidth || 0
 
         let svg = this.aoG
-                    .append("svg")
-                    .attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
-                    .attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
+            .append("svg")
+            .attr("width", this.aoParent.attrVar.xScale(this.attrVar.xRange[1]))
+            .attr("height", this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]))
 
         // rectangle for svg for filling
         svg.append("rect")

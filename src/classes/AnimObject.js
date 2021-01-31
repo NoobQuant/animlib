@@ -1,10 +1,16 @@
 /**
- * Class to create a person object
  * AnimObject is a general class for animatable objects. In browser document AnimObject is represented
- * as a <g> element that stores SVG element belonging to AnimObject.
+ * as a <g> element that stores SVG elements belonging to AnimObject.
  * 
- * --> TO BE CHEKED WITH AOPARENT: IS IT INDEED A POINTER OR A COPY OF THE OBJECT! IF A COPY; CHANGES TO
- * 	PARENT NOT VISIBLE IN STORED PARENT OBJECT WITHIN ANIMOBJECT!
+ * AnimObjects are most typically positioned on pixel dimension of Canvas, in which case Canvas is the parent
+ * of AnimObject. However, each AnimObject can also be placed on other AnimObjects with inner spaces, or domain
+ * dimensions (which can be same as pixel space, but need not to). In this case the first AnimObject is a child
+ * of the latter. If parent AnimObject does not have inner space (domain space), then it is just  an abstract
+ * <g> element grouping AnimObjects.
+ * 
+ * To do:
+ *  - With aoParent, is it indeed a pointer or a copy of the object? If a copy, then changes to the object
+ *    are not visible in stored aoParent version of the object.
  */
 
 export class AnimObject{
@@ -101,8 +107,9 @@ export class AnimObject{
 			this._UpdateDrawParams(params)
 
 			// Set positions
-			let xPos = this.attrVar.pos[0]
-			let yPos = this.attrVar.pos[1]
+			//let xPos = this.attrVar.pos[0]
+			//let yPos = this.attrVar.pos[1]
+			
 			let xEntPos
 			let yEntPos
 			if (this.attrDraw.type === "movein"){
@@ -110,45 +117,67 @@ export class AnimObject{
 				yEntPos = this.attrDraw.entPoint[1]
 			}
 
+			// Dete
+			let xPos 
+			let yPos
+			if (this.attrVar.pos === undefined){
+				xPos = undefined
+				yPos = undefined
+			} else {
+				xPos = this.attrVar.pos[0]
+				yPos = this.attrVar.pos[1]
+			}
+ 
+
 			// Draw AnimObject
-			if ("disable_translation_pos" in params & params["disable_translation_pos"]===true){
-			// Check if we should skip translation positioning and just display the object. This is for
-			// objects that have their position already determined via data preparation.
+			if (this.attrVar.pos === undefined){
+				// Check if we should skip translation positioning and just display the object. This is for
+				// objects that have their position already determined via data preparation.
 				d3.select("#"+this.attrFix.id)
 				.transition()
 				.duration(duration)
 				.style("opacity",this.attrVar.opacity)
+
 			} else if (this.attrDraw.type === "show"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-							"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
-								(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) + ")")
+							`translate(${this.aoParent.attrVar.xScale(xPos)}, 
+								${this.aoParent.attrVar.yScale(yPos)})`
+					)
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
+
 			} else if (this.attrDraw.type === "movein"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(xEntPos) + "," +
-							this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(yPos) - yEntPos) + ")")
+						`translate(${this.aoParent.attrVar.xScale(xEntPos)}, 
+							${this.aoParent.attrVar.yScale(yEntPos)})`
+					)
 					.transition()
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
-							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) + ")")
+						`translate(${this.aoParent.attrVar.xScale(xPos)}, 
+							${this.aoParent.attrVar.yScale(yPos)})`
+					)
 					.ease(this.attrDraw.moveInEase)
+
 			} else if (this.attrDraw.type === "scalein"){
 				d3.select("#"+ this.attrFix.id)
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
-							this.aoParent.attrVar.yScale(yPos) +") scale("+ this.attrDraw.moveInScale +")")
+						`translate(${this.aoParent.attrVar.xScale(xPos)}, 
+							${this.aoParent.attrVar.yScale(yPos)}) 
+							scale (${this.attrDraw.moveInScale})`
+					)
 					.transition()
 					.duration(duration)
+
 					.attr("transform",
-						"translate(" + this.aoParent.attrVar.xScale(xPos) + "," +
-							(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(yPos)) +
-								") scale("+ this.attrVar.scale +")")
+						`translate(${this.aoParent.attrVar.xScale(xPos)}, 
+							${this.aoParent.attrVar.yScale(yPos)}) 
+							scale (${this.attrVar.scale})`
+					)
 					.style("opacity",this.attrVar.opacity)
 					.ease(this.attrDraw.moveInEase)
 			}
@@ -173,12 +202,12 @@ export class AnimObject{
 				this._UpdateInnerSpace(duration, "update")
 			}
 
-			if ("disable_translation_pos" in params & params["disable_translation_pos"]===true){
-				// Update other than position
+			if (this.attrVar.pos === undefined){
+				// If there is no position for AnimObject group, update other stuff but not position
 				d3.select("#"+this.attrFix.id)
 				.transition()
 				.duration(duration)
-				.attr("transform", "scale("+ this.attrVar.scale +")")
+				.attr("transform", `scale(${this.attrVar.scale})`)
 				.ease(ease)
 			} else {
 				// Update position and scale
@@ -186,9 +215,10 @@ export class AnimObject{
 				.transition()
 				.duration(duration)
 				.attr("transform",
-					"translate(" + this.aoParent.attrVar.xScale(this.attrVar.pos[0]) + "," +
-						(this.aoParent.attrVar.yRange[1] - this.aoParent.attrVar.yScale(this.attrVar.pos[1])) +
-							") scale("+ this.attrVar.scale +")")
+					`translate(${this.aoParent.attrVar.xScale(this.attrVar.pos[0])}, 
+						${(this.aoParent.attrVar.yScale(this.attrVar.pos[1]))})
+					scale(${this.attrVar.scale})`
+				)
 				.ease(ease)
 			}
 		},delay)
@@ -265,34 +295,34 @@ export class AnimObject{
 
 		if (this.attrVar.xScaleType === "scaleLinear"){
 			this.attrVar.xScale = d3.scaleLinear()
-									.range(this.attrVar.xRange)
-									.domain(this.attrVar.xDomain)
+				.range(this.attrVar.xRange)
+				.domain(this.attrVar.xDomain)
 		} else if (this.attrVar.xScaleType == 'scaleBand'){
 			this.attrVar.xScale = d3.scaleBand()
-									.domain(this.attrVar.xDomain)
-									.range(this.attrVar.xRange)
-									.paddingInner(0.05) // still ad hoc!
+				.domain(this.attrVar.xDomain)
+				.range(this.attrVar.xRange)
+				.paddingInner(0.05) // still ad hoc!
 		} else if (this.attrVar.xScaleType === "scaleTime"){
 			this.attrVar.xScale = d3.scaleTime()
-							.range(this.attrVar.xRange)
-							.domain(this.attrVar.xDomain)
+				.range(this.attrVar.xRange)
+				.domain(this.attrVar.xDomain)
 		} else {
 			this.attrVar.xScale = undefined
 		}
 
 		if (this.attrVar.yScaleType === "scaleLinear"){
 			this.attrVar.yScale = d3.scaleLinear()
-									.range(this.attrVar.yRange.slice().reverse())
-									.domain(this.attrVar.yDomain)
+				.range(this.attrVar.yRange.slice().reverse())
+				.domain(this.attrVar.yDomain)
 		} else if (this.attrVar.yScaleType === "scaleBand"){
 			this.attrVar.yScale = d3.scaleLinear()
-									domain(this.attrVar.yDomain)
- 									.range(this.attrVar.yRange.slice().reverse())
-									.paddingInner(0.05) // still ad hoc!
+				domain(this.attrVar.yDomain)
+				.range(this.attrVar.yRange.slice().reverse())
+				.paddingInner(0.05) // still ad hoc!
 		} else if (this.attrVar.yScaleType === "scaleTime"){
 			this.attrVar.yScale = d3.scaleLinear()
-									.range(this.attrVar.yRange.slice().reverse())
-									.domain(this.attrVar.yDomain)
+				.range(this.attrVar.yRange.slice().reverse())
+				.domain(this.attrVar.yDomain)
 		} else {
 			this.attrVar.yScale = undefined
 		}
@@ -302,7 +332,7 @@ export class AnimObject{
 	}
 
 	_UpdateParams(params){
-		this.attrVar.pos 			= params.pos			|| this.attrVar.pos			|| [0,0]
+		this.attrVar.pos 			= params.pos			|| this.attrVar.pos			|| undefined
 		this.attrVar.scale	 	 	= params.scale   	  	|| this.attrVar.scale   	|| 1
 		this.attrVar.opacity 	 	= params.opacity 	  	|| this.attrVar.opacity 	|| 1
 		this.attrVar.data    	 	= params.data	  	  	|| this.attrVar.data	  	|| undefined
@@ -336,7 +366,7 @@ export class AnimObject{
 
 	_UpdateDrawParams(params){
 		this.attrDraw.type		  = params.type 		|| this.attrDraw.type 	 		|| "show"
-		this.attrDraw.entPoint    = params.entPoint 	|| this.attrDraw.entPoint 		|| [0,0]
+		this.attrDraw.entPoint    = params.entPoint 	|| this.attrDraw.entPoint 		|| [0, 1090]
 		this.attrDraw.moveInScale = params.moveInScale  || this.attrDraw.moveInScale 	|| 1/5
 		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrDraw.moveInEase  	|| d3.easeBack
 		this.attrDraw.drawEase    = params.drawEase 	|| this.attrDraw.drawEase  		|| d3.easeCubic

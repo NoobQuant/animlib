@@ -136,7 +136,9 @@
     path3.Draw({delay:timing, duration:1000})
  
     timing = timing + 3000
-    //path4.Update({delay:timing, duration:1500, params:{pos:[200, 600], scale:2}})
+    // Paths defined as svg paths in window dimensions are akward now; they do not conform to positions
+    // in pixel space. Needs rethingin!
+    path4.Update({delay:timing, duration:1500, params:{pos:[-400, 1090+400], scale:1.5}})
     path2.Hide({delay:timing, duration:3000})
 
   </script>

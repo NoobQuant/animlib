@@ -40,7 +40,7 @@
     // sqrt(250^2 + 250^2) / 1090 = 0.324361
     // Relative placeholder svg size is 250*2/1090 = 0.458716
     let params1 = {
-      pos: [100,100],
+      pos: [100, 100],
       path: "pics/finland.svg",
       id: "flag1",
       relSize: [45.8716,45.8716],
@@ -51,42 +51,42 @@
     // svg just below previous one and that the circle flag is of same
     // size.
     let params2 = {
-      pos: [100,600],
+      pos: [100, 600],
       path: "pics/finland.svg",
       id: "flag2",
       relSize: [45.8716,45.8716],
-      drawType: "fadein"   
+      drawType: "fadein"
     }
     let img2 = new Image(params2)
     
     // Move in flag such that x pos is just in front of previous two.
     let params3 = {
       pos: [600,350],
-      relEntPoint: [-600,0],      
+      relEntPoint: [-600, 0],
       path: "pics/finland.svg",
       id: "flag3",
       relSize: [45.8716,45.8716],
-      drawType: "movein"      
+      drawType: "movein"
     }
     let img3 = new Image(params3)
 
     let params4 = {
-      pos: [1100,0],
+      pos: [1100, 0],
       path: "pics/scattter.png",
       id: "scatter1",
-      relSize: [100,100],
-      drawType: "scalein"      
+      relSize: [100, 100],
+      drawType: "scalein"
     }
     let img4 = new Image(params4)
 
     let params5 = {
-      pos: [1100,500],
+      pos: [1100, 500],
       path: "pics/scattter.png",
       id: "scatter2",
       relSize: [50,50],
-      drawType: "fadein"      
+      drawType: "fadein"
     }
-    let img5 = new Image(params5)    
+    let img5 = new Image(params5)
 
     timing = timing + 500
     img1.Draw({delay:timing, duration:500})
@@ -101,7 +101,7 @@
     img4.Draw({delay:timing, duration:500})
 
     timing = timing + 500
-    img5.Draw({delay:timing, duration:500})    
+    img5.Draw({delay:timing, duration:500})
 
   </script> 
 

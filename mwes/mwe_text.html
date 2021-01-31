@@ -48,7 +48,7 @@
     `
 
     let textparams1 = {
-      "pos"            : [300,200],
+      "pos"            : [150, 800],
       "textAreaWidth"  : 700,
       "textAreaHeight" : 400,
       "id"             : "txt1",
@@ -60,7 +60,7 @@
     let text1 = new TextObject(textparams1, canvas)
 
     let textparams2 = {
-      "pos"            : [1200,700],
+      "pos"            : [1200, 400],
       "textAreaWidth"  : 800,
       "textAreaHeight" : 300,
       "id"             : "txt2",
@@ -73,15 +73,15 @@
     let text2 = new TextObject(textparams2, canvas)
     
     let textparams3 = {
-      "pos"            : [1200, 800],
+      "pos"            : [1200, 200],
       "textAreaWidth"  : 600,
-      "textAreaHeight" : 300,      
+      "textAreaHeight" : 300,
       "id"             : "txt3",
       "text"           : "test text",
       "fontSize"       : 70,
       "textRelXPos"    : -200,
       "textColor"      : NQTextColors.purple,
-      "entPoint"       : [1100,600]
+      "entPoint"       : [1100, 150]
     }
     let text3 = new TextObject(textparams3, canvas)
 
@@ -92,13 +92,13 @@
     text1.Draw({delay:timing, duration:1600})
     timing = timing + 1000
     text2.Draw({delay:timing, duration:1000, type:"movein"})
-    text3.Draw({delay:timing, duration:1000, type:"movein"})        
+    text3.Draw({delay:timing, duration:1000, type:"movein"})
 
     timing = timing + 3000
     text3.UpdateText({delay:timing, duration:1000, params:{text:"look at this"}})
 
     timing = timing + 2000
-    text2.Update({delay:timing, duration:1500, params:{pos:[700,550], scale:1.5}})
+    text2.Update({delay:timing, duration:1500, params:{pos:[700, 550], scale:1.5}})
 
     timing = timing + 2000
     text2.UpdateText({delay:timing, duration:1000, params:{text:"$y = \\gamma + \\beta_{1} X_{1} + \\beta_{2} X_{2}$"}})

@@ -1,3 +1,16 @@
+/**
+ * Special class that serves as canvas for animations.
+ * 
+ * Canvas defines the canvas for animations. All AnimObjects are placed on it; otherwise they
+ * will not be recorded. Canvas defines the so-called pixel dimension. Pixel dimesion is 1930
+ * pixels wide and 1080 pixels high, and positions are considered from left to right, bottom to top.
+ * The pixel dimension is to be differentiated from usual browser window space, which runs from top
+ * to bottom.
+ * 
+ * To do:
+ *  - Consider Canvas also an an AnimObject, probably can be done.
+ */
+
 export class Canvas{
 
 	constructor(params){
@@ -38,6 +51,8 @@ export class Canvas{
         this.attrVar.yScale = d3.scaleLinear()
             .range([0, height].slice().reverse())
             .domain([0, height])
+        //this.attrVar.InnerSpaceXStart = 0
+        //this.attrVar.InnerSpaceYStart = 0
 
         // Copy variable attributes to match what we have in AnimObject
         // for ease of reference

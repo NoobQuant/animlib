@@ -14,7 +14,7 @@ export class Bar extends AnimObject{
             // Common AnimObject draw that displays aoG
             // Pass extra draw parameter to circumvent position translating,
             // as path object is already positioned
-            params["disable_translation_pos"] = true
+            //params["disable_translation_pos"] = true
             super.Draw({delay:0, duration:0, params:params})
 
             // PRBLEM: This kicks in before draw parameters get update in above Draw.
@@ -27,7 +27,7 @@ export class Bar extends AnimObject{
         
         d3.timeout(() => {
             // Update common AnimObject
-            params["disable_translation_pos"] = true
+            //params["disable_translation_pos"] = true
 			super.Update({delay:0, duration:0, params:params})
         }, delay)
         

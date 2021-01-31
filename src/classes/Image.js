@@ -25,7 +25,7 @@ is placed. Position and scaling operates on the placed svg.
 		this.parentId        = params.parentId || "bgsvg"
 
         this.g = d3.select('#'+this.parentId).append('g')
-                    .attr('id', this.id)			
+                    .attr('id', this.id)
                     .style('opacity', 0.0)
 
         let imgs = this.g.selectAll("image").data([0])

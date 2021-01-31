@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+
+
+  <script type="module">
+    /* 
+    Examples on classes Circle and Rectangle.
+    */
+
+    // Module imports
+    import {Canvas} from '../src/classes/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'
+    import {Circle} from '../src/classes/Circle.js'
+    import {Svg} from '../src/classes/Svg.js'
+
+    if (document.URL.includes('cchh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    var timing = 0
+
+    /*********************************
+    Define objects 
+    *********************************/
+    let svgparams
+    let circparams
+    let canvas = new Canvas({})
+
+    // First scene
+    ///*
+    circparams = {
+      "pos"          : [200, 870],
+      "id"           : "circ1",
+    }
+    let circ1 = new Circle(circparams, canvas)
+
+    // Second scene
+    svgparams = {
+      "id"                 : "svg1",
+      "pos"                : [200, 900],
+      "xRange"             : [0, 1400],
+      "yRange"             : [0, 770],
+      "yDomain"            : [0, 770],
+      "xDomain"            : [0, 1400],
+      "strokeWidth"        : 3,
+      "strokeColor"        : "red",
+    }
+    let svg1 = new Svg(svgparams, canvas)
+    circparams = {
+      "pos"          : [200, 500],
+      "id"           : "circ2",
+    }
+    let circ2 = new Circle(circparams, svg1)
+    //*/
+
+    // Third scene
+    svgparams = {
+      "id"                 : "svg3",
+      "pos"                : [200, 900],
+      "xRange"             : [0, 1400],
+      "yRange"             : [0, 770],
+      "yDomain"            : [-10, 20],
+      "xDomain"            : [-500, 500],
+      "strokeWidth"        : 3,
+      "strokeColor"        : "red",
+    }
+    let svg2 = new Svg(svgparams, canvas)
+    circparams = {
+      "pos"          : [100, -5],
+      "id"           : "circ3",
+    }
+    let circ3 = new Circle(circparams, svg2)
+
+    /*********************************
+    Draw
+    *********************************/
+    ///*
+    // Draw a dot on canvas, in pixel space position [200, 870]
+    timing = timing + 500
+    circ1.Draw({delay:timing, duration:500})
+    timing = timing + 600
+    circ1.Hide({delay:timing, duration:300})
+    circ1.Remove({delay:timing+300, duration:50})
+
+    // Draw a dot on new svg, in pixel space position [200, 500]
+    // New svg top-left point is on canvas at pixel position 900, that is
+    // 1090 - 900 = 190 in window space
+    timing = timing + 1000
+    svg1.Draw({delay:timing, duration:100})
+    circ2.Draw({delay:timing+100, duration:500})
+    // Move dot to pixel position [200, 100]
+    timing = timing + 600
+    circ2.Update({delay:timing, duration:500, params:{"pos":[400, 100]}})
+    timing = timing + 600
+    svg1.Hide({delay:timing, duration:300})
+    svg1.Remove({delay:timing+300, duration:50})
+    //*/
+
+    // Draw a dot on new dvg, in domain space position [100, -5]
+    timing = timing + 1000
+    svg2.Draw({delay:timing, duration:100})
+    circ3.Draw({delay:timing+100, duration:500})
+    // Move dot to domain position [500, 20]
+    timing = timing + 600
+    circ3.Update({delay:timing, duration:500, params:{"pos":[500, 20]}})
+    timing = timing + 600
+    //svg2.Hide({delay:timing, duration:300})
+    //svg2.Remove({delay:timing+300, duration:50})
+
+  </script> 
+
+</body>
+</html>

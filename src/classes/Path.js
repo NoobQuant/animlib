@@ -83,7 +83,7 @@ export class Path extends AnimObject{
 				
 				// Also pass extra draw parameter to circumvent position translating,
 				// as path object is already positioned
-				params["disable_translation_pos"] = true
+				//params["disable_translation_pos"] = true
 				
 				super.Draw({delay:0, duration:duration, params:params})
 
@@ -105,8 +105,7 @@ export class Path extends AnimObject{
 
 		d3.timeout(() => {
 			// Update common AnimObject
-			//uper.Update({delay:0, duration:duration, params:params})
-            params["disable_translation_pos"] = true
+            //params["disable_translation_pos"] = true
 			super.Update({delay:0, duration:duration, params:params})
 		}, delay=delay)
 		

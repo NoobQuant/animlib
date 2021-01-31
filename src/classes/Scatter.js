@@ -35,7 +35,7 @@ export class Scatter extends AnimObject{
             
             // Pass extra draw parameter to circumvent position translating,
             // as path object is already positioned
-            params["disable_translation_pos"] = true
+            //params["disable_translation_pos"] = true
             super.Draw({delay:0, duration:duration, params:params})
 
 		}, delay=delay)
@@ -46,7 +46,7 @@ export class Scatter extends AnimObject{
 
 		d3.timeout(() => {
             // Update common AnimObject
-            params["disable_translation_pos"] = true
+            //params["disable_translation_pos"] = true
 			super.Update({delay:0, duration:duration, params:params})
 		}, delay=delay)
 		
