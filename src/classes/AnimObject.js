@@ -48,10 +48,16 @@ export class AnimObject{
 		 * @property {float} attrVar.opacity Opacity of this.aoG <g> element.
 		 * @property {float} attrVar.scale Scale (i.e. size) of this.aoG <g> element.
 		 * @property {Object} attrVar.data Object storing data for AnimObject.
+		 * @property {array} attrVar.xRange Horizontal dimension range of inner space.
+		 * @property {array} attrVar.yRange Vertical dimension range of inner space.
+		 * @property {array} attrVar.xDomain Horizontal domain range of inner space.
+		 * @property {array} attrVar.yDomain Vertical domain range of inner space.
+		 * @property {Object} attrVar.xScaleType Type of inner space horizontal domain. 
+		 * @property {Object} attrVar.yScaleType Type of inner space vertical domain.
 		 */
 		this.attrVar = {}
 		this._UpdateParams(params)
-		
+
 		// Make sure container for draw attributes always exists
 		/**
 		 * Varying attributes of AnimObject
