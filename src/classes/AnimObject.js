@@ -43,7 +43,7 @@ export class AnimObject{
 		
 		/**
 		 * Varying attributes of AnimObject
-		 * @param {Object} attrVar Fixed attributes
+		 * @param {Object} attrVar Variying attributes
 		 * @property {array} attrVar.pos [x, y] position relative to parent which is assumed to have inner space.
 		 * @property {float} attrVar.opacity Opacity of this.aoG <g> element.
 		 * @property {float} attrVar.scale Scale (i.e. size) of this.aoG <g> element.
@@ -53,6 +53,15 @@ export class AnimObject{
 		this._UpdateParams(params)
 		
 		// Make sure container for draw attributes always exists
+		/**
+		 * Varying attributes of AnimObject
+		 * @param {Object} attrDraw Draw attributes
+		 * @property {string} attrDraw.drawType How object is drawn.
+		 * @property {d3Ease} attrDraw.drawEase Ease for draw.
+		 * @property {array} attrDraw.entPoint Entry position.
+		 * @property {float} attrDraw.moveInScale Starting scale for drawType "scalein".
+		 * @property {d3Ease} attrDraw.moveInEase Ease for entry.
+		*/
 		this.attrDraw = {}
 		
 		/**
@@ -364,11 +373,11 @@ export class AnimObject{
 	}
 
 	_UpdateDrawParams(params){
-		this.attrDraw.drawType	  = params.drawType 	|| this.attrDraw.drawType 	 		|| "show"
+		this.attrDraw.drawType	  = params.drawType 	|| this.attrDraw.drawType 	 	|| "show"
+		this.attrDraw.drawEase    = params.drawEase 	|| this.attrDraw.drawEase  		|| d3.easeCubic
 		this.attrDraw.entPoint    = params.entPoint 	|| this.attrDraw.entPoint 		|| [0, 1090]
 		this.attrDraw.moveInScale = params.moveInScale  || this.attrDraw.moveInScale 	|| 1/5
 		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrDraw.moveInEase  	|| d3.easeBack
-		this.attrDraw.drawEase    = params.drawEase 	|| this.attrDraw.drawEase  		|| d3.easeCubic
 	}
 
 	_UpdateInnerSpace(duration, type){
