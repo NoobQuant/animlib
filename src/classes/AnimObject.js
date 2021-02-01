@@ -51,7 +51,10 @@ export class AnimObject{
 		 */
 		this.attrVar = {}
 		this._UpdateParams(params)
-
+		
+		// Make sure container for draw attributes always exists
+		this.attrDraw = {}
+		
 		/**
 		 * @property {Object} aoG Pointer to <g> of AnimObject svg elements.
 		 */
@@ -103,7 +106,6 @@ export class AnimObject{
 		d3.timeout(() => {
 
 			// Update draw attributes
-			this.attrDraw = {}
 			this._UpdateDrawParams(params)
 
 			// Set positions
@@ -112,7 +114,7 @@ export class AnimObject{
 			
 			let xEntPos
 			let yEntPos
-			if (this.attrDraw.type === "movein"){
+			if (this.attrDraw.drawType === "movein"){
 				xEntPos = this.attrDraw.entPoint[0]
 				yEntPos = this.attrDraw.entPoint[1]
 			}
@@ -138,7 +140,7 @@ export class AnimObject{
 				.duration(duration)
 				.style("opacity",this.attrVar.opacity)
 
-			} else if (this.attrDraw.type === "show"){
+			} else if (this.attrDraw.drawType === "show"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
 							`translate(${this.aoParent.attrVar.xScale(xPos)}, 
@@ -148,7 +150,7 @@ export class AnimObject{
 					.duration(duration)
 					.style("opacity",this.attrVar.opacity)
 
-			} else if (this.attrDraw.type === "movein"){
+			} else if (this.attrDraw.drawType === "movein"){
 				d3.select("#"+this.attrFix.id)
 					.attr("transform",
 						`translate(${this.aoParent.attrVar.xScale(xEntPos)}, 
@@ -163,7 +165,7 @@ export class AnimObject{
 					)
 					.ease(this.attrDraw.moveInEase)
 
-			} else if (this.attrDraw.type === "scalein"){
+			} else if (this.attrDraw.drawType === "scalein"){
 				d3.select("#"+ this.attrFix.id)
 					.attr("transform",
 						`translate(${this.aoParent.attrVar.xScale(xPos)}, 
@@ -196,6 +198,7 @@ export class AnimObject{
 
 			// Update varying AnimObject parameters
 			this._UpdateParams(params)
+			this._UpdateDrawParams(params)
 
 			// Update inner space if it exists
 			if (this.attrFix.hasInnerSpace === true){
@@ -361,7 +364,7 @@ export class AnimObject{
 	}
 
 	_UpdateDrawParams(params){
-		this.attrDraw.type		  = params.type 		|| this.attrDraw.type 	 		|| "show"
+		this.attrDraw.drawType	  = params.drawType 	|| this.attrDraw.drawType 	 		|| "show"
 		this.attrDraw.entPoint    = params.entPoint 	|| this.attrDraw.entPoint 		|| [0, 1090]
 		this.attrDraw.moveInScale = params.moveInScale  || this.attrDraw.moveInScale 	|| 1/5
 		this.attrDraw.moveInEase  = params.moveInEase 	|| this.attrDraw.moveInEase  	|| d3.easeBack

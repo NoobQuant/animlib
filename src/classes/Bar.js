@@ -15,16 +15,28 @@ export class Bar extends AnimObject{
 
 		d3.timeout(() => {
             this._CalculatrHistVar()
-            // Common AnimObject draw that displays aoG
-            // Pass extra draw parameter to circumvent position translating,
-            // as path object is already positioned
-            //params["disable_translation_pos"] = true
-            super.Draw({delay:0, duration:0, params:params})
+
+            // Draw aoG
+            //super.Draw({delay:0, duration:0, params:params})
+
+            // Skip AnimObject draw, as Bar is quite a special case
+
+			// Update draw attributes
+            this._UpdateDrawParams(params)
+            
+            // Make sure aoG is visible
+            d3.select("#"+this.attrFix.id)
+                .style("opacity", this.attrVar.opacity)
+
+        }, delay=delay)
+
+		d3.timeout(() => {
 
             // PROBLEM: This kicks in before draw parameters get update in above Draw.
             this._Draw(duration)
 
-		}, delay=delay)
+		}, delay=delay+25)
+
     }
 
 	Update({delay, duration, params={}}={}){
@@ -44,7 +56,7 @@ export class Bar extends AnimObject{
             // Update Bar specific
             this._CalculatrHistVar()
             this._Draw(duration)
-            
+
 		}, delay+25)
     }
 
@@ -85,13 +97,14 @@ export class Bar extends AnimObject{
         // UPDATE section
         bar.transition()
             .duration(duration)
+            .ease(this.attrDraw.drawEase)
             .attr("transform", (d, i) => 'translate( '+ xScale(d.x0) +','+ yScale(d.y) +')')
 
         bar.select("rect")
             .transition()
             .duration(duration)
+            .ease(this.attrDraw.drawEase)
             .attr('fill',this.attrVar.fill)
-            //.attr("height", this._BarHeight)
             .attr("height", BarHeight)
 
         // handle new elements ENTER
@@ -103,6 +116,7 @@ export class Bar extends AnimObject{
         
             barEnter.transition()
                 .duration(duration)
+                .ease(this.attrDraw.drawEase)
                 .attr("transform", (d, i) => `translate(${xScale(d.x0)}, ${yScale(d.y)})`)
             
         let rect = barEnter.append("rect") 
@@ -115,8 +129,7 @@ export class Bar extends AnimObject{
         rect.transition()
             .duration(duration)
             .attr("height", BarHeight)
-            // This wont work because draw parametes dont get updated yet in correct order...
-            //.ease(this.attrDraw.drawEase)
+            .ease(this.attrDraw.drawEase)
     }
 
     _CalculatrHistVar(){

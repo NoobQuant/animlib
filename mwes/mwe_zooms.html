@@ -140,14 +140,12 @@
         ,"id"          : "line3"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
     }    
     let lineParams4 = {
          "data"        : lineDataObject["y1"]
         ,"id"          : "line4"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
     }
     let line3 = new Path(lineParams3, plot2)
     let line4 = new Path(lineParams4, plot2)
@@ -172,7 +170,7 @@
     // Plot axes to svg1, draw line to plot
     timing = timing + 1000
     plot1.Draw({delay:timing, duration:300})
-    line1.Draw({delay:timing+300, duration:500})
+    line1.Draw({delay:timing+300, duration:500, params:{"drawType":"drawpath"}})
 
     // Zoom out svg1
     timing = timing + 2000
@@ -187,7 +185,7 @@
 
     // Continue line with another line object up to 17
     timing = timing + 2200
-    line2.Draw({delay:timing, duration:1500})
+    line2.Draw({delay:timing, duration:1500, params:{"drawType":"drawpath"}})
 
     // Continue plot object x-range up to svg1 end; i.e. plot1XRange minus plot position
     timing = timing + 2000
@@ -210,8 +208,8 @@
     plot2.Draw({delay:timing, duration:0})
     scatter1.Draw({delay:timing, duration:0})
     
-    line3.Draw({delay:timing, duration:500})
-    line4.Draw({delay:timing+300, duration:1000})
+    line3.Draw({delay:timing, duration:500, params:{"drawType":"drawpath"}})
+    line4.Draw({delay:timing+300, duration:1000, params:{"drawType":"drawpath"}})
 
     timing = timing + 3000
     let zoomParams1 = {

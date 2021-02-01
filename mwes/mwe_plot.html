@@ -202,21 +202,18 @@
         ,"id"          : "line1"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.orange
-        ,"drawEase"    : d3.easeCubic
     }
     let lineParams2 = {
          "data"        : lineDataObject["y2"]
         ,"id"          : "linedata2"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.light_purple
-        ,"drawEase"    : d3.easeCubic
     }
     let lineParams3 = {
          "data"        : lineDataObject["y3"]
         ,"id"          : "linedata3"
         ,"strokeWidth" : 3
         ,"strokeColor" : NQColors.steelblue
-        ,"drawEase"    : d3.easeCubic
     }
     let line1 = new Path(lineParams1, plot4)
     let line2 = new Path(lineParams2, plot4)
@@ -312,8 +309,8 @@
     line1.Update({delay:timing+25, duration:1000})
     
     timing = timing + 2000
-    line2.Draw({delay:timing, duration:1500})
-    line3.Draw({delay:timing, duration:1500})
+    line2.Draw({delay:timing, duration:1500, params:{"drawType":"drawpath"}})
+    line3.Draw({delay:timing, duration:1500, params:{"drawEase":d3.easeLinear, "drawType":"drawpath"}})
     
     timing = timing + 2000
     scatter3.Draw({delay:timing, duration:1000})

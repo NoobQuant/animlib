@@ -55,12 +55,6 @@
        ,"id"          : "bar1"
        ,'barDataType' : 'histogram_precalc'
     }
-    let histDataParams1_b = {
-        "data"        : [34,55,23,43,12,32,29]
-       ,"barDataType" : 'histogram'
-       ,"fill"        : "#fac0a2"
-       ,"barBins"     : [0,25,50,75,100,125,150,175,200]
-      }
     let bar1 = new Bar(histDataParams1_a, svg)
 
     /**************************************************
@@ -97,9 +91,17 @@
     **************************************************/
     timing = timing + 500
     svg.Draw({delay:timing, duration:0})
-    bar1.Draw({delay:timing+500, duration:1000})
+    //bar1.Draw({delay:timing+500, duration:1000})
+    bar1.Draw({delay:timing+500, duration:2000, params:{"drawEase":d3.easeLinear}})
 
-    timing = timing + 1500
+    timing = timing + 2500
+    let histDataParams1_b = {
+      "data"        : [34,55,23,43,12,32,29],
+      "barDataType" : 'histogram',
+      "fill"        : "#fac0a2",
+      "barBins"     : [0,25,50,75,100,125,150,175,200],
+      "drawEase"    :d3.easeCubic
+      }
     bar1.Update({delay:timing+500, duration:1000, params:histDataParams1_b})
 
     timing = timing + 1500

@@ -25,8 +25,8 @@ export class Path extends AnimObject{
 	}
 
 	Draw({delay, duration, params={}}={}){
-		let type = params.type || "drawpath"
-		let ease = params.ease || d3.easeLinear
+		//let type = params.type || "drawpath"
+		//let ease = params.ease || d3.easeLinear
 
 		d3.timeout(() => {
 
@@ -50,10 +50,17 @@ export class Path extends AnimObject{
 					.attr("d", (d) =>{ return that._LineData(d, this.curve)} )
 			}
 			this.totalLength = this.path.node().getTotalLength()
-			// Draw path
-			if (type == "drawpath"){
+		
+			// Make sure draw parameters get updated for if caluse; if we go to normal AnimObject
+			// draw this will happen twice, but hsould not matter
+			this._UpdateDrawParams(params)
 
-				// Show container group immediately
+			// Draw
+			if (this.attrDraw.drawType == "drawpath"){
+
+				// Skip AnimObject draw, make sure draw parameters get updated and
+				// show container group immediately
+				this._UpdateDrawParams(params)
 				d3.select('#'+ this.attrFix.id).style("opacity",1)
 				
 				this.path
@@ -66,7 +73,7 @@ export class Path extends AnimObject{
 					.attr("stroke-dashoffset", this.totalLength)
 					.transition()
 					.duration(duration)
-					.ease(ease)
+					.ease(this.attrDraw.drawEase)
 					.attr("stroke-dashoffset", 0)
 					.on('end', function () {
 						d3.select(this)

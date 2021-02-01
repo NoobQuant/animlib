@@ -28,8 +28,7 @@ export class Arrow extends Path {
 	};
 
 	Draw({delay,duration, params={}}={}){
-		let type = params.type || "drawpath"
-		let ease = params.ease || d3.easeLinear
+		let type = params.drawType || "drawpath"
 		d3.timeout(() => {
 
 			if(type === "drawpath"){
@@ -43,7 +42,7 @@ export class Arrow extends Path {
 					
 					this.arrow.transition()
 						.duration(duration)
-						.ease(ease)
+						.ease(this.attrDraw.drawEase)
 						.attrTween("transform", this._TranslateAlong(this.path.node()))
 				}, delay=0)
 			} else {
@@ -59,7 +58,7 @@ export class Arrow extends Path {
 					
 					this.arrow.transition()
 						.duration(duration)
-						.ease(ease)
+						.ease(this.attrDraw.drawEase)
 						.style("opacity",1)
 				}, delay=0)
 			}

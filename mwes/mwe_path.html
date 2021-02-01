@@ -126,14 +126,14 @@
     Animate
     **************************************************/
     timing = timing + 300
-    path1.Draw({delay:timing, duration:2000})
-    arrow1.Draw({delay:timing, duration:2000, params:{"type":"show"}}) // bug ig type:drawpath!
-    arrow2.Draw({delay:timing, duration:2000})
-    path4.Draw({delay:timing, duration:1500, params:{"type":"scalein"}})
+    path1.Draw({delay:timing, duration:2000, params:{"drawType":"drawpath"}})
+    arrow1.Draw({delay:timing, duration:2000, params:{"drawType":"show"}}) // bug ig type:drawpath!
+    arrow2.Draw({delay:timing, duration:2000, params:{"drawType":"drawpath"}})
+    path4.Draw({delay:timing, duration:1500, params:{"drawType":"scalein"}})
 
     timing = timing + 3000
-    path2.Draw({delay:timing, duration:3000, params:{"type":"show"}})
-    path3.Draw({delay:timing, duration:1000})
+    path2.Draw({delay:timing, duration:3000, params:{"drawType":"show"}})
+    path3.Draw({delay:timing, duration:1000, params:{"drawType":"drawpath"}})
  
     timing = timing + 3000
     // Paths defined as svg paths in window dimensions are akward now; they do not conform to positions
