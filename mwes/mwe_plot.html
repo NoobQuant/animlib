@@ -309,18 +309,14 @@
     let newParams4 = {'xDomain': [0, 20], 'yDomain': [0, 20]}
     plot4.Update({delay:timing, duration:1000, params:newParams4})
     plot4.UpdateAxes({delay:timing+25, duration:1000, plotParams:newParams4})
-    line1.Update({delay:timing+25, duration:1000, params:lineParams1})
+    line1.Update({delay:timing+25, duration:1000})
     
     timing = timing + 2000
     line2.Draw({delay:timing, duration:1500})
     line3.Draw({delay:timing, duration:1500})
     
     timing = timing + 2000
-    let newParams4_b = {'xDomain': [0, 25]}
     scatter3.Draw({delay:timing, duration:1000})
-    line1.Update({delay:timing+25, duration:1000, params:lineParams1})
-    line2.Update({delay:timing+25, duration:1000, params:lineParams2})
-    line3.Update({delay:timing+25, duration:1000, params:lineParams3})
 
     timing = timing + 2000
     line1.Hide({delay:timing, duration:500})
