@@ -5,6 +5,10 @@ export class Bar extends AnimObject{
     constructor(params, aoParent){
     
         super(params, aoParent)
+
+        // Bar class specisig parameters
+        this.attrVar.barBins 	 	= params.barBins 	  	|| this.attrVar.barBins 	|| 10
+        this.attrVar.barDataType 	= params.barDataType 	|| this.attrVar.barDataType || "histogram"
     }
 
 	Draw({delay, duration, params={}}={}){
@@ -17,7 +21,7 @@ export class Bar extends AnimObject{
             //params["disable_translation_pos"] = true
             super.Draw({delay:0, duration:0, params:params})
 
-            // PRBLEM: This kicks in before draw parameters get update in above Draw.
+            // PROBLEM: This kicks in before draw parameters get update in above Draw.
             this._Draw(duration)
 
 		}, delay=delay)
@@ -26,8 +30,12 @@ export class Bar extends AnimObject{
 	Update({delay, duration, params={}}={}){
         
         d3.timeout(() => {
-            // Update common AnimObject
-            //params["disable_translation_pos"] = true
+
+            // Bar class specisig parameters update
+            this.attrVar.barBins 	 	= params.barBins 	  	|| this.attrVar.barBins 	|| 10
+            this.attrVar.barDataType 	= params.barDataType 	|| this.attrVar.barDataType || "histogram"
+
+            // AnimObject Update
 			super.Update({delay:0, duration:0, params:params})
         }, delay)
         
@@ -36,6 +44,7 @@ export class Bar extends AnimObject{
             // Update Bar specific
             this._CalculatrHistVar()
             this._Draw(duration)
+            
 		}, delay+25)
     }
 
