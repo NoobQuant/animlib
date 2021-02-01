@@ -20,7 +20,7 @@
     */
     
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Path} from '../src/classes/Path.js'
     
@@ -33,14 +33,14 @@
     /****************************************************
       Canvas
     ****************************************************/
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
     /****************************************************
       Define bubble parameters
     ****************************************************/
-    let pathparams4 = 
+    let pathparams4 =
     {
-       pos: [[200,200], [1000,600]]
+       pos: [200,200]
       ,id:          "path4"
       ,pathData:    "M 0,0"
                   + "c -10,0 -40,-15 -60,40"
@@ -60,36 +60,36 @@
       ,strokeWidth: 5
       ,fill:"rgba(228, 239, 233, 1.00)"
       ,moveInScale: 1/20 
-    }    
-    let path4 = new Path(pathparams4)
+    }
+    let path4 = new Path(pathparams4, canvas)
 
     // Attach text to object
 		var fo = d3.select('#'+ "path4")
 					     .append('foreignObject')
-					     .attr('x',-180 + 0) 
-					     .attr('y',50   + 0)
-					     .attr('width',   500)
-					     .attr('height',  500)
+					     .attr('x',-180 + 0)
+					     .attr('y',50 + 0)
+					     .attr('width', 500)
+					     .attr('height', 500)
 		var div = fo.append('xhtml:div')
 						    .html("This is my<br>bubble text")
 						    .style("font-family","Arial")
-						    .attr("align", "center")					
+						    .attr("align", "center")
 						    .style("font-size", 40 + "px")
-						    .style("color", "black")    
+						    .style("color", "black")
 
     /****************************************************
       Animate
-    ****************************************************/                
+    ****************************************************/
     timing = timing + 300
     path4.Draw({delay:timing, duration:1500, type:'default'})
 
     timing = timing + 2000
-    path4.Update({delay:timing, duration:1500, params:{newScale:2}})    
+    path4.Update({delay:timing, duration:1500, params:{scale:2}})
 
     timing = timing + 2000
-    path4.Update({delay:timing, duration:1500, params:{moveStepNo:1}})
+    path4.Update({delay:timing, duration:1500, params:{pos:[1000,600]}})
 
-  </script> 
+  </script>
 
 </body>
 </html>

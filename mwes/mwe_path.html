@@ -8,131 +8,140 @@
 
   <!-- Load data from json-->
   <script src="data/path_data_pathmwe.json" charset="utf-8"></script>  
-
 </head>
-
-<style>
-</style>
 
 <body>
   <script type="module">
 
     /* 
     Examples on class Path and its child Arrow.
+    To do: path4 not working when updating!
     */
     
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Path} from '../src/classes/Path.js'
-    import {Arrow} from '../src/classes/Arrow.js'    
-    
+    import {Arrow} from '../src/classes/Arrow.js'
+
+    // For recording
     if (document.URL.includes('path_hh')){
       window.currentTime = 0
       performance.now = () => currentTime
     }
 
+    // Timing variable and canvas
     var timing = 0
-    
-    // Canvas
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
-    let pathparams1 = 
+    /**************************************************
+    Objects
+    **************************************************/
+    
+    // Path 1
+    let pathParams1 = 
     {
        id:          "path1"
-      ,pathData:    "M1056.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
-      ,color:       NQColors.light_purple
-      ,strokeWidth: 5   
+      ,data:        "M1056.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
+      ,strokeColor:  NQColors.light_purple
+      ,strokeWidth: 5
+      ,pathSurfaceType: "canvas"
     }
+    let path1 = new Path(pathParams1, canvas)
 
-    // This will be a box
-    let pathparams2 = 
+    // Path 2: box
+    let pathParams2 = 
     {
-      id          : "path2"
-     ,pos          : [[100,100]]      
-     ,pathData    : [[460,100],[840,100],[840,330],[460,330]]
-     ,color       : NQColors.yellow
-     ,strokeWidth : 5
-     ,curve       : d3.curveLinearClosed
+      id              : "path2"
+     ,data            : [[460,100],[840,100],[840,330],[460,330]]
+     ,strokeColor     : NQColors.yellow
+     ,strokeWidth     : 5
+     ,curve           : d3.curveLinearClosed
+     ,pathSurfaceType : "canvas"
     }
+    let path2 = new Path(pathParams2, canvas)
 
-    // This will be a curved path
-    let pathparams3 = 
+    // Path 3: curved path
+    let pathParams3 = 
     {
-      id          : "path3"
-     ,pos         : [[1200,600]]      
-     ,pathData    : [[50,0],[200,-150],[250,-150],[250,200], [350,200], [400,-500]]
-     ,color       : NQColors.yellow0
-     ,strokeWidth : 5
-     ,curve       : d3.curveBasis
+      id              : "path3"
+     ,data            : [[250, 600], [400, 450], [450, 450], [550, 800], [600, 100]]
+     ,strokeColor     : NQColors.orange
+     ,strokeWidth     : 5
+     ,curve           : d3.curveBasis
+     ,pathSurfaceType : "canvas"
     }
+    let path3 = new Path(pathParams3, canvas)
 
-    // Path where starting placement is determined by pos
-    let pathparams4 = 
+    // Path 4: starting placement is determined by first line
+    // Someting wrong with this!!!
+    let pathParams4 = 
     {
-       pos: [[1200,700], [200,600]]
-      ,id:          "path4"
-      ,pathData:    "M 0,0"
-                  + "c -10,0 -40,-15 -60,40"
-                  + "c -30,20 -32,51 -10,81" 
-                  + "c -14,10 -10,83 45,65"
-                  + "c -15,27 35,27 37,19"
-                  + "c 15,12 40,13 54,-3" 
-                  + "c 30,20 82,10 90,-9" 
-                  + "c 23,4 30,-10 29,-27" 
-                  + "c 10,0 10,-20 6,-20"
-                  + "c 36,-17 23,-40 16,-44"
-                  + "c 20,-21 23,-37 1,-57" 
-                  + "c 17,-16 -2,-48 -60,-34"
-                  + "c -5,-30 -70,-25 -60,-20" 
-                  + "c -20,-19 -70,-20 -90,9"
-      ,color:       NQColors.light_purple
+       id: "path4"
+      ,data: "M 1200, 700"
+              + "c -10,0 -40,-15 -60,40"
+              + "c -30,20 -32,51 -10,81" 
+              + "c -14,10 -10,83 45,65"
+              + "c -15,27 35,27 37,19"
+              + "c 15,12 40,13 54,-3" 
+              + "c 30,20 82,10 90,-9" 
+              + "c 23,4 30,-10 29,-27" 
+              + "c 10,0 10,-20 6,-20"
+              + "c 36,-17 23,-40 16,-44"
+              + "c 20,-21 23,-37 1,-57" 
+              + "c 17,-16 -2,-48 -60,-34"
+              + "c -5,-30 -70,-25 -60,-20" 
+              + "c -20,-19 -70,-20 -90,9"
+      ,strokeColor: NQColors.light_purple
       ,strokeWidth: 5
       ,fill: NQColors.yellow
-      ,moveInScale: 1/20 
-    }    
+      ,moveInScale: 1/20
+      ,pathSurfaceType: "canvas"
+    }
+    let path4 = new Path(pathParams4, canvas)
 
+    // Arrow 1
     let arrowparams1 = 
     {
        id           : "arrow1"
-      ,pos          : [[100,100]]
-      ,pathData     : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
-      ,color        : NQColors.light_purple
+      ,pos          : [100, 100]
+      ,data         : "M500.156,301.619c141.349-292.356,113.494,62.565,300.43-149.163"
+      ,strokeColor  : NQColors.light_purple
       ,strokeWidth  : 5
+      ,pathSurfaceType: "canvas"
     }
+    let arrow1 = new Arrow(arrowparams1, canvas)
 
-    // Data for long orange arrow from imported .json file
+    // Arrow 2: Data for long orange arrow from imported .json file
     let arrowparams2 = 
     {
-      id          : "arrow2"
-     ,pathData    : lineDataObject['y']
-     ,color       : NQColors.orange
-     ,strokeWidth : 5    
-    }    
+      id              : "arrow2"
+     ,data            : lineDataObject['y']
+     ,strokeColor     : NQColors.orange
+     ,strokeWidth     : 5
+    }
+    let arrow2 = new Arrow(arrowparams2, canvas)
 
-    let path1 = new Path(pathparams1)
-    let path2 = new Path(pathparams2)
-    let path3 = new Path(pathparams3)
-    let path4 = new Path(pathparams4)    
-    let arrow1 = new Arrow(arrowparams1)
-    let arrow2 = new Arrow(arrowparams2)    
-
+    /**************************************************
+    Animate
+    **************************************************/
     timing = timing + 300
-    path1.Draw({delay:timing, duration:2000})
-    arrow1.Draw({delay:timing, duration:2000, type:"default"})
-    arrow2.Draw({delay:timing, duration:2000})
-    path4.Draw({delay:timing, duration:1500, type:'scalein'})
+    path1.Draw({delay:timing, duration:2000, params:{"drawType":"drawpath"}})
+    arrow1.Draw({delay:timing, duration:2000, params:{"drawType":"show"}}) // bug ig type:drawpath!
+    arrow2.Draw({delay:timing, duration:2000, params:{"drawType":"drawpath"}})
+    path4.Draw({delay:timing, duration:1500, params:{"drawType":"scalein"}})
 
     timing = timing + 3000
-    path2.Draw({delay:timing, duration:3000, type:'default'})
-    path3.Draw({delay:timing, duration:1000})
+    path2.Draw({delay:timing, duration:3000, params:{"drawType":"show"}})
+    path3.Draw({delay:timing, duration:1000, params:{"drawType":"drawpath"}})
  
     timing = timing + 3000
-    path4.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:2}})
-
+    // Paths defined as svg paths in window dimensions are akward now; they do not conform to positions
+    // in pixel space. Needs rethingin!
+    path4.Update({delay:timing, duration:1500, params:{pos:[-400, 1090+400], scale:1.5}})
     path2.Hide({delay:timing, duration:3000})
 
-  </script> 
+  </script>
 
 </body>
 </html>

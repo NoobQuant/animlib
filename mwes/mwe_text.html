@@ -21,7 +21,7 @@
     Examples on text objects.
     */
 
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {AddMathJax} from '../src/functions/AddMathJax.js'
     import {TextObject} from '../src/classes/TextObject.js'
@@ -39,7 +39,7 @@
     /*********************************
     Define objects 
     *********************************/
-    const svg = Canvas({})
+    let canvas = new Canvas({})
       
     let mytext = `Wait a minute. So you are saying  I can easily write math 
     symbols within a text field if I wrap it in dollar signs?! Let's try:
@@ -48,21 +48,21 @@
     `
 
     let textparams1 = {
-      "pos"            : [[300,200]],
+      "pos"            : [150, 800],
       "textAreaWidth"  : 700,
-      "textAreaHeight" : 400, 
+      "textAreaHeight" : 400,
       "id"             : "txt1",
       "text"           : mytext,
       "fontSize"       : 40,
       "textRelXPos"    : -200,
       "textColor"      : NQTextColors.red,
     }
-    let text1 = new TextObject(textparams1)
+    let text1 = new TextObject(textparams1, canvas)
 
     let textparams2 = {
-      "pos"            : [[1200,700], [700,550]],
+      "pos"            : [1200, 400],
       "textAreaWidth"  : 800,
-      "textAreaHeight" : 300,      
+      "textAreaHeight" : 300,
       "id"             : "txt2",
       "text"           : "$y = \\alpha + \\beta \\mathbf{X}$",
       "fontSize"       : 70,
@@ -70,20 +70,20 @@
       "textColor"      : NQTextColors.purple,
       "entPoint"       : [1100,600]
     }
-    let text2 = new TextObject(textparams2)
+    let text2 = new TextObject(textparams2, canvas)
     
     let textparams3 = {
-      "pos"            : [[1200,800]],
+      "pos"            : [1200, 200],
       "textAreaWidth"  : 600,
-      "textAreaHeight" : 300,      
+      "textAreaHeight" : 300,
       "id"             : "txt3",
       "text"           : "test text",
       "fontSize"       : 70,
       "textRelXPos"    : -200,
       "textColor"      : NQTextColors.purple,
-      "entPoint"       : [1100,600]
+      "entPoint"       : [1100, 150]
     }
-    let text3 = new TextObject(textparams3)
+    let text3 = new TextObject(textparams3, canvas)
 
     /*********************************
     Draw
@@ -92,13 +92,13 @@
     text1.Draw({delay:timing, duration:1600})
     timing = timing + 1000
     text2.Draw({delay:timing, duration:1000, type:"movein"})
-    text3.Draw({delay:timing, duration:1000, type:"movein"})        
+    text3.Draw({delay:timing, duration:1000, type:"movein"})
 
     timing = timing + 3000
     text3.UpdateText({delay:timing, duration:1000, params:{text:"look at this"}})
 
     timing = timing + 2000
-    text2.Update({delay:timing, duration:1500, params:{moveStepNo:1, newScale:1.5}})
+    text2.Update({delay:timing, duration:1500, params:{pos:[700, 550], scale:1.5}})
 
     timing = timing + 2000
     text2.UpdateText({delay:timing, duration:1000, params:{text:"$y = \\gamma + \\beta_{1} X_{1} + \\beta_{2} X_{2}$"}})
@@ -107,7 +107,7 @@
     text3.UpdateText({delay:timing, duration:1000, params:{text:"change again!"}})
 
     // This needs to be added in conjunction with the import above!
-    AddMathJax(svg)
+    AddMathJax(d3.select('#'+canvas.id))
 
   </script> 
 

@@ -18,7 +18,7 @@
     */
 
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {ForceLayout} from '../src/classes/ForceLayout.js'
 
@@ -30,7 +30,7 @@
     let timing = 0
     
     // Canvas
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
     /*********************************************
      * Define nodes data for 1st force

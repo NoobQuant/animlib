@@ -1,14 +1,14 @@
 import {Path} from './Path.js'
 export class Arrow extends Path {
-    constructor(params) {
+    constructor(params, aoParent) {
 
-		super(params)
-		var arrow = this.group
-					  .append("svg:path")
-					  .attr("d", d3.symbol().type(d3.symbolTriangle))
-					  .style('stroke', this.color)
-					  .style('fill', this.color)
-					  .style("opacity",0)
+		super(params, aoParent)
+		var arrow = this.aoG
+			.append("svg:path")
+			.attr("d", d3.symbol().type(d3.symbolTriangle))
+			.style('stroke', this.attrVar.strokeColor)
+			.style('fill', this.attrVar.strokeColor)
+			.style("opacity",0)
 		this.arrow = arrow
 	}
 	
@@ -27,31 +27,41 @@ export class Arrow extends Path {
 		};
 	};
 
-	Draw({delay,duration, type="drawpath"}={}){
+	Draw({delay,duration, params={}}={}){
+		let type = params.drawType || "drawpath"
+		d3.timeout(() => {
 
-		if(type === "drawpath"){
-			super.Draw({delay:delay,duration:duration,type:type})
-			this.arrow.style("opacity",1)
-			this.arrow.transition()
-					.delay(delay)
-					.duration(duration)
-					.ease(d3.easeLinear)
-					.attrTween("transform", this._TranslateAlong(this.path.node()))
-		} else {
+			if(type === "drawpath"){
 
-			// This is slightly inconvenient; it first transfers the arrow
-			// to its end position
-			this.arrow.transition()
-					  .delay(0)
-					  .duration(0)
-					  .attrTween("transform", this._TranslateAlong(this.path.node()))
-			
-            super.Draw({delay:delay,duration:duration,type:type})
-			this.arrow.transition()
-					  .delay(delay)
-					  .duration(duration)
-					  .style("opacity",1)
-		}
+				// Draw shaft of arrow (path object)
+				super.Draw({delay:0, duration:duration, params:params})
+				
+				d3.timeout(() => {
+					this.arrow
+						.style("opacity",1)
+					
+					this.arrow.transition()
+						.duration(duration)
+						.ease(this.attrDraw.drawEase)
+						.attrTween("transform", this._TranslateAlong(this.path.node()))
+				}, delay=0)
+			} else {
+
+				super.Draw({delay:0, duration:duration, params:params})
+				
+				d3.timeout(() => {
+					// This is slightly inconvenient; it first transfers the arrow
+					// to its end position
+					this.arrow.transition()
+						.duration(0)
+						.attrTween("transform", this._TranslateAlong(this.path.node()))
+					
+					this.arrow.transition()
+						.duration(duration)
+						.ease(this.attrDraw.drawEase)
+						.style("opacity",1)
+				}, delay=0)
+			}
+		}, delay=delay)
 	}
-
 }

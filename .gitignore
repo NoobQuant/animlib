@@ -14,3 +14,6 @@ png/*
 # exclude content of dependencies folder
 src/dependencies/*
 !src/dependencies/info.txt
+
+# exclude docs folder
+docs

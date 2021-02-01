@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!-- d3-->
+  <script src="http://localhost:8000/src/dependencies/d3/d3.js" charset="utf-8"></script>
+
+  <!-- d3-xyzoom-->
+  <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
+
+</head>
+
+<style>
+</style>
+
+<body>
+  <script type="module">
+    /* 
+    Ro
+    */
+
+    import {Canvas} from '../src/classes/Canvas.js'
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'
+    import {Svg} from '../src/classes/Svg.js'
+    import {Bar} from '../src/classes/Bar.js'
+    import {Plot} from '../src/classes/Plot.js'
+
+    if (document.URL.includes('plot_hh')){
+      window.currentTime = 0
+      performance.now = () => currentTime
+    }
+
+    let timing = 0
+    let canvas = new Canvas({})
+
+    /**************************************************
+    Svg with linear inner space
+    **************************************************/
+    let svgparams = {
+       "pos"                : [200, 900]
+      ,"xRange"             : [0, 1400]
+      ,"yRange"             : [0, 650]
+      ,"xDomain"            : [0, 200]
+      ,"yDomain"            : [0,0.6]
+      ,"id"                 : "svg1"
+    }
+    let svg = new Svg(svgparams, canvas)
+
+    /**************************************************
+    Histogram data
+    **************************************************/
+    let histDataParams1_a = {
+        "data"        : [{"y": 0.05, "x0": 0.0, "x1": 25}, {"y": 0.09, "x0": 25, "x1": 50}]
+       ,"id"          : "bar1"
+       ,'barDataType' : 'histogram_precalc'
+    }
+    let bar1 = new Bar(histDataParams1_a, svg)
+
+    /**************************************************
+    Plot with bin inner space
+    **************************************************/
+    let params3 = {
+      "pos"          : [200, 900]
+      ,"xRange"      : [0,1400]
+      ,"yRange"      : [0,650]
+      ,"xDomain"     : ['A', 'B']
+      ,"yDomain"     : [0, 10] 
+      ,"id"          : "plot3"
+      ,"xLabel"      : "x label"
+      ,"yLabel"      : "y label"
+      ,"xScaleType"  : "scaleBand"
+      ,"xTickFormat" : "string"
+    };
+    let plot3 = new Plot(params3, canvas)
+
+    /**************************************************
+    Bar data
+    **************************************************/
+    let barData1_a = [{'x0':'A', "y":7}, {'x0':'B',"y":3}]
+
+    let barDataParams1_a = {
+        "data"       : barData1_a
+        ,"id"        : "barData1"
+        ,"barDataType"  : 'bar'
+    }
+    let bar2 = new Bar(barDataParams1_a, plot3)
+
+    /**************************************************
+    Animations
+    **************************************************/
+    timing = timing + 500
+    svg.Draw({delay:timing, duration:0})
+    //bar1.Draw({delay:timing+500, duration:1000})
+    bar1.Draw({delay:timing+500, duration:2000, params:{"drawEase":d3.easeLinear}})
+
+    timing = timing + 2500
+    let histDataParams1_b = {
+      "data"        : [34,55,23,43,12,32,29],
+      "barDataType" : 'histogram',
+      "fill"        : "#fac0a2",
+      "barBins"     : [0,25,50,75,100,125,150,175,200],
+      "drawEase"    :d3.easeCubic
+      }
+    bar1.Update({delay:timing+500, duration:1000, params:histDataParams1_b})
+
+    timing = timing + 1500
+    svg.Hide({delay:timing, duration:300})
+
+    timing = timing + 1500
+    plot3.Draw({delay:timing, duration:500})
+    timing = timing + 1000
+    bar2.Draw({delay:timing, duration:1000})
+
+  </script>
+
+</body>
+</html>

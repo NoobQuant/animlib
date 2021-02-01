@@ -2,7 +2,7 @@ export class ForceLayout{
 
 	constructor(params){	
 		
-		this.svgid				   = params.svgid || "bgsvg"
+		this.parentId			   = params.parentId || "bgsvg"
 		this.nodes        		   = params.nodes
 		this.id					   = params.id
 		this.forcemanybodystrength = params.forcemanybodystrength || -2
@@ -14,27 +14,27 @@ export class ForceLayout{
 		this.forceystrength		   = params.forceystrength || 0.07
 		
 		this.simulation = d3.forceSimulation(this.nodes)
-						   .force("charge", d3.forceManyBody().strength(this.forcemanybodystrength))
-						   .alpha(this.alpha)
-						   .alphaMin(this.alphamin)
-						   .alphaDecay(1 - Math.pow(this.alphamin, 1 / this.steps))               
-						   .velocityDecay(this.velocitydecay)
-						   .force('collision', d3.forceCollide()
-									.radius(function(d){return d.radius})    
-							)    
-							.force('x', d3.forceX()
-								.x(function(d) {return d.xCenter})
-								.strength(this.forcexstrength)
-							)
-							.force('y', d3.forceY()
-								.y(function(d) {return d.yCenter})
-								.strength(this.forceystrength)
-							)
-							.stop()
+			.force("charge", d3.forceManyBody().strength(this.forcemanybodystrength))
+			.alpha(this.alpha)
+			.alphaMin(this.alphamin)
+			.alphaDecay(1 - Math.pow(this.alphamin, 1 / this.steps))
+			.velocityDecay(this.velocitydecay)
+			.force('collision', d3.forceCollide()
+				.radius(function(d){return d.radius})
+			)    
+			.force('x', d3.forceX()
+				.x(function(d) {return d.xCenter})
+				.strength(this.forcexstrength)
+			)
+			.force('y', d3.forceY()
+				.y(function(d) {return d.yCenter})
+				.strength(this.forceystrength)
+			)
+			.stop()
 							
-		this.node = d3.select('#'+this.svgid)
+		this.node = d3.select('#'+this.parentId)
 					 .append("g")
-					 .attr("id",this.id)					             
+					 .attr("id",this.id)
 					 .attr("stroke", 'black')
 					 .attr("stroke-width", 1)
 					 .selectAll(".node")

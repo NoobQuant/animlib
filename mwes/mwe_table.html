@@ -8,17 +8,11 @@
 
 </head>
 
-<style>
-</style>
-
 <body>
   <script type="module">
-    /* 
-    Table
-    */
 
     // Module imports
-    import {Canvas} from '../src/functions/Canvas.js'
+    import {Canvas} from '../src/classes/Canvas.js'
     import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
     import {Table} from '../src/classes/Table.js'
 
@@ -30,21 +24,20 @@
     let timing = 0
     
     // Canvas
-    //const svg = Canvas(1930,1090, false, "white")
-    const svg = Canvas({})
+    let canvas = new Canvas({})
 
     /*********************************************
      * Define nodes data for 1st force
     *********************************************/
     let params = 
     {
-      id: "datatable1"
-      ,pos: [[200, 100], [200, 500]]   
+       id: "datatable1"
+      ,pos: [200, 800]
       ,path: "data/table_data.json"
       ,width: 1500
-      ,svgid: "bgsvg"
+      ,parentId: "bgsvg"
     }
-    let dt = new Table(params)
+    let dt = new Table(params, canvas)
 
     /*********************************************
      * Animate
@@ -54,10 +47,11 @@
     dt.Draw({delay:timing, duration:1000})
   
     timing = timing + 1500
-    dt.Update({delay:timing, duration:1500, params:{moveStepNo:1}})
+    let paramsUpdt = {pos: [200, 500]}
+    dt.Update({delay:timing, duration:1500, params:paramsUpdt})
     
     timing = timing + 2000
-    dt.Hide({delay:timing, duration:500})    
+    dt.Hide({delay:timing, duration:500})
 
   </script> 
 

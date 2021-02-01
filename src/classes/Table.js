@@ -1,7 +1,7 @@
 import {AnimObject} from './AnimObject.js'
 export class Table extends AnimObject{
-    constructor(params){
-        super(params)
+    constructor(params, aoParent){
+        super(params, aoParent)
         this.path            = params.path
         this.width           = params.width || 700        
         this.tdFontSize      = params.tdFontSize || 26
@@ -13,7 +13,7 @@ export class Table extends AnimObject{
         
         let that = this
         
-        var tableholder = this.group.append("foreignObject")					
+        var tableholder = this.aoG.append("foreignObject")					
                                .attr("width", this.width + 100)
                                .attr("height", 500)
                                .append("xhtml:body")
