@@ -72,10 +72,6 @@ export class Plot extends AnimObject{
 		// Show plot based on AnimObject Draw
 		super.Draw({delay:delay, duration:duration, params:params})
 
-		// Define a line function for to be used with these axes
-		// To be removed and use one defined on AnimObject
-		//this._DefineLineData(this.xScale, this.yScale)		
-		
 	}
 
 	UpdateAxes({delay, duration, params = {}}={}){
