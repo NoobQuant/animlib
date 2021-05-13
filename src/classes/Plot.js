@@ -78,12 +78,12 @@ export class Plot extends AnimObject{
 		
 	}
 
-	UpdateAxes({delay, duration, params = {}, type="update"}={}){
+	UpdateAxes({delay, duration, params = {}}={}){
 		let ease = params.ease || d3.easeCubic
 		// Updates axes but leaves content unchanged
 		d3.timeout(() => {
 			this._UpdatePlotParams(params)
-			this._UpdateAxes(0, duration, type, ease)
+			this._UpdateAxes(0, duration, ease)
 		},delay)
 	}
 	
@@ -117,7 +117,7 @@ export class Plot extends AnimObject{
 						
 		// Update call with immediate transition
 		this._AxisLabelUpdate("x",d3.transition().duration(0))
-	}	
+	}
 
 	_AxisLabelUpdate(label, t){
 
@@ -155,21 +155,16 @@ export class Plot extends AnimObject{
 											  .remove()
 							)
 			)
-	}		
+	}
 
-	_UpdateAxes(delay, duration, type="update", ease=delay.easeLinear){
-		//let yAxis = this.yAxis
+	_UpdateAxes(delay, duration, ease=delay.easeLinear){
+		/**
+		 * Update scales of plot axes to match scales of current inner space,
+		 * and update axis labels and ticks accordingly.
+		 */
 
-		if (type=="update"){
-			
-			this.xAxis.scale(this.attrVar.xScale)
-			this.yAxis.scale(this.attrVar.yScale)
-
-		} else if(type=="zoom"){
-						
-			this.xAxis.scale(this.attrVar.zoomedXScale)
-			this.yAxis.scale(this.attrVar.zoomedYScale)
-		}
+		this.xAxis.scale(this.attrVar.xScale)
+		this.yAxis.scale(this.attrVar.yScale)
 
 		// Update y axis
 		this.yAxisGroup
