@@ -22,7 +22,7 @@ WriteDfToJsonVar(df,'mwes/data/path_data_plotmwe.json',"sepx")
 #%%
 # Create time series data for line chart in mwe_plot
 dates1 = ['2007-01-01', '2007-04-01', '2007-07-01', '2007-10-01', '2008-01-01']
-dates2 = ['2010-03-31', '2010-06-30', '2010-09-30', '2010-12-31', '2010-03-31']
+dates2 = ['2007-01-01', '2008-01-01', '2009-01-01', '2010-01-01', '2011-01-01']
 df = pd.DataFrame(
     data={
         'ts1':[100, 120, 110, 80, 115],
@@ -31,7 +31,7 @@ df = pd.DataFrame(
         'dates2':pd.to_datetime(dates2),
     }
 )
-df['dates2'] = df['dates1'].dt.strftime('%Y-%m-%d')
+df['dates2'] = df['dates2'].dt.strftime('%Y-%m-%d')
 df = df[["dates1", "ts1", "dates2", "ts2"]]
 WriteDfToJsonVar(df, 'mwes/data/tsdata_plotmwe.json',"sepx", varname="tsData")
 # %%

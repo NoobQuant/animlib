@@ -10,7 +10,8 @@
   <script src="http://localhost:8000/src/dependencies/d3-xyzoom/build/d3-xyzoom.js"></script>
 
   <!-- Load data from json-->
-  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>  
+  <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
+  <script src="data/tsdata_plotmwe.json" charset="utf-8"></script>
 
   <!-- Math symbols - REQUIRED! PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
@@ -46,7 +47,7 @@
     /**************************************************
     Plot 1: Scatter
     **************************************************/
-    ///*
+    //*
     // Plot object
     let plotParams1 = {
        "pos"                : [200, 900]
@@ -97,7 +98,7 @@
     /**************************************************
     Plot 2: Histogram
     **************************************************/
-    ///*
+    //*
     // Plot object
     let plotParams2 = {
       "pos"          : [200, 900]
@@ -145,7 +146,7 @@
     /**************************************************
     Plot 3: Bars
     **************************************************/
-    ///*
+    //*
     // Plot object
     let plotParams3 = {
       "pos"          : [200, 900]
@@ -181,7 +182,7 @@
     /**************************************************
     Plot 4: Lines
     **************************************************/
-    ///*
+    //*
     // Plot object
     let plotParams4 = {
        "pos"                : [200, 900]
@@ -229,10 +230,49 @@
     //*/
 
     /**************************************************
+    Plot 5: Time series, as lines and scatter
+    **************************************************/
+    let parseTime = d3.timeParse("%Y-%m-%d")
+    ///*
+    // Plot object
+    let plotParams5 = {
+      "pos"        :[200, 900],
+      "xRange"     :[0, 1400],
+      "yRange"     :[0, 770],
+      "yDomain"    :[50, 200],
+      "xDomain"    :[parseTime("2007-01-01"), parseTime("2011-01-01")],
+      "id"         :"plot5",
+      "yLabel"     :"$\\alpha + \\text{Time}$",
+      "yLabelSize" :30,
+      "xLabel"     :"dummy title",
+      "xScaleType" :"scaleTime",
+      "xTickFormat":d3.timeFormat("%Y-%m-%d"),
+    }
+    let plot5 = new Plot(plotParams5, canvas)
+
+    let lineParams4 = {
+        "data"        :tsData["ts1"],
+        "id"          :"line4",
+        "strokeWidth" :3,
+        "strokeColor" :NQColors.orange,
+    }
+    let line4 = new Path(lineParams4, plot5)
+
+    // Convert x-axis from string date to JS dates
+    tsData["ts2"].forEach(el => el[0] = parseTime(el[0]))
+    let lineParams5 = {
+        "data"        :tsData["ts2"],
+        "id"          :"line5",
+        "strokeWidth" :3,
+        "strokeColor" :NQColors.steelblue,
+    }
+    let line5 = new Path(lineParams5, plot5)
+
+    /**************************************************
     Animations
     **************************************************/
     // Plot 1: Scatter
-    ///*
+    //*
     timing = timing + 200
     plot1.Draw({delay:timing, duration:500, params:{"type":"movein"}})
 
@@ -253,7 +293,7 @@
     //*/
 
     // Plot 2: Histogram
-    ///*
+    //*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:1000, params:{"type":"scalein"}})
 
@@ -277,7 +317,7 @@
     //*/
 
     // Plot 3: Bars
-    ///*
+    //*
     timing = timing + 1000
     plot3.Draw({delay:timing, duration:500})
     
@@ -295,7 +335,7 @@
     //*/
 
     // Plot 4: Lines
-    ///*
+    //*
     timing = timing + 1000
     plot4.Draw({delay:timing, duration:500})
     
@@ -311,7 +351,7 @@
     timing = timing + 2000
     line2.Draw({delay:timing, duration:1500, params:{"drawType":"drawpath"}})
     line3.Draw({delay:timing, duration:1500, params:{"drawEase":d3.easeLinear, "drawType":"drawpath"}})
-    
+
     timing = timing + 2000
     scatter3.Draw({delay:timing, duration:1000})
 
@@ -323,6 +363,16 @@
 
     timing = timing + 1000
     plot4.Hide({delay:timing, duration :500})
+    //*/
+
+    // Plot 5: Time series
+    ///*
+    timing = timing + 1000
+    plot5.Draw({delay:timing, duration:500})
+
+    timing = timing + 1000
+    line4.Draw({delay:timing, duration:500, params:{"drawType":"drawpath"}})
+    line5.Draw({delay:timing, duration:500, params:{"drawType":"drawpath"}})
     //*/
 
     // This needs to be added in conjunction with the import above!

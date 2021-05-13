@@ -222,28 +222,28 @@ export class Plot extends AnimObject{
 		/* Updates plot axis paramters */
 	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30
 		this.xLabel 			= params.xLabel 	 	 || this.xLabel 	 	  || ""
-		this.xLabelColor 		= params.xLabelColor 	 || this.xLabelColor 	  || "#D7E4DB" 
+		this.xLabelColor 		= params.xLabelColor 	 || this.xLabelColor 	  || "#D7E4DB"
 	    this.yLabelSize 		= params.yLabelSize  	 || this.yLabelSize  	  || 30
 		this.yLabel 			= params.yLabel 	 	 || this.yLabel 	 	  || ""
-		this.yLabelColor 		= params.yLabelColor 	 || this.yLabelColor 	  || "#D7E4DB" 		
+		this.yLabelColor 		= params.yLabelColor 	 || this.yLabelColor 	  || "#D7E4DB"
 		this.yLabelCorrector    = params.yLabelCorrector || this.yLabelCorrector  || [100,0]
 		this.xLabelCorrector    = params.xLabelCorrector || this.xLabelCorrector  || [0,70]
 		this.xTickLabelSize		= params.tickLabelSize   || this.xTickLabelSize	  || params.xTickLabelSize || 20
 		this.yTickLabelSize		= params.tickLabelSize   || this.yTickLabelSize	  || params.yTickLabelSize || 20
-	    this.xTickNo 			= params.tickNo 		 || this.xTickNo 		  || 5		
+	    this.xTickNo 			= params.tickNo 		 || this.xTickNo 		  || 5
 		this.xTickStroke 		= params.tickStroke 	 || this.xTickStroke 	  || "#D7E4DB"
-	    this.xTickSize 			= params.tickSize 		 || this.xTickSize 		  || 10		
+	    this.xTickSize 			= params.tickSize 		 || this.xTickSize 		  || 10
 		this.xTickStrokeWidth	= params.tickStrokeWidth || this.xTickStrokeWidth || 1
-		this.xTickLabelFill 	= params.tickLabelFill 	 || this.xTickLabelFill   || "#D7E4DB"		
+		this.xTickLabelFill 	= params.tickLabelFill 	 || this.xTickLabelFill   || "#D7E4DB"
 		this.xTickFormat		= params.xTickFormat 	 || this.xTickFormat 	  || d3.format('.1f')
 	    this.yTickNo 			= params.tickNo 		 || this.yTickNo 		  || 5
 		this.yTickStroke 		= params.tickStroke 	 || this.yTickStroke 	  || "#D7E4DB"
-	    this.yTickSize 			= params.tickSize 		 || this.yTickSize 		  || 10		
+	    this.yTickSize 			= params.tickSize 		 || this.yTickSize 		  || 10
 		this.yTickStrokeWidth	= params.tickStrokeWidth || this.yTickStrokeWidth || 1
 		this.yTickLabelFill 	= params.tickLabelFill   || this.yTickLabelFill   || "#D7E4DB"
 		this.yTickFormat		= params.yTickFormat 	 || this.yTickFormat	  || d3.format('.1f')
 		this.axisStroke			= params.axisStroke 	 || this.axisStroke		  || "#D7E4DB"
-		this.axisStrokeWidth	= params.axisStrokeWidth || this.axisStrokeWidth  || 1		
+		this.axisStrokeWidth	= params.axisStrokeWidth || this.axisStrokeWidth  || 1
 	}
 
 }
