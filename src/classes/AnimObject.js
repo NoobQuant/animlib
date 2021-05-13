@@ -514,12 +514,34 @@ export class AnimObject{
 		// Update inner space if it exists. Given that we are zooming it should always exist!
 		if (this.attrFix.hasInnerSpace === true){
 			this._UpdateInnerSpace(0, "zoom")
+			
+			// If AnimObject has axes attached to it, scale those as well
+			// Uses d3-rescale on definded scales xCale and yscale. That is, we 
+			// pick up the on-going transform using d3.event.transform and use
+			// its knowledge to rescale the axes scales
+			if (typeof this.xAxisGroup !== 'undefined'){
+				const zx = d3.event.transform.rescaleX(this.attrVar.xScale)
+				this.xAxisGroup.call(this.xAxis.scale(zx))
+				this.xAxisGroup
+				.selectAll("text")
+				.style("font-size", this.xTickLabelSize)
+				.style("fill",this.xTickLabelFill)
+			}
+			if (typeof this.yAxisGroup !== 'undefined'){
+				const zy = d3.event.transform.rescaleY(this.attrVar.yScale)
+				this.yAxisGroup.call(this.yAxis.scale(zy))
+				this.yAxisGroup
+				.selectAll("text")
+				.style("font-size", this.yTickLabelSize)
+				.style("fill",this.yTickLabelFill)
+			}
 		}
+
 		let that = this
 
 		let zoomedLineFunction = d3.line()
 			.x(function(d) {return that.attrVar.zoomedXScale(d[0])})
-			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})		
+			.y(function(d) {return that.attrVar.zoomedYScale(d[1])})
 
 		// Zooming behavior over all children AnimObjects of current AnimObject
 		this.aoChildren.forEach((el) => {
