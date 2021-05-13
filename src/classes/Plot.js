@@ -19,7 +19,7 @@ export class Plot extends AnimObject{
 		let yAxis = d3.axisLeft().scale(this.attrVar.yScale)
 
 		// init x-axis decorations
-		let xAxisGroup = this.aoG.append("g")
+		this.xAxisGroup = this.aoG.append("g")
 			.attr("transform", "translate("+ 0 + "," +
 				this.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
 			.call(xAxis
@@ -27,47 +27,23 @@ export class Plot extends AnimObject{
 				.ticks(this.xTickNo)
 			) 
 		if (this.xTickFormat != "string"){
-			xAxisGroup.call(xAxis.tickFormat(this.xTickFormat))
+			this.xAxisGroup.call(xAxis.tickFormat(this.xTickFormat))
 		}
-		xAxisGroup
-			.selectAll("text")
-			.style("font-size", this.xTickLabelSize)
-			.style("fill",this.xTickLabelFill)
-		xAxisGroup
-			.selectAll("line")
-			.style("stroke", this.xTickStroke)
-			.style("stroke-width", this.xTickStrokeWidth)
-		xAxisGroup
-			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
+		this._UpdateXAxisGroup()
 		this._XAxisLabel()
 
 		// init y-axis decorations
-		let yAxisGroup = this.aoG.append("g")
+		this.yAxisGroup = this.aoG.append("g")
 			.call(yAxis
 				.tickFormat(this.yTickFormat)
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
-			)
-		yAxisGroup
-			.selectAll("text")
-			.style("font-size", this.yTickLabelSize)
-			.style("fill",this.yTickLabelFill)
-		yAxisGroup
-			.selectAll("line")
-			.style("stroke", this.yTickStroke)
-			.style("stroke-width", this.yTickStrokeWidth)
-		yAxisGroup
-			.selectAll("path")
-			.attr("stroke", this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
+		)
+		this._UpdateYAxisGroup()
 		this._YAxisLabel()
 		
-		this.xAxis 		  = xAxis
-		this.yAxis 		  = yAxis
-		this.xAxisGroup   = xAxisGroup
-		this.yAxisGroup   = yAxisGroup
+		this.xAxis = xAxis
+		this.yAxis = yAxis
 
 		// Show plot based on AnimObject Draw
 		super.Draw({delay:delay, duration:duration, params:params})
@@ -159,6 +135,11 @@ export class Plot extends AnimObject{
 		 * and update axis labels and ticks accordingly.
 		 */
 
+		const transition = d3.transition()
+			.delay(delay)
+			.duration(duration)
+
+		// Update plot axes scales to match those of AO inner space
 		this.xAxis.scale(this.attrVar.xScale)
 		this.yAxis.scale(this.attrVar.yScale)
 
@@ -172,19 +153,7 @@ export class Plot extends AnimObject{
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
 			)
-
-		this.yAxisGroup
-			.selectAll("text")
-			.style("font-size", this.yTickLabelSize)
-			.style("fill",this.yTickLabelFill)
-		this.yAxisGroup
-			.selectAll("line")
-			.style("stroke", this.yTickStroke)
-			.style("stroke-width", this.yTickStrokeWidth)
-		this.yAxisGroup
-			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
+		this._UpdateYAxisGroup()
 
 		// Update x axis
 		this.xAxisGroup
@@ -196,23 +165,7 @@ export class Plot extends AnimObject{
 				.tickSize(this.xTickSize)
 				.ticks(this.xTickNo)
 			)
-
-		this.xAxisGroup
-			.selectAll("text")
-			.style("font-size", this.xTickLabelSize)
-			.style("fill",this.xTickLabelFill)
-		this.xAxisGroup
-			.selectAll("line")
-			.style("stroke", this.xTickStroke)
-			.style("stroke-width", this.xTickStrokeWidth)
-		this.xAxisGroup
-			.selectAll("path")
-			.attr("stroke" , this.axisStroke)
-			.style("stroke-width", this.axisStrokeWidth)
-		
-		const transition = d3.transition()
-			.delay(delay)
-			.duration(duration)
+		this._UpdateXAxisGroup()
 
 		// Update yLabel
 		this._AxisLabelUpdate("y", transition)
@@ -227,6 +180,42 @@ export class Plot extends AnimObject{
 		
 		// Refresh math symbols on the svg that plot AnimObject is defined on
 		AddMathJax(d3.select('#'+this.parentId))
+	}
+
+	_UpdateXAxisGroup(){
+		/**
+		 * Updates X axis decorations.
+		*/
+		this.xAxisGroup
+			.selectAll("text")
+			.style("font-size", this.xTickLabelSize)
+			.style("fill",this.xTickLabelFill)
+		this.xAxisGroup
+			.selectAll("line")
+			.style("stroke", this.xTickStroke)
+			.style("stroke-width", this.xTickStrokeWidth)
+		this.xAxisGroup
+			.selectAll("path")
+			.attr("stroke" , this.axisStroke)
+			.style("stroke-width", this.axisStrokeWidth)
+	}
+
+	_UpdateYAxisGroup(){
+		/**
+		 * Updates Y axis decorations.
+		*/
+		this.yAxisGroup
+			.selectAll("text")
+			.style("font-size", this.yTickLabelSize)
+			.style("fill",this.yTickLabelFill)
+		this.yAxisGroup
+			.selectAll("line")
+			.style("stroke", this.yTickStroke)
+			.style("stroke-width", this.yTickStrokeWidth)
+		this.yAxisGroup
+			.selectAll("path")
+			.attr("stroke", this.axisStroke)
+			.style("stroke-width", this.axisStrokeWidth)
 	}
 
 	_UpdatePlotParams(params){

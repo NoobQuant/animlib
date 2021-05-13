@@ -522,18 +522,12 @@ export class AnimObject{
 			if (typeof this.xAxisGroup !== 'undefined'){
 				const zx = d3.event.transform.rescaleX(this.attrVar.xScale)
 				this.xAxisGroup.call(this.xAxis.scale(zx))
-				this.xAxisGroup
-				.selectAll("text")
-				.style("font-size", this.xTickLabelSize)
-				.style("fill",this.xTickLabelFill)
+				this._UpdateXAxisGroup()
 			}
 			if (typeof this.yAxisGroup !== 'undefined'){
 				const zy = d3.event.transform.rescaleY(this.attrVar.yScale)
 				this.yAxisGroup.call(this.yAxis.scale(zy))
-				this.yAxisGroup
-				.selectAll("text")
-				.style("font-size", this.yTickLabelSize)
-				.style("fill",this.yTickLabelFill)
+				this._UpdateYAxisGroup()
 			}
 		}
 
