@@ -11,6 +11,7 @@
 
   <!-- Load data from json-->
   <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
+  <script src="data/tsdata_plotmwe.json" charset="utf-8"></script>
 
   <!-- Math symbols PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
@@ -71,7 +72,7 @@
     /**************************************************
     Scene 1
     **************************************************/
-    ///*
+    //*
     // Svg object
     let svgParams1 = {
          "id"          : "svg1"
@@ -119,7 +120,7 @@
     /**************************************************
     Scene 2
     **************************************************/
-    ///*
+    //*
     // Plot object
     let plotParams2 = {
        "pos"        : [150, 900]
@@ -159,12 +160,43 @@
     let scatter1 = new Scatter(scatterParams1, plot2)
     //*/
 
+    /**************************************************
+    Scene 3
+    **************************************************/
+    //*
+    let parseTime = d3.timeParse("%Y-%m-%d")
+    ///*
+    // Plot object
+    let plotParams3 = {
+      "pos"        :[200, 900],
+      "xRange"     :[0, 1400],
+      "yRange"     :[0, 770],
+      "yDomain"    :[50, 200],
+      "xDomain"    :[parseTime("2007-01-01"), parseTime("2008-01-01")],
+      "id"         :"plot3",
+      "yLabel"     :"$\\alpha + \\text{Time}$",
+      "yLabelSize" :30,
+      "xLabel"     :"dummy title",
+      "xScaleType" :"scaleTime",
+      "xTickFormat":d3.timeFormat("%Y-%m-%d"),
+    }
+    let plot3 = new Plot(plotParams3, canvas)
+
+    let lineParams5 = {
+        "data"        :tsData["ts1"],
+        "id"          :"line5",
+        "strokeWidth" :3,
+        "strokeColor" :NQColors.orange,
+    }
+    let line5 = new Path(lineParams5, plot3)
+    //*/
+
     /*********************************
     Animate Scene 1
     Zoom out line chart and continue drawing the line. Notice that line
     is drawn on svg1.
     *********************************/
-    ///*
+    //*
     svg1.Draw({delay:0, duration:0})
 
     // Plot axes to svg1, draw line to plot
@@ -173,11 +205,11 @@
     line1.Draw({delay:timing+300, duration:500, params:{"drawType":"drawpath"}})
 
     // Zoom out svg1
-    timing = timing + 2000
-    svg1.Update({delay:timing, duration:2000, params:{scale:0.5, ease:d3.easeCubic}})
+    timing = timing + 1000
+    svg1.Update({delay:timing, duration:1000, params:{scale:0.5, ease:d3.easeCubic}})
 
     // Continue plot domain to 17 but do not alter line otherwise
-    timing = timing + 2000
+    timing = timing + 1100
     let params1_a = {'xDomain':[0, 17], 'xRange':[0, 1400]}
     plot1.Update({delay:timing, duration:2000, params:params1_a})
     plot1.UpdateAxes({delay:timing+25, duration:2000, plotParams:params1_a})
@@ -185,10 +217,10 @@
 
     // Continue line with another line object up to 17
     timing = timing + 2200
-    line2.Draw({delay:timing, duration:1500, params:{"drawType":"drawpath"}})
+    line2.Draw({delay:timing, duration:1000, params:{"drawType":"drawpath"}})
 
     // Continue plot object x-range up to svg1 end; i.e. plot1XRange minus plot position
-    timing = timing + 2000
+    timing = timing + 1500
     let params1_b = {'xRange':[0, plot1XRange-plot1_xpos]}
     plot1.Update({delay:timing, duration:1000, params:params1_b})
     plot1.UpdateAxes({delay:timing, duration:1000, params:params1_b})
@@ -201,9 +233,10 @@
     //*/
 
     /*********************************
-    Animate - Zoom in chart with scatter and lines
+    Animate Scene 2
+    Zoom in chart with scatter and lines
     *********************************/
-    ///*
+    //*
     timing = timing + 1000
     plot2.Draw({delay:timing, duration:0})
     scatter1.Draw({delay:timing, duration:0})
@@ -224,7 +257,36 @@
       "yDomain"  : [-10,10],
       "xDomain"  : [-10,20]
     }    
-    plot2.Zoom({delay:timing, duration:2000, zoomParams:zoomParams2})
+    plot2.Zoom({delay:timing, duration:1000, zoomParams:zoomParams2})
+
+    timing = timing + 1500
+    plot2.Hide({delay:timing, duration:500})
+    //*/
+
+    /*********************************
+    Animate Scene 3
+    Zoom in and out time series line
+    *********************************/
+    //*
+    timing = timing + 1000
+    plot3.Draw({delay:timing, duration:0})
+    line5.Draw({delay:timing+500, duration:500, params:{"drawType":"drawpath"}})
+
+    timing = timing + 1500
+    let zoomParams3 = {
+      "yDomain"    : [90, 140],
+      "xDomain"    : [parseTime("2007-03-01"), parseTime("2007-06-30")],
+      "zoomEase"   : d3.easeCubic,
+    }
+    plot3.Zoom({delay:timing, duration:1000, zoomParams:zoomParams3})
+
+    timing = timing + 2000
+    let zoomParams4 = {
+      "yDomain"  : [50, 200],
+      "xDomain"  : [parseTime("2007-01-01"), parseTime("2008-01-01")],
+      "zoomEase"   : d3.easeCubic,
+    }
+    plot3.Zoom({delay:timing, duration:2000, zoomParams:zoomParams4})
     //*/
 
     // This needs to be added in conjunction with the import above!
