@@ -12,6 +12,8 @@
   <!-- Load data from json-->
   <script src="data/path_data_plotmwe.json" charset="utf-8"></script>
   <script src="data/tsdata_plotmwe.json" charset="utf-8"></script>
+  <script src="data/scatterdata1_plotmwe.json" charset="utf-8"></script>
+  <script src="data/scatterdata2_plotmwe.json" charset="utf-8"></script>
 
   <!-- Math symbols - REQUIRED! PUT AS LAST IMPORT!-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
@@ -79,9 +81,9 @@
 
     // Scatter objects
     let scatterParams1a = {
-       "id"          : "scatter1"
-      ,"data"        : CreateScatterData({'x':[-1100,1100], 'y':[0,20]}, NQColors.orange, 5)
-      ,"strokeWidth" : 4
+      "id"          : "scatter1",
+      "data"        : scatter_data1,
+      "strokeWidth" : 4,
     }
     let scatterParams1b = {
       'data'         : CreateScatterData({'x':[-1100,1100], 'y':[0,10]}, NQColors.dark_purple, 10)
@@ -240,7 +242,7 @@
       "xRange"     :[0, 1400],
       "yRange"     :[0, 770],
       "yDomain"    :[50, 200],
-      "xDomain"    :[parseTime("2007-01-01"), parseTime("2011-01-01")],
+      "xDomain"    :[parseTime("2007-01-01"), parseTime("2011-03-01")],
       "id"         :"plot5",
       "yLabel"     :"$\\alpha + \\text{Time}$",
       "yLabelSize" :30,
@@ -267,6 +269,13 @@
         "strokeColor" :NQColors.steelblue,
     }
     let line5 = new Path(lineParams5, plot5)
+
+    // Time series as scatter
+    let scatterParams4 = {
+      "id"          : "scatter4",
+      "data"        : scatter_data2,
+    }
+    let scatter4 = new Scatter(scatterParams4, plot5)
 
     /**************************************************
     Animations
@@ -373,6 +382,9 @@
     timing = timing + 1000
     line4.Draw({delay:timing, duration:500, params:{"drawType":"drawpath"}})
     line5.Draw({delay:timing, duration:500, params:{"drawType":"drawpath"}})
+    
+    timing = timing + 1000
+    scatter4.Draw({delay:timing, duration:500})
     //*/
 
     // This needs to be added in conjunction with the import above!

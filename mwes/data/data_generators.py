@@ -4,7 +4,7 @@ os.chdir("../../")
 import pandas as pd
 import numpy as np
 import json
-from src.dataprep.WriteDfToJsonVar import WriteDfToJsonVar
+from src.dataprep.WriteDfToJsonVar import WriteDfToJsonVar, WriteScatter
 
 #%%
 # Create data for arrow in mwe_path.html
@@ -34,4 +34,40 @@ df = pd.DataFrame(
 df['dates2'] = df['dates2'].dt.strftime('%Y-%m-%d')
 df = df[["dates1", "ts1", "dates2", "ts2"]]
 WriteDfToJsonVar(df, 'mwes/data/tsdata_plotmwe.json',"sepx", varname="tsData")
+# %%
+# Write normal scatter data for mwe_plot
+df = pd.DataFrame(
+    data={
+        "x":np.random.randint(low=-1100, high=1100, size=10),
+        "y":np.random.randint(low=0, high=20, size=10),
+    }
+)
+df["color"] = "#F09B0C"
+df["r"] = 5
+WriteScatter(
+    df,
+    path='mwes/data/scatterdata1_plotmwe.json',
+    varname="scatter_data1",
+    x="x",
+    y="y",
+)
+
+# %%
+# Write time series scatter data for mwe_plot
+dates = ['2007-01-01', '2008-01-01', '2009-01-01', '2010-01-01', '2011-01-01']
+df = pd.DataFrame(
+    data={
+        "x":pd.to_datetime(dates),
+        "y":[120, 115, 130, 140, 100],
+    }
+)
+df["color"] = "#F09B0C"
+df["r"] = 10
+WriteScatter(
+    df,
+    path='mwes/data/scatterdata2_plotmwe.json',
+    varname="scatter_data2",
+    x="x",
+    y="y",
+)
 # %%
