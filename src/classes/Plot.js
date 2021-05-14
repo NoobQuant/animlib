@@ -15,35 +15,37 @@ export class Plot extends AnimObject{
 		*/
 
 		// init axes for plot
-		let xAxis = d3.axisBottom().scale(this.attrVar.xScale)
-		let yAxis = d3.axisLeft().scale(this.attrVar.yScale)
+		this.xAxis = d3.axisBottom().scale(this.attrVar.xScale)
+		this.yAxis = d3.axisLeft().scale(this.attrVar.yScale)
 
 		// init x-axis decorations
 		this.xAxisGroup = this.aoG.append("g")
 			.attr("transform", "translate("+ 0 + "," +
 				this.aoParent.attrVar.xScale(this.attrVar.yRange[1]) + ")")
-			.call(xAxis
+			.call(this.xAxis
 				.tickSize(this.xTickSize)
 				.ticks(this.xTickNo)
-			) 
+			)
+		// Need to do this separately
 		if (this.xTickFormat != "string"){
-			this.xAxisGroup.call(xAxis.tickFormat(this.xTickFormat))
+			this.xAxisGroup.call(this.xAxis.tickFormat(this.xTickFormat))
 		}
+
 		this._UpdateXAxisGroup()
 		this._XAxisLabel()
 
 		// init y-axis decorations
 		this.yAxisGroup = this.aoG.append("g")
-			.call(yAxis
-				.tickFormat(this.yTickFormat)
+			.call(this.yAxis
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
 		)
+		// Need to do this separately
+		if (this.yTickFormat != "string"){
+			this.yAxisGroup.call(this.yAxis.tickFormat(this.yTickFormat))
+		}
 		this._UpdateYAxisGroup()
 		this._YAxisLabel()
-		
-		this.xAxis = xAxis
-		this.yAxis = yAxis
 
 		// Show plot based on AnimObject Draw
 		super.Draw({delay:delay, duration:duration, params:params})
@@ -138,7 +140,7 @@ export class Plot extends AnimObject{
 		const transition = d3.transition()
 			.delay(delay)
 			.duration(duration)
-
+		
 		// Update plot axes scales to match those of AO inner space
 		this.xAxis.scale(this.attrVar.xScale)
 		this.yAxis.scale(this.attrVar.yScale)
@@ -153,6 +155,14 @@ export class Plot extends AnimObject{
 				.tickSize(this.yTickSize)
 				.ticks(this.yTickNo)
 			)
+		// Need to do this separately
+		if (this.yTickFormat != "string"){
+			this.yAxisGroup
+				.transition()
+				.delay(delay)
+				.duration(duration)
+				.call(this.yAxis.tickFormat(this.yTickFormat))
+		}
 		this._UpdateYAxisGroup()
 
 		// Update x axis
@@ -165,6 +175,14 @@ export class Plot extends AnimObject{
 				.tickSize(this.xTickSize)
 				.ticks(this.xTickNo)
 			)
+		// Need to do this separately
+		if (this.xTickFormat != "string"){
+			this.xAxisGroup
+				.transition()
+				.delay(delay)
+				.duration(duration)
+				.call(this.xAxis.tickFormat(this.xTickFormat))
+		}
 		this._UpdateXAxisGroup()
 
 		// Update yLabel
@@ -186,6 +204,7 @@ export class Plot extends AnimObject{
 		/**
 		 * Updates X axis decorations.
 		*/
+		//this.xAxisGroup.call(this.xAxis.tickFormat(this.xTickFormat))
 		this.xAxisGroup
 			.selectAll("text")
 			.style("font-size", this.xTickLabelSize)
@@ -204,6 +223,7 @@ export class Plot extends AnimObject{
 		/**
 		 * Updates Y axis decorations.
 		*/
+		//this.yAxisGroup.call(this.yAxis.tickFormat(this.yTickFormat))
 		this.yAxisGroup
 			.selectAll("text")
 			.style("font-size", this.yTickLabelSize)

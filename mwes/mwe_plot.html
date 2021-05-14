@@ -234,8 +234,8 @@
     /**************************************************
     Plot 5: Time series, as lines and scatter
     **************************************************/
+    //*
     let parseTime = d3.timeParse("%Y-%m-%d")
-    ///*
     // Plot object
     let plotParams5 = {
       "pos"        :[200, 900],
@@ -289,9 +289,13 @@
     scatter1.Draw({delay:timing, duration:500})
 
     timing = timing + 1000
-    let newAxisParams = {'yLabel': '$\\beta + \\text{new!}$', "yDomain": [0,10], "xDomain": [-1300,1300]}
+    let newAxisParams = {
+      'yLabel':'$\\beta + \\text{new!}$',
+      "yDomain": [0, 10],
+      "xDomain": [-1300, 1300]
+    }
     plot1.Update({delay:timing, duration:1000, params:newAxisParams})
-    plot1.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams})
+    plot1.UpdateAxes({delay:timing+25, duration:1000, params:newAxisParams})
     scatter1.Update({delay:timing+25, duration:1000, params:scatterParams1b})
 
     timing = timing + 1200
@@ -312,7 +316,7 @@
     timing = timing + 2500
     let newAxisParams2 = {'yDomain':[0, 0.6]}
     plot2.Update({delay:timing, duration:1000, params:newAxisParams2})
-    plot2.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams2})
+    plot2.UpdateAxes({delay:timing+25, duration:1000, params:newAxisParams2})
     bar1.Update({delay:timing+25, duration:1000, params:histParams1b})
 
     timing = timing + 2000
@@ -336,7 +340,7 @@
     timing = timing + 1500
     let newAxisParams3 = {'yDomain':[0, 5]}
     plot3.Update({delay:timing, duration:1000, params:newAxisParams3})
-    plot3.UpdateAxes({delay:timing+25, duration:1000, plotParams:newAxisParams3})
+    plot3.UpdateAxes({delay:timing+25, duration:1000, params:newAxisParams3})
     bar3.Update({delay:timing+25, duration:1000, params:barParams1b})
 
     timing = timing + 1500
@@ -354,7 +358,7 @@
     timing = timing + 1500
     let newParams4 = {'xDomain': [0, 20], 'yDomain': [0, 20]}
     plot4.Update({delay:timing, duration:1000, params:newParams4})
-    plot4.UpdateAxes({delay:timing+25, duration:1000, plotParams:newParams4})
+    plot4.UpdateAxes({delay:timing+25, duration:1000, params:newParams4})
     line1.Update({delay:timing+25, duration:1000})
     
     timing = timing + 2000
@@ -375,7 +379,7 @@
     //*/
 
     // Plot 5: Time series
-    ///*
+    //*
     timing = timing + 1000
     plot5.Draw({delay:timing, duration:500})
 
@@ -385,6 +389,27 @@
     
     timing = timing + 1000
     scatter4.Draw({delay:timing, duration:500})
+
+    // Hide lines, and remove them
+    timing = timing + 1000
+    line4.Hide({delay:timing, duration:300})
+    line5.Hide({delay:timing, duration:300})
+    line4.Remove({delay:timing+400})
+    line5.Remove({delay:timing+400})
+
+    // Convert time series scatter to normal scatter
+    timing = timing + 1000
+    let newAxisParams4 = {
+      "yDomain": [-1, 21],
+      "xScaleType":"scaleLinear",
+      "xDomain": [-1300, 1300],
+      "xTickFormat":d3.format('.1f')
+    }
+    let scatterParams4b = {'data':scatter_data1}
+    plot5.Update({delay:timing, duration:1000, params:newAxisParams4})
+    plot5.UpdateAxes({delay:timing+25, duration:1000, params:newAxisParams4})
+    scatter4.Update({delay:timing+25, duration:1000, params:scatterParams4b})
+
     //*/
 
     // This needs to be added in conjunction with the import above!
