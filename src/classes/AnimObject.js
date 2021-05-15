@@ -124,17 +124,12 @@ export class AnimObject{
 			this._UpdateDrawParams(params)
 
 			// Set positions
-			//let xPos = this.attrVar.pos[0]
-			//let yPos = this.attrVar.pos[1]
-			
 			let xEntPos
 			let yEntPos
 			if (this.attrDraw.drawType === "movein"){
 				xEntPos = this.attrDraw.entPoint[0]
 				yEntPos = this.attrDraw.entPoint[1]
 			}
-
-			// Dete
 			let xPos 
 			let yPos
 			if (this.attrVar.pos === undefined){
@@ -145,7 +140,6 @@ export class AnimObject{
 				yPos = this.attrVar.pos[1]
 			}
  
-
 			// Draw AnimObject
 			if (this.attrVar.pos === undefined){
 				// Check if we should skip translation positioning and just display the object. This is for
@@ -311,39 +305,8 @@ export class AnimObject{
 
 	_InitInnerSpace(){
 
-		if (this.attrVar.xScaleType === "scaleLinear"){
-			this.attrVar.xScale = d3.scaleLinear()
-				.range(this.attrVar.xRange)
-				.domain(this.attrVar.xDomain)
-		} else if (this.attrVar.xScaleType == 'scaleBand'){
-			this.attrVar.xScale = d3.scaleBand()
-				.domain(this.attrVar.xDomain)
-				.range(this.attrVar.xRange)
-				.paddingInner(0.05) // still ad hoc!
-		} else if (this.attrVar.xScaleType === "scaleTime"){
-			this.attrVar.xScale = d3.scaleTime()
-				.range(this.attrVar.xRange)
-				.domain(this.attrVar.xDomain)
-		} else {
-			this.attrVar.xScale = undefined
-		}
-
-		if (this.attrVar.yScaleType === "scaleLinear"){
-			this.attrVar.yScale = d3.scaleLinear()
-				.range(this.attrVar.yRange.slice().reverse())
-				.domain(this.attrVar.yDomain)
-		} else if (this.attrVar.yScaleType === "scaleBand"){
-			this.attrVar.yScale = d3.scaleLinear()
-				domain(this.attrVar.yDomain)
-				.range(this.attrVar.yRange.slice().reverse())
-				.paddingInner(0.05) // still ad hoc!
-		} else if (this.attrVar.yScaleType === "scaleTime"){
-			this.attrVar.yScale = d3.scaleLinear()
-				.range(this.attrVar.yRange.slice().reverse())
-				.domain(this.attrVar.yDomain)
-		} else {
-			this.attrVar.yScale = undefined
-		}
+		this._DefineXscale()
+		this._DefineYscale()
 
 		// Define line function after inner space is known
 		this._DefineLineData(this.attrVar.xScale, this.attrVar.yScale)
@@ -393,19 +356,16 @@ export class AnimObject{
 
 		if (type=="update"){
 
-			this.attrVar.xScale = this.attrVar.xScale
-				.copy()
-				.range(this.attrVar.xRange)
-				.domain(this.attrVar.xDomain)
-			this.attrVar.yScale = this.attrVar.yScale
-				.copy()
-				.range(this.attrVar.yRange.slice().reverse())
-				.domain(this.attrVar.yDomain)
+			// Redefine scales
+			this._DefineXscale()
+			this._DefineYscale()
 
 			// Re-define base area and clip
 			let mydata = [{
 				"width":this.aoParent.attrVar.xScale(this.attrVar.xRange[1]),
-				"height":this.aoParent.attrVar.yScale(this.aoParent.attrVar.yScale(this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
+				"height":this.aoParent.attrVar.yScale(
+					this.aoParent.attrVar.yScale(
+						this.aoParent.attrVar.pos[1]) - this.attrVar.yRange[1]),
 				"fill":"none",
 				"id":this.attrFix.id + "_baseArea"
 			}]
@@ -562,6 +522,44 @@ export class AnimObject{
 			.x(function(d) {return that.attrVar.xScale(d[0])})
 			.y(function(d) {return that.attrVar.yScale(d[1])})
 		this.lineFunction = lineFunction
-	}	
+	}
+
+	_DefineXscale(){
+		if (this.attrVar.xScaleType === "scaleLinear"){
+			this.attrVar.xScale = d3.scaleLinear()
+				.range(this.attrVar.xRange)
+				.domain(this.attrVar.xDomain)
+		} else if (this.attrVar.xScaleType == 'scaleBand'){
+			this.attrVar.xScale = d3.scaleBand()
+				.domain(this.attrVar.xDomain)
+				.range(this.attrVar.xRange)
+				.paddingInner(0.05) // still ad hoc!
+		} else if (this.attrVar.xScaleType === "scaleTime"){
+			this.attrVar.xScale = d3.scaleTime()
+				.range(this.attrVar.xRange)
+				.domain(this.attrVar.xDomain)
+		} else {
+			this.attrVar.xScale = undefined
+		}
+	}
+
+	_DefineYscale(){
+		if (this.attrVar.yScaleType === "scaleLinear"){
+			this.attrVar.yScale = d3.scaleLinear()
+				.range(this.attrVar.yRange.slice().reverse())
+				.domain(this.attrVar.yDomain)
+		} else if (this.attrVar.yScaleType === "scaleBand"){
+			this.attrVar.yScale = d3.scaleLinear()
+				domain(this.attrVar.yDomain)
+				.range(this.attrVar.yRange.slice().reverse())
+				.paddingInner(0.05) // still ad hoc!
+		} else if (this.attrVar.yScaleType === "scaleTime"){
+			this.attrVar.yScale = d3.scaleLinear()
+				.range(this.attrVar.yRange.slice().reverse())
+				.domain(this.attrVar.yDomain)
+		} else {
+			this.attrVar.yScale = undefined
+		}
+	}
 
 }
