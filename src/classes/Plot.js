@@ -240,30 +240,36 @@ export class Plot extends AnimObject{
 
 	_UpdatePlotParams(params){
 		/* Updates plot axis paramters */
-	    this.xLabelSize 		= params.xLabelSize  	 || this.xLabelSize  	  || this.xLabelSize || 30
-		this.xLabel 			= params.xLabel 	 	 || this.xLabel 	 	  || ""
-		this.xLabelColor 		= params.xLabelColor 	 || this.xLabelColor 	  || "#D7E4DB"
-	    this.yLabelSize 		= params.yLabelSize  	 || this.yLabelSize  	  || 30
-		this.yLabel 			= params.yLabel 	 	 || this.yLabel 	 	  || ""
-		this.yLabelColor 		= params.yLabelColor 	 || this.yLabelColor 	  || "#D7E4DB"
-		this.yLabelCorrector    = params.yLabelCorrector || this.yLabelCorrector  || [100,0]
-		this.xLabelCorrector    = params.xLabelCorrector || this.xLabelCorrector  || [0,70]
-		this.xTickLabelSize		= params.tickLabelSize   || this.xTickLabelSize	  || params.xTickLabelSize || 20
-		this.yTickLabelSize		= params.tickLabelSize   || this.yTickLabelSize	  || params.yTickLabelSize || 20
-	    this.xTickNo 			= params.tickNo 		 || this.xTickNo 		  || 5
-		this.xTickStroke 		= params.tickStroke 	 || this.xTickStroke 	  || "#D7E4DB"
-	    this.xTickSize 			= params.tickSize 		 || this.xTickSize 		  || 10
-		this.xTickStrokeWidth	= params.tickStrokeWidth || this.xTickStrokeWidth || 1
-		this.xTickLabelFill 	= params.tickLabelFill 	 || this.xTickLabelFill   || "#D7E4DB"
-		this.xTickFormat		= params.xTickFormat 	 || this.xTickFormat 	  || d3.format('.1f')
-	    this.yTickNo 			= params.tickNo 		 || this.yTickNo 		  || 5
-		this.yTickStroke 		= params.tickStroke 	 || this.yTickStroke 	  || "#D7E4DB"
-	    this.yTickSize 			= params.tickSize 		 || this.yTickSize 		  || 10
-		this.yTickStrokeWidth	= params.tickStrokeWidth || this.yTickStrokeWidth || 1
-		this.yTickLabelFill 	= params.tickLabelFill   || this.yTickLabelFill   || "#D7E4DB"
-		this.yTickFormat		= params.yTickFormat 	 || this.yTickFormat	  || d3.format('.1f')
-		this.axisStroke			= params.axisStroke 	 || this.axisStroke		  || "#D7E4DB"
-		this.axisStrokeWidth	= params.axisStrokeWidth || this.axisStrokeWidth  || 1
+
+		// Numbers that can evaluate to zero need to be dealt with carefully to
+		// avoid zero being treated "falsey"
+		this.xLabelSize 	  	= Number(params.xLabelSize===0 && '0' 		|| params.xLabelSize===0 && '0' 		|| this.xLabelSize===0 && '0' 		|| 30)
+		this.yLabelSize 	  	= Number(params.yLabelSize===0 && '0' 		|| params.yLabelSize===0 && '0' 		|| this.yLabelSize===0 && '0' 		|| 30)
+		this.xTickLabelSize   	= Number(params.xTickLabelSize===0 && '0' 	|| params.xTickLabelSize===0 && '0' 	|| this.xTickLabelSize===0 && '0' 	|| 20)
+		this.yTickLabelSize   	= Number(params.yTickLabelSize===0 && '0' 	|| params.yTickLabelSize===0 && '0' 	|| this.yTickLabelSize===0 && '0' 	|| 20)
+		this.xTickNo 		  	= Number(params.xTickNo===0 && '0' 			|| params.xTickNo===0 && '0' 			|| this.xTickNo===0 && '0' 			|| 5)
+		this.yTickNo 		  	= Number(params.yTickNo===0 && '0' 			|| params.yTickNo===0 && '0' 			|| this.yTickNo===0 && '0' 			|| 5)
+		this.xTickSize 		  	= Number(params.xTickSize===0 && '0' 		|| params.xTickSize===0 && '0' 			|| this.xTickSize===0 && '0' 		|| 10)
+		this.yTickSize 		  	= Number(params.yTickSize===0 && '0' 		|| params.yTickSize===0 && '0' 			|| this.yTickSize===0 && '0' 		|| 10)
+		this.xTickStrokeWidth 	= Number(params.xTickStrokeWidth===0 && '0' || params.xTickStrokeWidth===0 && '0' 	|| this.xTickStrokeWidth===0 && '0' || 1)
+		this.yTickStrokeWidth 	= Number(params.yTickStrokeWidth===0 && '0' || params.yTickStrokeWidth===0 && '0' 	|| this.yTickStrokeWidth===0 && '0' || 1)
+		this.axisStrokeWidth 	= Number(params.axisStrokeWidth===0 && '0' 	|| params.axisStrokeWidth===0 && '0' 	|| this.axisStrokeWidth===0 && '0' 	|| 1)
+
+		// Rest
+		this.xLabel 			= params.xLabel 	 	   || this.xLabel 	 	   	|| ""
+		this.xLabelColor 		= params.xLabelColor 	   || this.xLabelColor 	   	|| "#D7E4DB"
+		this.yLabel 			= params.yLabel 	 	   || this.yLabel 	 	   	|| ""
+		this.yLabelColor 		= params.yLabelColor 	   || this.yLabelColor 	   	|| "#D7E4DB"
+		this.yLabelCorrector    = params.yLabelCorrector   || this.yLabelCorrector 	|| [100, 0]
+		this.xLabelCorrector    = params.xLabelCorrector   || this.xLabelCorrector 	|| [0, 70]
+		this.xTickStroke 		= params.xTickStroke 	   || this.xTickStroke 	   	|| "#D7E4DB"
+		this.yTickStroke 		= params.yTickStroke 	   || this.yTickStroke 	   	|| "#D7E4DB"
+		this.xTickLabelFill 	= params.xTickLabelFill    || this.xTickLabelFill  	|| "#D7E4DB"
+		this.xTickFormat		= params.xTickFormat 	   || this.xTickFormat 	   	|| d3.format('.1f')
+		this.yTickLabelFill 	= params.yTickLabelFill    || this.yTickLabelFill  	|| "#D7E4DB"
+		this.yTickFormat		= params.yTickFormat 	   || this.yTickFormat	   	|| d3.format('.1f')
+		this.axisStroke			= params.axisStroke 	   || this.axisStroke	   	|| "#D7E4DB"
+
 	}
 
 }
