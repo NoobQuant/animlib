@@ -103,12 +103,15 @@ export class Plot extends AnimObject{
 		
 		let selection
 		let labelText
+		let labelSize
 		if (label=="y"){
 			selection = this.yLabelDiv
 			labelText = this.yLabel
+			labelSize = this.yLabelSize
 		} else if(label=="x"){
 			selection = this.xLabelDiv
-			labelText = this.xLabel			
+			labelText = this.xLabel
+			labelSize = this.xLabelSize
 		}
 
 		selection.selectAll("text")
@@ -123,6 +126,7 @@ export class Plot extends AnimObject{
 				update => update
 							.call(update => update.transition(t3)
 												  .style("opacity",1)
+												  .style("font-size", labelSize + "px")
 							),
 				exit => exit.call(exit => exit.transition(t2)
 											  .style("opacity",0)
@@ -243,17 +247,17 @@ export class Plot extends AnimObject{
 
 		// Numbers that can evaluate to zero need to be dealt with carefully to
 		// avoid zero being treated "falsey"
-		this.xLabelSize 	  	= Number(params.xLabelSize===0 && '0' 		|| params.xLabelSize===0 && '0' 		|| this.xLabelSize===0 && '0' 		|| 30)
-		this.yLabelSize 	  	= Number(params.yLabelSize===0 && '0' 		|| params.yLabelSize===0 && '0' 		|| this.yLabelSize===0 && '0' 		|| 30)
-		this.xTickLabelSize   	= Number(params.xTickLabelSize===0 && '0' 	|| params.xTickLabelSize===0 && '0' 	|| this.xTickLabelSize===0 && '0' 	|| 20)
-		this.yTickLabelSize   	= Number(params.yTickLabelSize===0 && '0' 	|| params.yTickLabelSize===0 && '0' 	|| this.yTickLabelSize===0 && '0' 	|| 20)
-		this.xTickNo 		  	= Number(params.xTickNo===0 && '0' 			|| params.xTickNo===0 && '0' 			|| this.xTickNo===0 && '0' 			|| 5)
-		this.yTickNo 		  	= Number(params.yTickNo===0 && '0' 			|| params.yTickNo===0 && '0' 			|| this.yTickNo===0 && '0' 			|| 5)
-		this.xTickSize 		  	= Number(params.xTickSize===0 && '0' 		|| params.xTickSize===0 && '0' 			|| this.xTickSize===0 && '0' 		|| 10)
-		this.yTickSize 		  	= Number(params.yTickSize===0 && '0' 		|| params.yTickSize===0 && '0' 			|| this.yTickSize===0 && '0' 		|| 10)
-		this.xTickStrokeWidth 	= Number(params.xTickStrokeWidth===0 && '0' || params.xTickStrokeWidth===0 && '0' 	|| this.xTickStrokeWidth===0 && '0' || 1)
-		this.yTickStrokeWidth 	= Number(params.yTickStrokeWidth===0 && '0' || params.yTickStrokeWidth===0 && '0' 	|| this.yTickStrokeWidth===0 && '0' || 1)
-		this.axisStrokeWidth 	= Number(params.axisStrokeWidth===0 && '0' 	|| params.axisStrokeWidth===0 && '0' 	|| this.axisStrokeWidth===0 && '0' 	|| 1)
+		this.xLabelSize 	  	= Number(params.xLabelSize===0 && '0' 		|| params.xLabelSize		|| this.xLabelSize===0 && '0' 		|| this.xLabelSize 			|| 30)
+		this.yLabelSize 	  	= Number(params.yLabelSize===0 && '0' 		|| params.yLabelSize		|| this.yLabelSize===0 && '0' 		|| this.yLabelSize 			|| 30)
+		this.xTickLabelSize   	= Number(params.xTickLabelSize===0 && '0' 	|| params.xTickLabelSize 	|| this.xTickLabelSize===0 && '0' 	|| this.xTickLabelSize  	|| 20)
+		this.yTickLabelSize   	= Number(params.yTickLabelSize===0 && '0' 	|| params.yTickLabelSize 	|| this.yTickLabelSize===0 && '0' 	|| this.yTickLabelSize  	|| 20)
+		this.xTickNo 		  	= Number(params.xTickNo===0 && '0' 			|| params.xTickNo			|| this.xTickNo===0 && '0' 			|| this.xTickNo 			|| 5)
+		this.yTickNo 		  	= Number(params.yTickNo===0 && '0' 			|| params.yTickNo 			|| this.yTickNo===0 && '0' 			|| this.yTickNo 			|| 5)
+		this.xTickSize 		  	= Number(params.xTickSize===0 && '0' 		|| params.xTickSize 		|| this.xTickSize===0 && '0' 		|| this.xTickSize 			|| 10)
+		this.yTickSize 		  	= Number(params.yTickSize===0 && '0' 		|| params.yTickSize 		|| this.yTickSize===0 && '0' 		|| this.yTickSize 			|| 10)
+		this.xTickStrokeWidth 	= Number(params.xTickStrokeWidth===0 && '0' || params.xTickStrokeWidth 	|| this.xTickStrokeWidth===0 && '0' || this.xTickStrokeWidth 	|| 1)
+		this.yTickStrokeWidth 	= Number(params.yTickStrokeWidth===0 && '0' || params.yTickStrokeWidth 	|| this.yTickStrokeWidth===0 && '0' || this.yTickStrokeWidth 	|| 1)
+		this.axisStrokeWidth 	= Number(params.axisStrokeWidth===0 && '0' 	|| params.axisStrokeWidth 	|| this.axisStrokeWidth===0 && '0' 	|| this.axisStrokeWidth 	|| 1)
 
 		// Rest
 		this.xLabel 			= params.xLabel 	 	   || this.xLabel 	 	   	|| ""
