@@ -1,5 +1,12 @@
 # RELEASE HISTORY
 
+## v.0.2.1
+- Work with time series data and related zooms.
+- WriteScatter update.
+
+## v.0.2.0
+- Quite a big overhaul to unify  AnimObject concepts. See Github project v0.2.0.
+
 ## v.0.1.7
 - #5: Added zooming within plots.
 - #6: Fixed bug with zooming and line drawing.
