@@ -1,5 +1,8 @@
 # RELEASE HISTORY
 
+## v.0.2.2
+- Image class now inherits AnimObject.
+
 ## v.0.2.1
 - Work with time series data and related zooms.
 - WriteScatter update.
