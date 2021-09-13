@@ -8,21 +8,12 @@
 
 </head>
 
-<style>
-</style>
-
 <body>
   <script type="module">
-    /* 
-    Round image of a flag is place on a top-left corner of svg. With viewBox of 1920x1080
-    the radius of circle is 540.
-
-    Backgroung svg size is set to 1930x1090.
-    */
 
     // Module imports
     import {Canvas} from '../src/classes/Canvas.js'
-    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'    
+    import {NQBGColors,NQColors,NQTextColors,NQFonts} from '../src/variables/NQ_colors_and_fonts.js'
     import {Image} from '../src/classes/Image.js'
 
     if (document.URL.includes('image_hh')){
@@ -35,58 +26,46 @@
     // Canvas
     let canvas = new Canvas({})
 
-    // Flag in top-left corner with placeholder svg height 500 and
-    // flag radius of sqrt(250^2 + 250^2) = 353.55339
-    // sqrt(250^2 + 250^2) / 1090 = 0.324361
-    // Relative placeholder svg size is 250*2/1090 = 0.458716
+    // Flag image. Underlying svg is such that with relSize 100, the svg place
+    // holder spans the entire canvas, with flag image reaching from top to
+    // bottom, from left to about middle. relSize X means height (and diameter)
+    // of (X/100) * 1090 for the flag image. With relSize = 50 radius is 545.
     let params1 = {
-      pos: [100, 100],
+      pos: [0, 1080],
       path: "pics/finland.svg",
       id: "flag1",
-      relSize: [45.8716,45.8716],
+      relSize: 50,
     }
-    let img1 = new Image(params1)
+    let img1 = new Image(params1, canvas)
 
     // Fade in flag to position such that top-left box of placeholder
     // svg just below previous one and that the circle flag is of same
     // size.
     let params2 = {
-      pos: [100, 600],
+      pos: [0, 545],
       path: "pics/finland.svg",
       id: "flag2",
-      relSize: [45.8716,45.8716],
-      drawType: "fadein"
+      relSize: 50,
     }
-    let img2 = new Image(params2)
+    let img2 = new Image(params2, canvas)
     
     // Move in flag such that x pos is just in front of previous two.
     let params3 = {
-      pos: [600,350],
-      relEntPoint: [-600, 0],
+      pos: [545, 545+545/2],
       path: "pics/finland.svg",
       id: "flag3",
-      relSize: [45.8716,45.8716],
-      drawType: "movein"
+      relSize: 50,
     }
-    let img3 = new Image(params3)
+    let img3 = new Image(params3, canvas)
 
+    // Image drawn with scale in
     let params4 = {
-      pos: [1100, 0],
-      path: "pics/scattter.png",
+      pos: [1100, 1090],
+      path: "pics/scatter.png",
       id: "scatter1",
-      relSize: [100, 100],
-      drawType: "scalein"
+      relSize: 100,
     }
-    let img4 = new Image(params4)
-
-    let params5 = {
-      pos: [1100, 500],
-      path: "pics/scattter.png",
-      id: "scatter2",
-      relSize: [50,50],
-      drawType: "fadein"
-    }
-    let img5 = new Image(params5)
+    let img4 = new Image(params4, canvas)
 
     timing = timing + 500
     img1.Draw({delay:timing, duration:500})
@@ -95,13 +74,13 @@
     img2.Draw({delay:timing, duration:500})
 
     timing = timing + 500
-    img3.Draw({delay:timing, duration:500})
+    img3.Draw({delay:timing, duration:500, params:{"drawType":"movein", "entPoint":[-600, 545+545/2]}})
 
     timing = timing + 500
-    img4.Draw({delay:timing, duration:500})
+    img4.Draw({delay:timing, duration:500, params:{drawType:"scalein"}})
 
-    timing = timing + 500
-    img5.Draw({delay:timing, duration:500})
+    timing = timing + 1000
+    img1.Update({delay:timing, duration:1500, params:{"pos":[1100, 600], "ease":d3.easeCubic}})
 
   </script> 
 
